@@ -39,7 +39,13 @@
       "athletes": "Sportivi antrenați",
       "medals": "Medalii și podiumuri",
       "years": "Ani de experiență"
-    }
+    },
+    "scroll": "Derulează",
+    "live": "LIVE · Antrenament acum",
+    "badgeMedals": "medalii în 2025",
+    "badgeNew": "Clip nou din sală",
+    "badgeNewSub": "acum 2 minute",
+    "manifesto": "Nu antrenăm doar corpul. Construim caractere care nu cedează, sportivi care respectă și oameni care câștigă — pe saltea și în viață."
   },
   "about": {
     "eyebrow": "Spiritul academiei",
@@ -70,11 +76,13 @@
     "karateAge": "Avansat",
     "kidsText": "Disciplină, coordonare, respect și încredere într-un mediu motivant.",
     "adultsText": "Tehnică, forță, viteză și mentalitate de luptător, cu evoluție vizibilă.",
-    "karateText": "Antrenamente intense pentru sportivii care vor să ridice nivelul la maxim."
+    "karateText": "Antrenamente intense pentru sportivii care vor să ridice nivelul la maxim.",
+    "pick": "Alege grupa"
   },
   "coaches": {
     "eyebrow": "Antrenorii noștri",
-    "title": "Experiență. Respect. Leadership."
+    "title": "Experiență. Respect. Leadership.",
+    "hover": "Treci cu mouse-ul peste antrenori"
   },
   "reviews": {
     "eyebrow": "Review-uri",
@@ -340,5 +348,30 @@
     "analyticsText": "Statistici anonime despre paginile vizitate.",
     "marketing": "Marketing",
     "marketingText": "Măsurarea campaniilor și afișarea de reclame relevante."
+  },
+  "media": {
+    "eyebrow": "Media",
+    "title": "Sala, direct pe telefonul tău",
+    "subtitle": "Fiecare antrenament, fiecare competiție, fiecare podium — filmate și trimise comunității. Dublu-tap pe orice ecran.",
+    "drag": "Trage",
+    "open": "Deschide",
+    "hint": "Trage, derulează sau folosește săgețile",
+    "close": "Închide",
+    "prev": "Anterior",
+    "next": "Următor",
+    "likes": "aprecieri",
+    "notifLike": "a apreciat clipul tău",
+    "notifMedal": "Aur la Cupa Olteniei",
+    "notifNew": "Antrenament nou postat",
+    "notifFollow": "urmăritori noi",
+    "stat1": "clipuri publicate",
+    "stat2": "vizualizări",
+    "stat3": "părinți conectați"
+  },
+  "cta": {
+    "eyebrow": "Începe azi",
+    "title": "Prima ședință e gratis",
+    "text": "Vino la o oră de probă. Echipamentul e pe noi, motivația vine de la sine.",
+    "button": "Rezervă ședința"
   }
 }

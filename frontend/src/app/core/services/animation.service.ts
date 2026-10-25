@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -13,7 +13,11 @@ gsap.registerPlugin(ScrollTrigger);
 export class AnimationService {
   readonly reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
+  /** Devine true cand intro-ul s-a terminat (sau n-a rulat deloc). */
+  readonly introDone = signal(false);
+
   private resizeTimer?: number;
+  private introWaiters: (() => void)[] = [];
 
   constructor() {
     // Fonturile web (Orbitron/Poppins) sosesc dupa primul layout si schimba
@@ -29,6 +33,17 @@ export class AnimationService {
     clearTimeout(this.resizeTimer);
     this.resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 200) as unknown as number;
   };
+
+  markIntroDone(): void {
+    if (this.introDone()) return;
+    this.introDone.set(true);
+    this.introWaiters.splice(0).forEach((fn) => fn());
+  }
+
+  /** Ruleaza `fn` dupa intro, ca animatiile de intrare sa nu se consume sub el. */
+  afterIntro(fn: () => void): void {
+    this.introDone() ? fn() : this.introWaiters.push(fn);
+  }
 
   get gsap() {
     return gsap;

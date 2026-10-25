@@ -264,3 +264,146 @@ export class RevealDirective implements AfterViewInit, OnDestroy {
     this.tween?.kill();
   }
 }
+
+/**
+ * Parallax legat de scroll: elementul se deplaseaza mai repede sau mai incet
+ * decat pagina. `parallaxSpeed` pozitiv = urca mai repede, negativ = ramane in urma.
+ */
+@Directive({
+  selector: '[aiaParallax]',
+  standalone: true
+})
+export class ParallaxDirective implements AfterViewInit, OnDestroy {
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly anim = inject(AnimationService);
+
+  readonly parallaxSpeed = input(0.2);
+  readonly parallaxRotate = input(0);
+  readonly parallaxScale = input(0);
+
+  private tween?: gsap.core.Tween;
+
+  ngAfterViewInit(): void {
+    if (this.anim.reducedMotion) return;
+    const speed = this.parallaxSpeed();
+    this.tween = gsap.fromTo(
+      this.host.nativeElement,
+      { yPercent: speed * 50, rotate: -this.parallaxRotate(), scale: 1 - this.parallaxScale() },
+      {
+        yPercent: -speed * 50,
+        rotate: this.parallaxRotate(),
+        scale: 1 + this.parallaxScale(),
+        ease: 'none',
+        scrollTrigger: { trigger: this.host.nativeElement, start: 'top bottom', end: 'bottom top', scrub: 0.6 }
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.tween?.scrollTrigger?.kill();
+    this.tween?.kill();
+  }
+}
+
+/**
+ * Text care se "aprinde" cuvant cu cuvant, legat direct de scroll (scrub):
+ * cititorul controleaza ritmul. Cuvintele stinse raman lizibile, doar slabe.
+ */
+@Directive({
+  selector: '[aiaScrubWords]',
+  standalone: true
+})
+export class ScrubWordsDirective implements AfterViewInit, OnDestroy {
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly anim = inject(AnimationService);
+
+  private tween?: gsap.core.Tween;
+
+  ngAfterViewInit(): void {
+    const el = this.host.nativeElement as HTMLElement;
+    if (this.anim.reducedMotion) return;
+    const text = el.textContent ?? '';
+    if (!text.trim()) return;
+
+    el.setAttribute('aria-label', text.trim());
+    el.textContent = '';
+    const spans: HTMLElement[] = [];
+    for (const unit of text.split(/(\s+)/).filter((u) => u.length > 0)) {
+      if (/^\s+$/.test(unit)) {
+        el.appendChild(document.createTextNode(unit));
+        continue;
+      }
+      const span = document.createElement('span');
+      span.textContent = unit;
+      span.setAttribute('aria-hidden', 'true');
+      span.style.display = 'inline-block';
+      el.appendChild(span);
+      spans.push(span);
+    }
+
+    this.tween = gsap.fromTo(
+      spans,
+      { opacity: 0.12, filter: 'blur(6px)', y: 12 },
+      {
+        opacity: 1,
+        filter: 'blur(0px)',
+        y: 0,
+        stagger: 0.08,
+        ease: 'power1.out',
+        scrollTrigger: { trigger: el, start: 'top 85%', end: 'bottom 45%', scrub: 0.8 }
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.tween?.scrollTrigger?.kill();
+    this.tween?.kill();
+  }
+}
+
+/**
+ * Dezvaluire cu masca: elementul se deschide dintr-o fanta (clip-path) in timp
+ * ce continutul sau face un zoom-out usor. Pentru imagini si blocuri media.
+ */
+@Directive({
+  selector: '[aiaClipReveal]',
+  standalone: true
+})
+export class ClipRevealDirective implements AfterViewInit, OnDestroy {
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly anim = inject(AnimationService);
+
+  readonly clipFrom = input<'bottom' | 'center' | 'left'>('bottom');
+  readonly clipDelay = input(0);
+
+  private tween?: gsap.core.Tween;
+
+  ngAfterViewInit(): void {
+    if (this.anim.reducedMotion) return;
+    const from = {
+      bottom: 'inset(100% 0% 0% 0% round 30px)',
+      center: 'inset(48% 48% 48% 48% round 30px)',
+      left: 'inset(0% 100% 0% 0% round 30px)'
+    }[this.clipFrom()];
+
+    this.tween = gsap.fromTo(
+      this.host.nativeElement,
+      { clipPath: from, scale: 1.08 },
+      {
+        clipPath: 'inset(0% 0% 0% 0% round 30px)',
+        scale: 1,
+        duration: 1.4,
+        delay: this.clipDelay(),
+        ease: 'expo.out',
+        immediateRender: false,
+        scrollTrigger: { trigger: this.host.nativeElement, start: 'top 88%', once: true },
+        onComplete: () => gsap.set(this.host.nativeElement, { clearProps: 'clipPath' })
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.tween?.scrollTrigger?.kill();
+    this.tween?.kill();
+  }
+}

@@ -9,6 +9,7 @@ import { SearchModalComponent } from './shared/components/search-modal.component
 import { ToastHostComponent } from './shared/components/toast-host.component';
 import { BackToTopComponent, ScrollProgressComponent } from './shared/components/ui-utilities';
 import { WhatsappButtonComponent } from './shared/components/whatsapp-button.component';
+import { AmbientComponent, LiquidCursorComponent, LiquidDefsComponent } from './shared/motion/liquid.components';
 import { ClickSparkComponent } from './shared/motion/motion.components';
 
 @Component({
@@ -25,10 +26,15 @@ import { ClickSparkComponent } from './shared/motion/motion.components';
     ScrollProgressComponent,
     BackToTopComponent,
     ClickSparkComponent,
-    WhatsappButtonComponent
+    WhatsappButtonComponent,
+    LiquidDefsComponent,
+    AmbientComponent,
+    LiquidCursorComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <aia-liquid-defs />
+    <aia-ambient />
     <aia-intro />
 
     <aia-scroll-progress />
@@ -48,6 +54,7 @@ import { ClickSparkComponent } from './shared/motion/motion.components';
     <aia-back-to-top />
     <aia-whatsapp-button />
     <aia-click-spark />
+    <aia-liquid-cursor />
   `
 })
 export class AppComponent implements AfterViewInit, OnDestroy {

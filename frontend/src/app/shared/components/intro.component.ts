@@ -41,6 +41,11 @@ import { AnimationService } from '../../core/services/animation.service';
           <div class="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-[#E60000] to-transparent"></div>
         </div>
 
+        <!-- Lentila de sticla care se umfla in spatele titlului -->
+        <div class="pointer-events-none absolute inset-0 grid place-items-center">
+          <div #lens class="intro-lens aia-glass aia-refract"></div>
+        </div>
+
         <!-- Continutul central -->
         <div #content class="pointer-events-none absolute inset-0 grid place-items-center px-6 text-center">
           <div>
@@ -52,7 +57,7 @@ import { AnimationService } from '../../core/services/animation.service';
               #title
               class="font-display text-[11vw] leading-[1.05] text-white sm:text-[8vw] lg:text-[5.5rem]"
             >
-              Academia<br />Ion Andrei
+              Academia<br /><span class="aia-text-liquid">Ion Andrei</span>
             </h1>
 
             <div #line class="mx-auto mt-8 h-[2px] w-0 rounded-full bg-gradient-to-r from-transparent via-[#e10600] to-transparent"></div>
@@ -79,6 +84,12 @@ import { AnimationService } from '../../core/services/animation.service';
       :host {
         display: contents;
       }
+      .intro-lens {
+        width: min(70vw, 560px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.16), rgba(255, 31, 61, 0.08) 55%, rgba(94, 242, 255, 0.06));
+      }
     `
   ]
 })
@@ -94,6 +105,7 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
   private readonly title = viewChild<ElementRef<HTMLElement>>('title');
   private readonly eyebrow = viewChild<ElementRef<HTMLElement>>('eyebrow');
   private readonly line = viewChild<ElementRef<HTMLElement>>('line');
+  private readonly lens = viewChild<ElementRef<HTMLElement>>('lens');
   private readonly motto = viewChild<ElementRef<HTMLElement>>('motto');
   private readonly canvasRef = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
 
@@ -102,6 +114,7 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (!this.visible()) {
+      this.anim.markIntroDone();
       this.finished.emit();
       return;
     }
@@ -131,7 +144,8 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
     const tl = gsap.timeline({ onComplete: () => this.complete() });
     this.timeline = tl;
 
-    tl.from(this.eyebrow()!.nativeElement, { opacity: 0, y: 20, duration: 0.7, ease: 'power2.out' })
+    tl.from(this.lens()!.nativeElement, { scale: 0, opacity: 0, duration: 1.6, ease: 'expo.out' }, 0)
+      .from(this.eyebrow()!.nativeElement, { opacity: 0, y: 20, duration: 0.7, ease: 'power2.out' }, 0.1)
       .from(
         this.title()!.nativeElement,
         { opacity: 0, scale: 1.25, filter: 'blur(22px)', duration: 1.1, ease: 'power3.out' },
@@ -142,6 +156,10 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
       // Pauza dramatica inainte de deschiderea usilor
       .to({}, { duration: 0.55 })
       .to(this.content()!.nativeElement, { opacity: 0, scale: 0.94, duration: 0.5, ease: 'power2.in' })
+      // Lentila "explodeaza" spre camera chiar cand se deschid usile.
+      .to(this.lens()!.nativeElement, { scale: 4, opacity: 0, duration: 1.2, ease: 'power3.in' }, '<')
+      // Hero-ul isi porneste intrarea odata cu deschiderea usilor.
+      .call(() => this.anim.markIntroDone(), [], 'doors')
       // Split door: panourile ies din cadru simultan
       .to(this.doorLeft()!.nativeElement, { xPercent: -100, duration: 1.15, ease: 'power4.inOut' }, 'doors')
       .to(this.doorRight()!.nativeElement, { xPercent: 100, duration: 1.15, ease: 'power4.inOut' }, 'doors');
@@ -155,6 +173,7 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
       /* private mode - intro-ul va rula din nou, acceptabil */
     }
     this.visible.set(false);
+    this.anim.markIntroDone();
     this.finished.emit();
   }
 

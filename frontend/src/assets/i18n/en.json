@@ -39,7 +39,13 @@
       "athletes": "Athletes trained",
       "medals": "Medals and podiums",
       "years": "Years of experience"
-    }
+    },
+    "scroll": "Scroll",
+    "live": "LIVE · Training now",
+    "badgeMedals": "medals in 2025",
+    "badgeNew": "New clip from the gym",
+    "badgeNewSub": "2 minutes ago",
+    "manifesto": "We don’t just train bodies. We build characters that don’t give up, athletes who respect and people who win — on the mat and in life."
   },
   "about": {
     "eyebrow": "The academy spirit",
@@ -70,11 +76,13 @@
     "karateAge": "Advanced",
     "kidsText": "Discipline, coordination, respect and confidence in a motivating environment.",
     "adultsText": "Technique, strength, speed and a fighter's mindset, with visible progress.",
-    "karateText": "Intense training for athletes who want to push their level to the maximum."
+    "karateText": "Intense training for athletes who want to push their level to the maximum.",
+    "pick": "Pick your group"
   },
   "coaches": {
     "eyebrow": "Our coaches",
-    "title": "Experience. Respect. Leadership."
+    "title": "Experience. Respect. Leadership.",
+    "hover": "Hover over the coaches"
   },
   "reviews": {
     "eyebrow": "Reviews",
@@ -340,5 +348,30 @@
     "analyticsText": "Anonymous statistics about visited pages.",
     "marketing": "Marketing",
     "marketingText": "Campaign measurement and relevant advertising."
+  },
+  "media": {
+    "eyebrow": "Media",
+    "title": "The gym, straight to your phone",
+    "subtitle": "Every session, every competition, every podium — filmed and shared with the community. Double-tap any screen.",
+    "drag": "Drag",
+    "open": "Open",
+    "hint": "Drag, scroll or use the arrows",
+    "close": "Close",
+    "prev": "Previous",
+    "next": "Next",
+    "likes": "likes",
+    "notifLike": "liked your clip",
+    "notifMedal": "Gold at the Oltenia Cup",
+    "notifNew": "New training posted",
+    "notifFollow": "new followers",
+    "stat1": "clips published",
+    "stat2": "views",
+    "stat3": "connected parents"
+  },
+  "cta": {
+    "eyebrow": "Start today",
+    "title": "First session is free",
+    "text": "Come for a trial class. Gear is on us, motivation comes naturally.",
+    "button": "Book the session"
   }
 }

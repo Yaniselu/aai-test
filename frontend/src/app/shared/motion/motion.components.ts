@@ -295,8 +295,8 @@ export class ClickSparkComponent implements AfterViewInit, OnDestroy {
       <div #track class="flex shrink-0 items-center gap-10 whitespace-nowrap pr-10">
         @for (pass of passes; track pass) {
           @for (word of items(); track $index) {
-            <span class="font-display text-4xl uppercase leading-none tracking-wide sm:text-6xl">{{ word }}</span>
-            <span class="h-1.5 w-1.5 shrink-0 rotate-45 bg-[var(--aia-blood)]"></span>
+            <span [class]="klass()">{{ word }}</span>
+            <span class="h-2.5 w-2.5 shrink-0 rotate-45 rounded-[3px] bg-[var(--aia-blood)] shadow-[0_0_14px_var(--aia-blood)]"></span>
           }
         }
       </div>
@@ -310,6 +310,9 @@ export class VelocityMarqueeComponent implements AfterViewInit, OnDestroy {
 
   readonly items = input<string[]>(['DISCIPLINA', 'FORTA', 'RESPECT', 'VICTORIE']);
   readonly baseSpeed = input(0.7);
+  /** Banda a doua dintr-o pereche merge in sens opus. */
+  readonly reverse = input(false);
+  readonly klass = input('font-display text-4xl uppercase leading-none tracking-wide sm:text-6xl');
 
   readonly passes = [1, 2, 3];
 
@@ -331,7 +334,7 @@ export class VelocityMarqueeComponent implements AfterViewInit, OnDestroy {
     const loop = () => {
       const width = el.scrollWidth / this.passes.length;
       // Direcția se inversează când derulezi în sus — banda "simte" scroll-ul.
-      const direction = this.velocity < -0.5 ? -1 : 1;
+      const direction = (this.velocity < -0.5 ? -1 : 1) * (this.reverse() ? -1 : 1);
       const speed = this.baseSpeed() + Math.min(Math.abs(this.velocity) * 0.35, 14);
 
       this.offset += speed * direction;

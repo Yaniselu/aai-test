@@ -18,27 +18,38 @@ import { LogoComponent } from './logo.component';
     <header class="fixed inset-x-0 top-0 z-50 transition-all duration-500" [style.paddingTop.px]="shrunk() ? 10 : 20">
       <div class="aia-container">
         <div
-          class="flex items-center justify-between gap-4 px-4 transition-all duration-500 sm:px-5"
+          class="bar aia-glass flex items-center justify-between gap-4 px-3 sm:px-4"
+          [class.shrunk]="shrunk()"
+          [class.hidden-up]="hiddenUp()"
           [style.height.px]="shrunk() ? 62 : 72"
           [style.borderRadius]="'var(--aia-radius-pill)'"
-          [style.border]="'1px solid ' + (shrunk() ? 'var(--aia-border)' : 'transparent')"
-          [style.backgroundColor]="shrunk() ? 'color-mix(in srgb, var(--aia-bg) 72%, transparent)' : 'transparent'"
-          [style.backdropFilter]="shrunk() ? 'blur(18px)' : 'none'"
-          [style.boxShadow]="shrunk() ? 'var(--aia-shadow-sm)' : 'none'"
         >
           <a routerLink="/" class="group" [attr.aria-label]="'nav.home' | translate">
             <aia-logo [size]="shrunk() ? 38 : 42" />
           </a>
 
           <!-- Navigatie desktop -->
-          <nav class="hidden items-center gap-6 lg:flex" [attr.aria-label]="'nav.main' | translate">
+          <nav
+            class="nav relative hidden items-center gap-1 lg:flex"
+            [attr.aria-label]="'nav.main' | translate"
+            (pointerleave)="ind.set(null)"
+          >
+            <span
+              class="ind aia-glass"
+              aria-hidden="true"
+              [style.opacity]="ind() ? 1 : 0"
+              [style.left.px]="ind()?.left ?? 0"
+              [style.width.px]="ind()?.width ?? 0"
+            ></span>
             @for (item of navItems; track item.labelKey) {
               <a
+                (pointerenter)="moveInd($event)"
+                (focus)="moveInd($event)"
                 [routerLink]="item.route"
                 [fragment]="item.fragment"
                 routerLinkActive="!text-[var(--aia-text)]"
                 [routerLinkActiveOptions]="{ exact: item.route === '/' && !item.fragment }"
-                class="text-[13px] transition-colors hover:text-[var(--aia-text)]"
+                class="relative z-[1] rounded-full px-3.5 py-2 text-[13px] transition-colors hover:text-[var(--aia-text)]"
                 [style.color]="'var(--aia-text-muted)'"
               >
                 {{ item.labelKey | translate }}
@@ -124,8 +135,8 @@ import { LogoComponent } from './logo.component';
     @if (menuOpen()) {
       <div
         id="aia-mobile-menu"
-        class="fixed inset-0 z-40 flex flex-col justify-center px-8 lg:hidden"
-        style="background: var(--aia-bg); animation: aia-menu-in .4s cubic-bezier(.16,1,.3,1)"
+        class="mobile-menu fixed inset-0 z-40 flex flex-col justify-center px-8 lg:hidden"
+        style="animation: aia-menu-in .6s cubic-bezier(.16,1,.3,1)"
       >
         <nav class="flex flex-col" [attr.aria-label]="'nav.main' | translate">
           @for (item of navItems; track item.labelKey; let i = $index) {
@@ -175,6 +186,32 @@ import { LogoComponent } from './logo.component';
   `,
   styles: [
     `
+      .bar {
+        transition: height 0.5s var(--aia-ease), transform 0.6s var(--aia-ease), box-shadow 0.5s, background 0.5s;
+        --lg-tint: rgba(255, 255, 255, 0.04);
+        --lg-tint-2: rgba(255, 255, 255, 0.01);
+      }
+      .bar.shrunk {
+        --lg-tint: rgba(255, 255, 255, 0.1);
+        --lg-tint-2: rgba(255, 255, 255, 0.03);
+      }
+      :host-context(html.light) .bar { --lg-tint: rgba(255, 255, 255, 0.45); --lg-tint-2: rgba(255, 255, 255, 0.2); }
+      .bar.hidden-up { transform: translateY(-140%); }
+      .ind {
+        position: absolute;
+        top: 50%;
+        height: 38px;
+        margin-top: -19px;
+        border-radius: 999px;
+        pointer-events: none;
+        transition: left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+        --lg-tint: rgba(255, 255, 255, 0.14);
+      }
+      .mobile-menu {
+        background: color-mix(in srgb, var(--aia-bg) 55%, transparent);
+        -webkit-backdrop-filter: blur(30px) saturate(180%);
+        backdrop-filter: blur(30px) saturate(180%);
+      }
       @keyframes aia-menu-in {
         from {
           opacity: 0;
@@ -206,6 +243,10 @@ export class HeaderComponent {
 
   readonly languages = SUPPORTED_LANGS;
   readonly shrunk = signal(false);
+  /** Bara se ascunde la scroll in jos si revine la scroll in sus. */
+  readonly hiddenUp = signal(false);
+  readonly ind = signal<{ left: number; width: number } | null>(null);
+  private lastY = 0;
   readonly menuOpen = signal(false);
 
   readonly navItems = [
@@ -220,7 +261,17 @@ export class HeaderComponent {
 
   @HostListener('window:scroll')
   onScroll(): void {
-    this.shrunk.set(window.scrollY > 40);
+    const y = window.scrollY;
+    this.shrunk.set(y > 40);
+    if (!this.menuOpen()) this.hiddenUp.set(y > 400 && y > this.lastY + 2);
+    if (y < this.lastY - 2 || y < 400) this.hiddenUp.set(false);
+    this.lastY = y;
+  }
+
+  /** Pastila de sticla aluneca sub linkul de sub cursor. */
+  moveInd(event: Event): void {
+    const el = event.currentTarget as HTMLElement;
+    this.ind.set({ left: el.offsetLeft, width: el.offsetWidth });
   }
 
   toggleMenu(): void {
