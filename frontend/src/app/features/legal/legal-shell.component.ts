@@ -25,7 +25,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   styles: [
     `
       .legal-body ::ng-deep h2 {
-        font-family: 'Bebas Neue', sans-serif;
+        font-family: 'Anton', 'Impact', sans-serif;
         font-size: 1.9rem;
         margin-top: 2.75rem;
         margin-bottom: 0.75rem;

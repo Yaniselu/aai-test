@@ -135,7 +135,7 @@ import { LogoComponent } from './logo.component';
     @if (menuOpen()) {
       <div
         id="aia-mobile-menu"
-        class="mobile-menu fixed inset-0 z-40 flex flex-col justify-center px-8 lg:hidden"
+        class="mobile-menu fixed inset-0 z-40 flex flex-col overflow-y-auto px-8 pb-10 pt-28 lg:hidden"
         style="animation: aia-menu-in .6s cubic-bezier(.16,1,.3,1)"
       >
         <nav class="flex flex-col" [attr.aria-label]="'nav.main' | translate">
@@ -144,7 +144,7 @@ import { LogoComponent } from './logo.component';
               [routerLink]="item.route"
               [fragment]="item.fragment"
               (click)="closeMenu()"
-              class="border-b py-5 font-display text-3xl transition-colors hover:text-[var(--aia-blood)]"
+              class="border-b py-4 font-display text-4xl transition-colors hover:text-[var(--aia-blood)] sm:py-5"
               [style.borderColor]="'var(--aia-border)'"
               [style.animation]="'aia-item-in .5s cubic-bezier(.16,1,.3,1) both'"
               [style.animationDelay]="60 * i + 'ms'"

@@ -297,8 +297,8 @@ interface MediaItem {
       @media (max-width: 767px) {
         .notif { font-size: 10px; max-width: 170px; padding: 7px 10px 7px 7px; }
         .notif .ico { width: 24px; height: 24px; border-radius: 8px; }
-        .n1 { left: 3%; top: 34%; }
-        .n2 { right: 3%; top: 41%; }
+        .n1 { left: 3%; top: auto; bottom: 22%; }
+        .n2 { right: 3%; top: auto; bottom: 34%; }
         .n3, .n4 { display: none; }
       }
 
@@ -396,7 +396,7 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
 
   private ctx?: gsap.Context;
   private raf?: number;
-  private readonly reel = { target: 0, current: 0, max: 0, velocity: 0, dragging: false, startX: 0, startTarget: 0, moved: 0, lastX: 0 };
+  private readonly reel = { recenter: true, target: 0, current: 0, max: 0, velocity: 0, dragging: false, startX: 0, startTarget: 0, moved: 0, lastX: 0 };
   private resizeObs?: ResizeObserver;
   private lbStartX = 0;
   private lbSwiped = false;
@@ -437,11 +437,13 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
       const fan = mobile ? 1.1 : 1;
       const flow = mobile ? 2.1 : 1;
 
+      // Scena nu porneste goala: pachetul e deja vizibil in partea de jos,
+      // aplecat spre camera, iar scroll-ul il ridica.
       gsap.set(phones, {
-        y: '70vh',
-        rotateX: 55,
+        y: '38vh',
+        rotateX: 40,
         rotateZ: (i) => (i - mid) * 3,
-        opacity: 0
+        opacity: 1
       });
       gsap.set('.notif', { scale: 0, opacity: 0 });
       gsap.set('.t-stats', { y: 60, opacity: 0 });
@@ -460,8 +462,7 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
 
       // 1. Pachetul urca din jos
       tl.to(phones, { y: 0, rotateX: 0, opacity: 1, stagger: 0.06, duration: 1, ease: 'power3.out' })
-        .fromTo('.bigword span', { scale: 1.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.2 }, 0)
-        .from('.t-intro', { y: 40, opacity: 0, duration: 0.6 }, 0.2)
+        .fromTo('.bigword span', { scale: 1.5, opacity: 0.35 }, { scale: 1, opacity: 1, duration: 1.2 }, 0)
 
         // 2. Evantai
         .to(phones, {
@@ -537,6 +538,13 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
     track.style.paddingLeft = `${pad}px`;
     track.style.paddingRight = `${pad}px`;
     this.reel.max = Math.max(track.scrollWidth - vp.clientWidth, 0);
+    // Pornim cu telefonul din mijloc centrat, ca ambele laturi sa fie pline.
+    if (this.reel.recenter) {
+      this.reel.recenter = false;
+      const n = track.children.length;
+      const step = itemW + (parseFloat(getComputedStyle(track).columnGap) || 0);
+      this.reel.target = this.reel.current = Math.min(Math.floor((n - 1) / 2) * step, this.reel.max);
+    }
     this.reel.target = Math.min(this.reel.target, this.reel.max);
   }
 
@@ -619,7 +627,7 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
 
   setFilter(f: string): void {
     this.activeFilter.set(f);
-    this.reel.target = 0;
+    this.reel.recenter = true;
     this.reel.velocity = 0;
   }
 

@@ -28,13 +28,12 @@ import {
   VelocityMarqueeComponent
 } from '../../shared/motion/motion.components';
 import {
-  ClipRevealDirective,
   MagnetDirective,
   ParallaxDirective,
   RevealDirective,
   TiltDirective
 } from '../../shared/motion/motion.directives';
-import { ImpactDirective, KineticTextComponent, SlashComponent } from '../../shared/motion/aggressive.motion';
+import { ImpactDirective, KineticTextComponent, SlashComponent, WipeDirective } from '../../shared/motion/aggressive.motion';
 import { ContactFormComponent } from './contact-form.component';
 import { LocationsMapComponent } from './locations-map.component';
 import { MediaShowcaseComponent } from './media-showcase.component';
@@ -67,11 +66,11 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     ImpactDirective,
     KineticTextComponent,
     SlashComponent,
+    WipeDirective,
     MagnetDirective,
     RevealDirective,
     TiltDirective,
-    ParallaxDirective,
-    ClipRevealDirective
+    ParallaxDirective
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -109,6 +108,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
       <!-- HUD de camera: colturi de vizor, REC, timecode, coordonate -->
       <div class="hud pointer-events-none absolute inset-0 z-[5]" aria-hidden="true">
+        <span class="hud-scan"></span>
         <i class="hc tl"></i><i class="hc tr"></i><i class="hc bl"></i><i class="hc br"></i>
         <div class="hud-rec font-heading"><span class="rec-dot"></span>REC <span class="aia-index">{{ timecode() }}</span></div>
         <div class="hud-geo font-heading">44.3182°N · 23.7684°E · CRAIOVA</div>
@@ -145,7 +145,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
             {{ 'hero.subtitle' | translate }}
           </p>
 
-          <div class="hero-in mt-8 flex flex-wrap gap-3">
+          <div class="hero-in mt-8 grid grid-cols-1 gap-3 sm:flex sm:flex-wrap">
             <a routerLink="/auth/register" aiaMagnet class="aia-btn aia-btn-primary !px-8 !py-4">
               <span>{{ 'hero.cta' | translate }}</span>
               <aia-icon name="arrow-right" [size]="16" />
@@ -247,9 +247,11 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     </div>
 
     <!-- ═══════════════ SPIRIT ═══════════════ -->
-    <section id="despre" class="relative scroll-mt-28 py-24 lg:py-36">
+    <section id="despre" class="relative scroll-mt-28 overflow-x-clip py-24 lg:py-36">
+      <span class="aia-deco-slash left-[-6vw] top-[18%]" aiaParallax [parallaxSpeed]="1.6" aria-hidden="true"></span>
+      <span class="aia-deco-slash right-[-8vw] top-[55%] !w-[30vw]" aiaParallax [parallaxSpeed]="-1.2" aria-hidden="true"></span>
       <div class="aia-container">
-        <p class="aia-eyebrow" aiaReveal>{{ 'about.eyebrow' | translate }}</p>
+        <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'about.eyebrow\' | translate" /></p>
         <h2 class="aia-section-title mt-5 max-w-4xl" aiaImpact>{{ 'about.title' | translate }}</h2>
 
         <!-- Manifest care se aprinde cuvant cu cuvant la scroll -->
@@ -308,7 +310,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p class="aia-eyebrow" aiaReveal>{{ 'groups.eyebrow' | translate }}</p>
+            <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'groups.eyebrow\' | translate" /></p>
             <h2 class="aia-section-title mt-5" aiaImpact>{{ 'groups.title' | translate }}</h2>
           </div>
           <p class="aia-chip" aiaReveal><aia-icon name="arrow-down" [size]="12" /> {{ 'groups.pick' | translate }}</p>
@@ -318,11 +320,11 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
           @for (group of groups; track group.name; let i = $index) {
             <!-- .stack-card = lipit + micsorat la scroll; .stack-inner = intrare + sticla -->
             <div class="stack-card" [style.top.px]="100 + i * 26">
-            <article class="stack-inner aia-card h-full overflow-hidden">
+            <article class="stack-inner solid aia-card h-full overflow-hidden">
               <span class="aia-corner !z-30" style="--corner: 34px"></span>
               <div class="stack-dim pointer-events-none absolute inset-0 z-20 rounded-[inherit] bg-black opacity-0" aria-hidden="true"></div>
               <div class="grid h-full lg:grid-cols-[1.1fr_0.9fr]">
-                <div class="aia-duo relative h-[260px] overflow-hidden sm:h-[340px] lg:h-full">
+                <div class="aia-duo relative h-[260px] overflow-hidden sm:h-[340px] lg:h-full" aiaWipe>
                   <img
                     [src]="group.image"
                     [alt]="group.name"
@@ -334,8 +336,8 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
                   <span class="aia-chip absolute left-5 top-5 !text-white">{{ group.ageKey | translate }}</span>
                 </div>
 
-                <div class="relative flex flex-col justify-center p-7 sm:p-10 lg:p-14">
-                  <span class="font-display aia-text-outline-red pointer-events-none absolute right-6 top-4 text-[120px] leading-none lg:text-[200px]">0{{ i + 1 }}</span>
+                <div class="relative flex flex-col justify-center p-7 pt-24 sm:p-10 sm:pt-28 lg:p-14">
+                  <span class="font-display aia-text-outline-red pointer-events-none absolute right-5 top-3 text-[84px] leading-none sm:text-[110px] lg:right-8 lg:top-6 lg:text-[150px]">0{{ i + 1 }}</span>
                   <h3 class="relative font-display text-5xl lg:text-7xl">{{ group.name }}</h3>
                   <p class="relative mt-5 max-w-md text-[15px] leading-relaxed" [style.color]="'var(--aia-text-muted)'">
                     {{ group.textKey | translate }}
@@ -365,7 +367,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p class="aia-eyebrow" aiaReveal>{{ 'schedule.eyebrow' | translate }}</p>
+            <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'schedule.eyebrow\' | translate" /></p>
             <h2 class="aia-section-title mt-5" aiaImpact>{{ 'schedule.title' | translate }}</h2>
           </div>
           <div class="aia-glass flex items-center gap-3 rounded-full px-5 py-3" aiaReveal>
@@ -375,7 +377,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
           </div>
         </div>
 
-        <div class="aia-card mt-12 p-4 sm:p-6 lg:p-8" aiaClipReveal clipFrom="center">
+        <div class="aia-card mt-12 overflow-hidden p-4 sm:p-6 lg:p-8" aiaWipe>
           <aia-schedule />
         </div>
       </div>
@@ -384,11 +386,12 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     <aia-kinetic top="TRAIN HARD" bottom="FIGHT EASY" />
 
     <!-- ═══════════════ ANTRENORI — panouri care se extind ═══════════════ -->
-    <section id="antrenori" class="relative scroll-mt-28 py-24 lg:py-32">
+    <section id="antrenori" class="relative scroll-mt-28 overflow-x-clip py-24 lg:py-32">
+      <span class="aia-deco-slash right-[-6vw] top-[10%]" aiaParallax [parallaxSpeed]="1.4" aria-hidden="true"></span>
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p class="aia-eyebrow" aiaReveal>{{ 'coaches.eyebrow' | translate }}</p>
+            <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'coaches.eyebrow\' | translate" /></p>
             <h2 class="aia-section-title mt-5 max-w-3xl" aiaImpact>{{ 'coaches.title' | translate }}</h2>
           </div>
           <p class="hidden text-xs lg:block" [style.color]="'var(--aia-text-muted)'" aiaReveal>{{ 'coaches.hover' | translate }} &rarr;</p>
@@ -398,6 +401,8 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
           @for (coach of coaches; track coach.name; let i = $index) {
             <article
               class="coach aia-card overflow-hidden"
+              aiaWipe
+              [wipeDelay]="i * 0.12"
               [class.open]="activeCoach() === i"
               (pointerenter)="activeCoach.set(i)"
               (focusin)="activeCoach.set(i)"
@@ -428,7 +433,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     <section class="relative py-24 lg:py-32">
       <div class="aia-container grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
-          <p class="aia-eyebrow" aiaReveal>{{ 'reviews.eyebrow' | translate }}</p>
+          <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'reviews.eyebrow\' | translate" /></p>
           <h2 class="aia-section-title mt-5" aiaImpact>{{ 'reviews.title' | translate }}</h2>
           <div class="mt-8 flex gap-3" aiaReveal>
             <button type="button" aiaMagnet class="aia-btn aia-btn-ghost h-14 w-14 !px-0" (click)="prevReview()" [attr.aria-label]="'reviews.previous' | translate">
@@ -450,7 +455,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
           style="perspective: 1400px; touch-action: pan-y"
         >
           @for (r of reviews; track r.author; let i = $index) {
-            <figure class="review aia-card absolute inset-0 flex flex-col p-7 sm:p-10" [style]="reviewStyle(i)" [attr.aria-hidden]="i !== reviewIndex()">
+            <figure class="review solid aia-card absolute inset-0 flex flex-col p-7 sm:p-10" [style]="reviewStyle(i)" [attr.aria-hidden]="i !== reviewIndex()">
               <span class="quote font-display" aria-hidden="true">&ldquo;</span>
               <div class="flex gap-1" [style.color]="'#ff1f3d'" aria-label="5/5">
                 @for (star of stars; track star) {
@@ -511,6 +516,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
     <aia-locations-map />
     <aia-contact-form />
+    <aia-kinetic top="ACADEMIA" bottom="ION ANDREI" />
   `,
   styles: [
     `
@@ -553,10 +559,12 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
         opacity: 0.55;
         animation: strobe 4s steps(1) infinite;
       }
+      /* Un singur clipit scurt la cateva secunde: agresiv, dar fara stroboscop. */
       @keyframes strobe {
-        0%, 70%, 100% { opacity: 0.5; }
-        72%, 76% { opacity: 0.08; }
-        74%, 78% { opacity: 0.9; }
+        0%, 84%, 100% { opacity: 0.5; }
+        86% { opacity: 0.12; }
+        88% { opacity: 0.85; }
+        92% { opacity: 0.5; }
       }
       @media (max-width: 1023px) { .hero-word { font-size: 52vw; top: 72%; right: -10vw; } }
 
@@ -596,6 +604,20 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       .hud-side { right: 22px; top: 50%; writing-mode: vertical-rl; transform: translateY(-50%); font-size: 10px; }
       @media (max-width: 1023px) { .hud-side, .hud-iso, .hc.tl, .hc.tr, .hud-rec { display: none; } }
 
+      /* Linia de scanare a camerei, care coboara continuu prin cadru. */
+      .hud-scan {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 120px;
+        background: linear-gradient(180deg, transparent, rgba(255, 0, 25, 0.08) 85%, rgba(255, 0, 25, 0.5) 99%, transparent);
+        animation: scan 6s linear infinite;
+      }
+      @keyframes scan {
+        from { transform: translateY(-120px); }
+        to { transform: translateY(100svh); }
+      }
       .lb-bar { position: absolute; left: 0; right: 0; z-index: 7; height: 0; background: #000; pointer-events: none; }
       .lb-top { top: 0; }
       .lb-bot { bottom: 0; }
@@ -735,6 +757,15 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       .j-step.on .node i { background: var(--aia-blood-bright); }
       .j-step .aia-card-flat { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s; opacity: 0.45; transform: translateY(14px); }
       .j-step.on .aia-card-flat { opacity: 1; transform: none; }
+
+      /* Cardurile care se suprapun (stiva, pachetul de review-uri) sunt opace:
+         prin sticla transparenta s-ar vedea textul cardului de dedesubt. */
+      .solid {
+        background: linear-gradient(160deg, #161616 0%, #080808 60%, #120206 100%);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+      }
+      :host-context(html.light) .solid { background: linear-gradient(160deg, #ffffff, #ececec); }
 
       /* ---------- grupe ---------- */
       .stack-card {
@@ -950,6 +981,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
       this.buildHeroScroll();
       this.buildSpirit();
       this.buildStack();
+      this.buildBatches();
     }, this.host.nativeElement);
 
     this.startStageTilt();
@@ -1130,13 +1162,42 @@ export class HomePage implements AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+   * Elementele marunte (celule de program, campuri de formular, linkuri din
+   * subsol) apar in rafale: ScrollTrigger.batch le grupeaza pe cele care intra
+   * in ecran in acelasi timp si le da un stagger scurt, ca o salva.
+   */
+  private buildBatches(): void {
+    const groups = [
+      '#program li',
+      'aia-locations-map .aia-card',
+      'aia-locations-map li',
+      'aia-contact-form .aia-input',
+      'aia-contact-form .aia-btn',
+      'aia-contact-form li'
+    ];
+    for (const sel of groups) {
+      const els = gsap.utils.toArray<HTMLElement>(sel, document);
+      if (!els.length) continue;
+      gsap.set(els, { opacity: 0, y: 34, skewY: 3 });
+      ScrollTrigger.batch(els, {
+        start: 'top 92%',
+        once: true,
+        onEnter: (batch) =>
+          gsap.to(batch, { opacity: 1, y: 0, skewY: 0, duration: 0.7, ease: 'expo.out', stagger: 0.045, overwrite: true, clearProps: 'transform' })
+      });
+    }
+  }
+
   // ------------------------------------------------------------- review-uri
   reviewStyle(i: number): Record<string, string> {
     const n = this.reviews.length;
     const offset = (i - this.reviewIndex() + n) % n;
     const z = n - offset;
     return {
-      transform: `translate3d(${offset * 26}px, ${offset * -22}px, ${-offset * 90}px) rotateZ(${offset * 2.5}deg)`,
+      // Cartile din spate urca si se micsoreaza, fara deplasare laterala: pe ecrane
+      // inguste orice translatie pe X ar iesi din pagina.
+      transform: `translate3d(0, ${offset * -18}px, ${-offset * 90}px) scale(${1 - offset * 0.05}) rotateZ(${offset * -2}deg)`,
       opacity: String(offset === 0 ? 1 : 0.75 - offset * 0.2),
       filter: offset === 0 ? 'none' : `blur(${offset * 1.5}px)`,
       zIndex: String(z),

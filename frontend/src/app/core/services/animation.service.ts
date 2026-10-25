@@ -63,7 +63,10 @@ export class AnimationService {
           { x: intensity * 0.3, y: 0, duration: 0.04 },
           { x: 0, y: 0, duration: 0.06 }
         ],
-        overwrite: 'auto'
+        overwrite: 'auto',
+        // Un transform ramas pe o sectiune ar deveni containing block pentru
+        // descendentii position: fixed; il stergem dupa cutremur.
+        clearProps: 'transform'
       }
     );
   }

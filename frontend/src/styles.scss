@@ -85,6 +85,12 @@ html.light {
 html {
   scroll-behavior: auto;
 }
+/* `clip`, nu `hidden`: taie orice depasire orizontala fara sa creeze un
+   container de scroll (care ar strica position: sticky si pin-urile GSAP). */
+html,
+body {
+  overflow-x: clip;
+}
 html.lenis,
 html.lenis body {
   height: auto;
@@ -100,7 +106,6 @@ body {
   font-family: 'Poppins', system-ui, sans-serif;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
   transition: background-color 0.5s var(--aia-ease), color 0.5s var(--aia-ease);
 }
 
@@ -206,7 +211,7 @@ h1, h2, h3, .font-display {
    aceste clase (ex. `hidden lg:inline-flex` pe un `.aia-btn`). */
 @layer components {
   .aia-container {
-    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8;
+    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 2xl:max-w-[1480px];
   }
 
   /* ---------------- Suprafata de baza: sticla lichida ----------------
@@ -460,48 +465,68 @@ h1, h2, h3, .font-display {
   90%, 94% { opacity: 1; }
 }
 
-/* Glitch RGB: doua copii ale textului (din data-text), decalate rosu/alb
-   si taiate in felii care sar. Ruleaza in rafale scurte, nu continuu. */
+/* Glitch RGB: umbre rosii/albe decalate si un mic salt orizontal, in rafale
+   scurte. Se aplica pe elementul insusi (text-shadow), deci nu depinde de cum
+   se rupe textul pe randuri si ramane perfect aliniat pe orice ecran. */
 .aia-glitch {
-  position: relative;
-  display: inline-block;
+  animation: aia-glitch 4.2s steps(1) infinite;
 }
-.aia-glitch::before,
-.aia-glitch::after {
-  content: attr(data-text);
+.aia-glitch:hover { animation-duration: 0.7s; }
+@keyframes aia-glitch {
+  0%, 88%, 100% { text-shadow: none; translate: none; }
+  89% { text-shadow: -4px 0 rgba(255, 0, 25, 0.9), 4px 0 rgba(255, 255, 255, 0.55); translate: 3px 0; }
+  90.5% { text-shadow: 5px 0 rgba(255, 0, 25, 0.9), -3px 0 rgba(255, 255, 255, 0.5); translate: -4px 0; }
+  92% { text-shadow: -2px 0 rgba(255, 0, 25, 0.8); translate: 2px 0; }
+  93.5% { text-shadow: none; translate: none; }
+  96% { text-shadow: 3px 0 rgba(255, 0, 25, 0.8), -3px 0 rgba(255, 255, 255, 0.4); translate: -2px 0; }
+  97% { text-shadow: none; translate: none; }
+}
+
+/* Titlurile se inclina dupa viteza scroll-ului (FxLayer seteaza --vskew).
+   Literele sar la hover; `translate` e separat de transform-ul pus de GSAP. */
+.aia-section-title {
+  transform: skewY(calc(var(--vskew, 0) * 1deg));
+  transform-origin: left center;
+}
+.aia-section-title span span,
+.hero-title .ch {
+  transition: translate 0.35s var(--aia-spring), color 0.2s;
+}
+@media (hover: hover) {
+  .aia-section-title span span:hover,
+  .hero-title .ch:hover {
+    translate: 0 -12%;
+    color: var(--aia-blood);
+  }
+}
+
+/* Coltul rosu al cardului creste la hover; sageata din butoane avanseaza. */
+.aia-card > .aia-corner { transition: width 0.4s var(--aia-snap), height 0.4s var(--aia-snap); }
+.aia-card:hover > .aia-corner { width: calc(var(--corner) * 2); height: calc(var(--corner) * 2); }
+.aia-btn aia-icon { transition: translate 0.35s var(--aia-snap); }
+.aia-btn:hover aia-icon { translate: 5px 0; }
+
+/* Panoul rosu care se retrage de pe imagini (WipeDirective). */
+.aia-wipe-panel {
   position: absolute;
   inset: 0;
+  z-index: 15;
   pointer-events: none;
-  opacity: 0;
+  background: var(--aia-blood);
+  transform-origin: right center;
 }
-.aia-glitch::before {
-  color: var(--aia-blood);
-  -webkit-text-fill-color: var(--aia-blood);
-  animation: aia-glitch-a 3.2s steps(1) infinite;
-}
-.aia-glitch::after {
-  color: var(--aia-text);
-  -webkit-text-fill-color: var(--aia-text);
-  animation: aia-glitch-b 3.2s steps(1) infinite;
-}
-.aia-glitch:hover::before,
-.aia-glitch:hover::after { animation-duration: 0.45s; }
-@keyframes aia-glitch-a {
-  0%, 82%, 100% { opacity: 0; transform: none; clip-path: inset(0 0 0 0); }
-  84% { opacity: 0.9; transform: translate(-6px, 2px); clip-path: inset(12% 0 58% 0); }
-  86% { opacity: 0.9; transform: translate(5px, -1px); clip-path: inset(62% 0 8% 0); }
-  88% { opacity: 0.9; transform: translate(-3px, 0); clip-path: inset(30% 0 40% 0); }
-  90% { opacity: 0; }
-  94% { opacity: 0.9; transform: translate(8px, 1px); clip-path: inset(78% 0 2% 0); }
-  96% { opacity: 0; }
-}
-@keyframes aia-glitch-b {
-  0%, 83%, 100% { opacity: 0; transform: none; clip-path: inset(0 0 0 0); }
-  85% { opacity: 0.8; transform: translate(4px, -2px); clip-path: inset(40% 0 35% 0); }
-  87% { opacity: 0.8; transform: translate(-7px, 1px); clip-path: inset(5% 0 80% 0); }
-  89% { opacity: 0; }
-  95% { opacity: 0.8; transform: translate(-4px, 0); clip-path: inset(55% 0 20% 0); }
-  97% { opacity: 0; }
+
+/* Lame decorative care plutesc in parallax prin sectiuni. */
+.aia-deco-slash {
+  position: absolute;
+  z-index: 0;
+  height: 3px;
+  width: 38vw;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--aia-blood), transparent);
+  box-shadow: 0 0 24px rgba(255, 0, 25, 0.6);
+  rotate: -14deg;
+  opacity: 0.7;
 }
 
 /* Lumina de neon care palpaie (titluri, imaginea din hero). */
@@ -545,9 +570,9 @@ h1, h2, h3, .font-display {
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 4px);
   mix-blend-mode: multiply;
-  opacity: 0.4;
+  opacity: 0.28;
 }
 html.light .aia-scanlines { opacity: 0.18; }
 

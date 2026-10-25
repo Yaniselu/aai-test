@@ -102,8 +102,8 @@ export class ImpactDirective implements AfterViewInit, OnDestroy {
         el.classList.add('aia-glitch');
         if (this.impactQuiet()) return;
         const r = el.getBoundingClientRect();
-        this.anim.flash(r.left + r.width / 2, r.top + r.height / 2, 0.9);
-        this.anim.shake(section, 12);
+        this.anim.flash(r.left + r.width / 2, r.top + r.height / 2, 0.45);
+        this.anim.shake(section, 7);
       })
       .fromTo(chars, { color: '#ff0019' }, { color: '', duration: 0.5, stagger: 0.01, ease: 'none', clearProps: 'color' }, '<');
 
@@ -281,5 +281,45 @@ export class SlashComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.st?.kill();
     this.tl?.kill();
+  }
+}
+
+/**
+ * Un panou rosu acopera elementul si se retrage brusc spre dreapta cand
+ * acesta intra in ecran, ca o perdea trasa dintr-o miscare. Gazda trebuie
+ * sa fie `position: relative` si `overflow: hidden`.
+ */
+@Directive({
+  selector: '[aiaWipe]',
+  standalone: true
+})
+export class WipeDirective implements AfterViewInit, OnDestroy {
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly anim = inject(AnimationService);
+
+  readonly wipeDelay = input(0);
+  private tl?: gsap.core.Timeline;
+  private panel?: HTMLElement;
+
+  ngAfterViewInit(): void {
+    if (this.anim.reducedMotion) return;
+    const el = this.host.nativeElement as HTMLElement;
+    this.panel = document.createElement('div');
+    this.panel.className = 'aia-wipe-panel';
+    this.panel.setAttribute('aria-hidden', 'true');
+    el.appendChild(this.panel);
+
+    this.tl = gsap
+      .timeline({ delay: this.wipeDelay(), scrollTrigger: { trigger: el, start: 'top 85%', once: true } })
+      .fromTo(this.panel, { scaleX: 0, transformOrigin: 'left center' }, { scaleX: 1, duration: 0.35, ease: 'expo.in' })
+      .set(this.panel, { transformOrigin: 'right center' })
+      .to(this.panel, { scaleX: 0, duration: 0.6, ease: 'expo.out' })
+      .set(this.panel, { display: 'none' });
+  }
+
+  ngOnDestroy(): void {
+    this.tl?.scrollTrigger?.kill();
+    this.tl?.kill();
+    this.panel?.remove();
   }
 }

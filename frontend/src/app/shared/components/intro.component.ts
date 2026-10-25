@@ -54,7 +54,7 @@ import { AnimationService } from '../../core/services/animation.service';
             <p #eyebrow class="mb-5 font-heading text-[11px] font-semibold uppercase tracking-[0.6em] text-[#ff0019] sm:text-xs">
               Craiova &middot; Arte Martiale
             </p>
-            <h1 #title class="aia-glitch font-display text-[19vw] leading-[0.84] text-white sm:text-[14vw] lg:text-[10rem]" data-text="ACADEMIA ION ANDREI">
+            <h1 #title class="font-display text-[19vw] leading-[0.84] text-white sm:text-[14vw] lg:text-[10rem]" data-text="ACADEMIA ION ANDREI">
               Academia<br /><span class="text-[#ff0019]">Ion Andrei</span>
             </h1>
             <div #line class="mx-auto mt-8 h-[4px] w-0 bg-[#ff0019] shadow-[0_0_30px_#ff0019]"></div>
@@ -176,6 +176,7 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
       .add(() => {
         this.anim.flash(innerWidth / 2, innerHeight / 2, 0.8);
         this.anim.shake(root, 14);
+        this.title()!.nativeElement.classList.add('aia-glitch');
       })
       .to(this.line()!.nativeElement, { width: 'min(520px, 80vw)', duration: 0.5, ease: 'expo.out' })
       .from(this.motto()!.nativeElement, { opacity: 0, y: 16, duration: 0.4, ease: 'power2.out' }, '<')

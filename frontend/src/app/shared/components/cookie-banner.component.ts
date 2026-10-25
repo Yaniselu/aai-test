@@ -17,7 +17,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   template: `
     @if (consent.needsDecision()) {
       <div
-        class="fixed inset-x-0 bottom-0 z-[140] p-4 sm:p-5"
+        class="fixed inset-x-0 bottom-0 z-[140] p-3 sm:p-5"
         [style.backgroundColor]="'color-mix(in srgb, var(--aia-bg) 88%, transparent)'"
         [style.backdropFilter]="'blur(18px)'"
         [style.borderTop]="'1px solid var(--aia-border)'"
@@ -27,10 +27,10 @@ import { TranslatePipe } from '@ngx-translate/core';
         aria-labelledby="aia-cookie-title"
       >
         <div class="aia-container">
-          <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div class="flex flex-col gap-3 sm:gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-2xl">
-              <h2 id="aia-cookie-title" class="font-display text-xl">{{ 'cookies.title' | translate }}</h2>
-              <p class="mt-2 text-sm leading-relaxed" [style.color]="'var(--aia-text-muted)'">
+              <h2 id="aia-cookie-title" class="font-display text-lg sm:text-xl">{{ 'cookies.title' | translate }}</h2>
+              <p class="mt-1.5 text-xs leading-relaxed sm:mt-2 sm:text-sm" [style.color]="'var(--aia-text-muted)'">
                 {{ 'cookiesBanner.text' | translate }}
                 <a routerLink="/legal/cookies" class="ml-1 underline hover:text-[var(--aia-cyan)]">
                   {{ 'cookiesBanner.policy' | translate }}
@@ -82,7 +82,8 @@ import { TranslatePipe } from '@ngx-translate/core';
               }
             </div>
 
-            <div class="flex shrink-0 flex-col gap-2 sm:flex-row lg:flex-col xl:flex-row">
+            <!-- Pe telefon cele trei actiuni stau pe un rand, ca bannerul sa nu acopere jumatate de ecran. -->
+            <div class="cookie-actions grid shrink-0 grid-cols-3 gap-2 sm:flex sm:flex-row lg:flex-col xl:flex-row">
               <button type="button" class="aia-btn aia-btn-primary" (click)="consent.acceptAll()">
                 {{ 'cookies.acceptAll' | translate }}
               </button>
@@ -106,6 +107,15 @@ import { TranslatePipe } from '@ngx-translate/core';
   `,
   styles: [
     `
+      @media (max-width: 639px) {
+        .cookie-actions .aia-btn {
+          padding: 12px 6px;
+          font-size: 10px;
+          letter-spacing: 0.08em;
+          --aia-cut: 9px;
+        }
+        .cookie-actions .aia-btn:hover { letter-spacing: 0.08em; }
+      }
       @keyframes aia-cookie-in {
         from {
           transform: translateY(100%);

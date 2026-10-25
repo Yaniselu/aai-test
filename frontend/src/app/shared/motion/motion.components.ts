@@ -37,6 +37,17 @@ export class ScrambleTextComponent implements AfterViewInit, OnDestroy {
 
   private frame?: number;
   private trigger?: ScrollTrigger;
+  private started = false;
+
+  constructor() {
+    // La schimbarea limbii textul nou se descifreaza din nou, nu ramane cel vechi.
+    effect(() => {
+      const t = this.text();
+      if (!this.started) return;
+      if (this.anim.reducedMotion) this.shown.set(t);
+      else this.run(t);
+    });
+  }
 
   private static readonly GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\<>*#';
 
@@ -44,6 +55,7 @@ export class ScrambleTextComponent implements AfterViewInit, OnDestroy {
     const final = this.text();
 
     if (this.anim.reducedMotion) {
+      this.started = true;
       this.shown.set(final);
       return;
     }
@@ -53,7 +65,10 @@ export class ScrambleTextComponent implements AfterViewInit, OnDestroy {
       trigger: this.host.nativeElement,
       start: 'top 92%',
       once: true,
-      onEnter: () => this.run(final)
+      onEnter: () => {
+        this.started = true;
+        this.run(this.text());
+      }
     });
   }
 
@@ -63,6 +78,7 @@ export class ScrambleTextComponent implements AfterViewInit, OnDestroy {
   }
 
   private run(final: string): void {
+    if (this.frame) clearTimeout(this.frame as unknown as number);
     let settled = 0;
 
     const step = () => {

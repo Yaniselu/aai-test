@@ -9,7 +9,10 @@ import {
   signal,
   viewChild
 } from '@angular/core';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
+import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Subscription } from 'rxjs';
 import { AnimationService } from '../../core/services/animation.service';
 import { SmoothScrollService } from '../../core/services/smooth-scroll.service';
 
@@ -526,6 +529,11 @@ export class SectionDotsComponent implements AfterViewInit, OnDestroy {
     }
     <div #flash class="aia-flash" aria-hidden="true"></div>
     <div #rage class="rage" aria-hidden="true"></div>
+    <div #curtain class="curtain" aria-hidden="true">
+      <span class="curtain-red"></span>
+      <span class="curtain-black"></span>
+      <span class="curtain-logo font-display">AIA</span>
+    </div>
   `,
   styles: [
     `
@@ -538,6 +546,26 @@ export class SectionDotsComponent implements AfterViewInit, OnDestroy {
         opacity: 0;
         box-shadow: inset 0 0 160px 20px rgba(255, 0, 25, 0.55);
       }
+      /* Cortina dintre pagini: o lama rosie urmata de una neagra, in diagonala. */
+      .curtain { position: fixed; inset: 0; z-index: 260; pointer-events: none; visibility: hidden; }
+      .curtain-red,
+      .curtain-black {
+        position: absolute;
+        inset: -10% -30%;
+        transform: skewX(-18deg) scaleX(0);
+        transform-origin: left center;
+      }
+      .curtain-red { background: var(--aia-blood); }
+      .curtain-black { background: #000; }
+      .curtain-logo {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18vw;
+        color: var(--aia-blood);
+        opacity: 0;
+      }
     `
   ]
 })
@@ -545,23 +573,36 @@ export class FxLayerComponent implements AfterViewInit, OnDestroy {
   private readonly anim = inject(AnimationService);
   private readonly flash = viewChild.required<ElementRef<HTMLElement>>('flash');
   private readonly rage = viewChild.required<ElementRef<HTMLElement>>('rage');
+  private readonly curtain = viewChild.required<ElementRef<HTMLElement>>('curtain');
+  private readonly router = inject(Router);
+  private navSub?: Subscription;
+  private covering?: Promise<void>;
+  private currentPath = '';
 
   readonly reduced = this.anim.reducedMotion;
   private raf?: number;
   private lastY = 0;
+  private prevY = 0;
   private heat = 0;
+  private skew = 0;
 
   ngAfterViewInit(): void {
     this.anim.registerFlash(this.flash().nativeElement);
     if (this.reduced) return;
+    this.watchNavigation();
     this.lastY = window.scrollY;
     const el = this.rage().nativeElement;
     const loop = () => {
       const y = window.scrollY;
       const v = Math.abs(y - this.lastY);
       this.lastY = y;
+      const dir = y > this.prevY ? 1 : -1;
+      this.prevY = y;
       this.heat += (Math.min(v / 60, 1) - this.heat) * 0.12;
       el.style.opacity = this.heat.toFixed(3);
+      // Inclinarea titlurilor dupa viteza: maxim 4 grade, amortizata.
+      this.skew += (Math.max(-4, Math.min(4, (v / 14) * dir)) - this.skew) * 0.1;
+      document.documentElement.style.setProperty('--vskew', this.skew.toFixed(2));
       this.raf = requestAnimationFrame(loop);
     };
     loop();
@@ -569,5 +610,49 @@ export class FxLayerComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.raf) cancelAnimationFrame(this.raf);
+    this.navSub?.unsubscribe();
+  }
+
+  /**
+   * La schimbarea paginii (nu si la salturi pe ancore in aceeasi pagina),
+   * cortina acopera ecranul, iar dupa ce noua pagina e gata se retrage.
+   */
+  private watchNavigation(): void {
+    const root = this.curtain().nativeElement;
+    const [red, black, logo] = Array.from(root.children) as HTMLElement[];
+    const pathOf = (url: string) => url.split(/[?#]/)[0];
+    this.currentPath = pathOf(this.router.url);
+
+    this.navSub = this.router.events.subscribe((e) => {
+      if (e instanceof NavigationStart) {
+        if (pathOf(e.url) === this.currentPath) return;
+        this.currentPath = pathOf(e.url);
+        gsap.killTweensOf([red, black, logo]);
+        gsap.set(root, { visibility: 'visible' });
+        gsap.set([red, black], { transformOrigin: 'left center' });
+        this.covering = new Promise((done) => {
+          gsap
+            .timeline({ onComplete: () => done() })
+            .fromTo(red, { scaleX: 0 }, { scaleX: 1, duration: 0.32, ease: 'expo.in' })
+            .fromTo(black, { scaleX: 0 }, { scaleX: 1, duration: 0.32, ease: 'expo.in' }, 0.08)
+            .fromTo(logo, { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power4.in' }, 0.2);
+        });
+      }
+      // Si o navigare anulata (ex. redirect din guard) trebuie sa retraga cortina.
+      const settled = e instanceof NavigationEnd || e instanceof NavigationCancel || e instanceof NavigationError;
+      if (settled && e instanceof NavigationEnd) this.currentPath = pathOf(e.urlAfterRedirects);
+      if (settled && this.covering) {
+        const wait = this.covering;
+        this.covering = undefined;
+        void wait.then(() => {
+          gsap.set([red, black], { transformOrigin: 'right center' });
+          gsap
+            .timeline({ onComplete: () => gsap.set(root, { visibility: 'hidden' }) })
+            .to(logo, { opacity: 0, scale: 0.8, duration: 0.2 })
+            .to(black, { scaleX: 0, duration: 0.5, ease: 'expo.out' }, 0.05)
+            .to(red, { scaleX: 0, duration: 0.5, ease: 'expo.out' }, 0.15);
+        });
+      }
+    });
   }
 }
