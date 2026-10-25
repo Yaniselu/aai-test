@@ -1,0 +1,147 @@
+spring:
+  application:
+    name: academia-ion-andrei-api
+
+  datasource:
+    # Render (si multe alte platforme) expun connection string-ul in forma
+    # "postgresql://user:parola@host/baza". Spring Boot nu recunoaste acest
+    # format si nu poate deduce driverul - de aici esecul la pornire cu
+    # "Failed to determine a suitable driver class".
+    #
+    # De aceea construim noi URL-ul JDBC din host / port / nume, care sunt
+    # expuse separat. DATABASE_URL ramane disponibil pentru gazdele care dau
+    # direct un URL JDBC valid (Docker local, RDS).
+    url: ${DATABASE_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:academia}}
+    driver-class-name: org.postgresql.Driver
+    username: ${DATABASE_USER:academia}
+    password: ${DATABASE_PASSWORD:academia}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      # `update` este comod in dezvoltare. Pentru productie, treci pe `validate`
+      # si gestioneaza schema cu Flyway sau Liquibase.
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+    show-sql: false
+
+  servlet:
+    multipart:
+      max-file-size: 8MB
+      max-request-size: 10MB
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        transport:
+          protocol: smtp
+
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,text/html,text/css,application/javascript
+  error:
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    # Indicatorul de mail incearca sa deschida o conexiune SMTP la fiecare
+    # verificare. Cum `spring.mail.host` are mereu o valoare implicita, el se
+    # activa si fara credentiale, esua, si trecea intreg /actuator/health in
+    # DOWN (503) - motiv pentru care platforma nu apuca sa considere serviciul
+    # pornit. Trimiterea de email nu e critica: MailService inghite oricum
+    # erorile SMTP, deci nu are ce sa raporteze aici.
+    mail:
+      enabled: false
+
+app:
+  # Minimum 32 de caractere. Genereaza cu: openssl rand -base64 48
+  jwt:
+    secret: ${JWT_SECRET:schimba-acest-secret-cu-unul-generat-de-minimum-32-caractere}
+    expiration-ms: 86400000
+    issuer: academia-ion-andrei
+
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:4200,https://academiaionandrei.ro}
+
+  frontend-url: ${FRONTEND_URL:http://localhost:4200}
+
+  storage:
+    local-path: ${STORAGE_PATH:./uploads/stories}
+    public-base-url: ${STORAGE_PUBLIC_URL:/uploads/stories}
+    avatar-path: ${AVATAR_PATH:./uploads/avatars}
+    avatar-public-url: ${AVATAR_PUBLIC_URL:/uploads/avatars}
+
+  stories:
+    lifetime-hours: 24
+
+  gamification:
+    xp-per-session: 50
+    xp-per-level: 500
+    wheel-cooldown-days: 7
+
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:noreply@academiaionandrei.ro}
+    leads-to: ${MAIL_LEADS_TO:contact@academiaionandrei.ro}
+
+  seed:
+    admin-email: ${SEED_ADMIN_EMAIL:admin@academiaionandrei.ro}
+    admin-password: ${SEED_ADMIN_PASSWORD:}
+
+logging:
+  level:
+    ro.academiaionandrei: INFO
+    org.springframework.security: WARN
+
+---
+# Profil de dezvoltare: H2 in memorie, fara PostgreSQL local.
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:h2:mem:academia;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+app:
+  jwt:
+    secret: secret-de-dezvoltare-lung-de-cel-putin-32-de-caractere
+  seed:
+    admin-password: admin1234
+  mail:
+    enabled: false

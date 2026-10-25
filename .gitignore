@@ -1,0 +1,16 @@
+node_modules/
+dist/
+target/
+uploads/
+.angular/
+out-tsc/
+.env
+.env.local
+.vercel
+.idea/
+.vscode/
+*.log
+*.iml
+
+# Originalele necomprimate ale pozelor (pastrate local, nu in repo)
+.media-originals/

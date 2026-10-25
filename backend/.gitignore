@@ -1,0 +1,12 @@
+target/
+uploads/
+*.class
+*.jar
+.env
+.idea/
+.vscode/
+*.iml
+
+# Maven Wrapper: jar-ul TREBUIE comis, altfel ./mvnw nu porneste
+# pe o masina noua. Exceptia anuleaza regula *.jar de mai sus.
+!.mvn/wrapper/maven-wrapper.jar

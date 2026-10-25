@@ -1,0 +1,75 @@
+# Blueprint Render pentru backend-ul Academiei.
+#
+# Trebuie sa stea in RADACINA repo-ului: Render cauta render.yaml doar aici,
+# nu in subdirectoare. Caile de mai jos indica spre backend/.
+#
+# Planurile sunt `free`, ca sa poata fi pornit fara card. Doua limite de stiut:
+#  - serviciul gratuit adoarme dupa ~15 minute de inactivitate si porneste in
+#    ~50 de secunde la prima cerere (raceala de start, nu eroare);
+#  - planul gratuit NU suporta discuri persistente, asa ca fisierele incarcate
+#    (avataruri, story-uri) se pierd la fiecare repornire. Story-urile oricum
+#    traiesc 24h, dar pentru avataruri treci pe un plan platit si adauga:
+#      disk:
+#        name: uploads
+#        mountPath: /app/uploads
+#        sizeGB: 5
+
+services:
+  - type: web
+    name: academia-ion-andrei-api
+    runtime: docker
+    repo: https://github.com/LeutzuMarr/AcademiaIonAndrei
+    branch: main
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: frankfurt
+    healthCheckPath: /actuator/health
+    envVars:
+      # connectionString vine in forma "postgresql://user:parola@host/baza".
+      # DatabaseUrlEnvironmentPostProcessor il converteste in JDBC la pornire,
+      # deci nu mai e nevoie de nicio variabila completata manual.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: academia-db
+          property: connectionString
+      - key: DATABASE_USER
+        fromDatabase:
+          name: academia-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: academia-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JPA_DDL_AUTO
+        value: update
+      - key: STORAGE_PATH
+        value: /app/uploads/stories
+      - key: AVATAR_PATH
+        value: /app/uploads/avatars
+      # Se completeaza dupa ce stim adresa de pe Vercel.
+      - key: CORS_ORIGINS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      # Parola contului de administrator creat la prima pornire.
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      # Email tranzactional - optional; fara ele, mesajele doar se logheaza.
+      - key: MAIL_ENABLED
+        value: "false"
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+
+databases:
+  - name: academia-db
+    databaseName: academia
+    user: academia
+    plan: free
+    region: frankfurt

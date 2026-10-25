@@ -1,0 +1,4 @@
+# EnvironmentPostProcessor trebuie inregistrat aici: ruleaza inainte de
+# contextul Spring, deci nu poate fi descoperit prin scanare de componente.
+org.springframework.boot.env.EnvironmentPostProcessor=\
+ro.academiaionandrei.api.config.DatabaseUrlEnvironmentPostProcessor

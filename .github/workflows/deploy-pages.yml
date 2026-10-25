@@ -1,0 +1,61 @@
+name: Deploy pe GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# O singura publicare odata; nu anulam una in curs, ca sa nu ramana Pages pe jumatate.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instaleaza dependintele
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: frontend
+        # base-href = /<nume-repo>/ ca resursele sa se rezolve corect pe Pages.
+        run: npm run build:github -- --base-href "/${{ github.event.repository.name }}/"
+
+      - name: Pregateste iesirea pentru Pages
+        working-directory: frontend/dist
+        run: |
+          # GitHub Pages nu are rutare SPA: orice adresa directa ar da 404.
+          # Un 404.html identic cu index.html lasa router-ul Angular sa preia ruta.
+          cp index.html 404.html
+          # Fara .nojekyll, Jekyll ignora fisierele care incep cu underscore.
+          touch .nojekyll
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
