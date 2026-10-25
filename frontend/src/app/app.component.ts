@@ -9,7 +9,7 @@ import { SearchModalComponent } from './shared/components/search-modal.component
 import { ToastHostComponent } from './shared/components/toast-host.component';
 import { BackToTopComponent, ScrollProgressComponent } from './shared/components/ui-utilities';
 import { WhatsappButtonComponent } from './shared/components/whatsapp-button.component';
-import { AmbientComponent, LiquidCursorComponent, LiquidDefsComponent } from './shared/motion/liquid.components';
+import { AmbientComponent, FxLayerComponent, LiquidCursorComponent, LiquidDefsComponent } from './shared/motion/liquid.components';
 import { ClickSparkComponent } from './shared/motion/motion.components';
 
 @Component({
@@ -29,7 +29,8 @@ import { ClickSparkComponent } from './shared/motion/motion.components';
     WhatsappButtonComponent,
     LiquidDefsComponent,
     AmbientComponent,
-    LiquidCursorComponent
+    LiquidCursorComponent,
+    FxLayerComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -54,6 +55,7 @@ import { ClickSparkComponent } from './shared/motion/motion.components';
     <aia-back-to-top />
     <aia-whatsapp-button />
     <aia-click-spark />
+    <aia-fx-layer />
     <aia-liquid-cursor />
   `
 })

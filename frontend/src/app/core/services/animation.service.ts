@@ -34,6 +34,40 @@ export class AnimationService {
     this.resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 200) as unknown as number;
   };
 
+  private flashEl?: HTMLElement;
+
+  registerFlash(el: HTMLElement): void {
+    this.flashEl = el;
+  }
+
+  /** Flash rosu pe tot ecranul, centrat intr-un punct (impact). */
+  flash(x = innerWidth / 2, y = innerHeight / 2, strength = 1): void {
+    if (this.reducedMotion || !this.flashEl) return;
+    const el = this.flashEl;
+    el.style.setProperty('--fx', `${x}px`);
+    el.style.setProperty('--fy', `${y}px`);
+    gsap.fromTo(el, { opacity: strength }, { opacity: 0, duration: 0.7, ease: 'power2.out', overwrite: true });
+  }
+
+  /** Cutremur scurt al unui element, la impact. */
+  shake(el: Element, intensity = 10): void {
+    if (this.reducedMotion) return;
+    gsap.fromTo(
+      el,
+      { x: 0, y: 0 },
+      {
+        keyframes: [
+          { x: -intensity, y: intensity * 0.4, duration: 0.04 },
+          { x: intensity * 0.8, y: -intensity * 0.5, duration: 0.04 },
+          { x: -intensity * 0.5, y: intensity * 0.3, duration: 0.04 },
+          { x: intensity * 0.3, y: 0, duration: 0.04 },
+          { x: 0, y: 0, duration: 0.06 }
+        ],
+        overwrite: 'auto'
+      }
+    );
+  }
+
   markIntroDone(): void {
     if (this.introDone()) return;
     this.introDone.set(true);

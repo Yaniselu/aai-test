@@ -16,9 +16,9 @@ import { AnimationService } from '../../core/services/animation.service';
 /**
  * INTRO CINEMATIC
  * ---------------
- * 1. Ecran negru full-screen cu particule pe canvas.
- * 2. Titlul "ACADEMIA ION ANDREI" apare cu efect glitch.
- * 3. Cele doua panouri se despart din mijloc spre exterior (split door),
+ * 1. Ecran negru cu scantei; numaratoare 3-2-1-FIGHT izbita cu flash si cutremur.
+ * 2. Titlul "ACADEMIA ION ANDREI" cade din fata camerei, cu glitch.
+ * 3. O lama rosie taie ecranul pe diagonala, iar cele doua jumatati se despart,
  *    dezvaluind homepage-ul care era deja randat dedesubt.
  *
  * Ruleaza o singura data pe sesiune, ca navigarea ulterioara sa nu devina obositoare.
@@ -29,40 +29,36 @@ import { AnimationService } from '../../core/services/animation.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
-      <div class="fixed inset-0 z-[200] select-none" role="presentation" aria-hidden="true">
-        <!-- Panoul stang -->
-        <div #doorLeft class="absolute inset-y-0 left-0 w-1/2 overflow-hidden bg-[#050505]">
-          <canvas #canvas class="absolute inset-0 h-full w-full opacity-70"></canvas>
-          <div class="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-[#E60000] to-transparent"></div>
-        </div>
+      <div #root class="fixed inset-0 z-[200] select-none overflow-hidden" role="presentation" aria-hidden="true">
+        <!-- Doua panouri cat ecranul, taiate pe aceeasi diagonala -->
+        <div #doorLeft class="door door-l absolute inset-0 bg-black"></div>
+        <div #doorRight class="door door-r absolute inset-0 bg-black"></div>
 
-        <!-- Panoul drept -->
-        <div #doorRight class="absolute inset-y-0 right-0 w-1/2 overflow-hidden bg-[#050505]">
-          <div class="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-[#E60000] to-transparent"></div>
-        </div>
+        <canvas #canvas class="absolute inset-0 h-full w-full opacity-80"></canvas>
 
-        <!-- Lentila de sticla care se umfla in spatele titlului -->
+        <!-- Lama care taie ecranul exact pe linia usilor -->
+        <svg class="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line #cut x1="64" y1="-2" x2="36" y2="102" stroke="#ff0019" stroke-width="0.9" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" />
+        </svg>
+
+        <!-- Numaratoarea inversa -->
         <div class="pointer-events-none absolute inset-0 grid place-items-center">
-          <div #lens class="intro-lens aia-glass aia-refract"></div>
+          @for (n of countdown; track n) {
+            <span class="count font-display" [class.fight]="n === 'FIGHT'">{{ n }}</span>
+          }
         </div>
 
-        <!-- Continutul central -->
+        <!-- Titlul -->
         <div #content class="pointer-events-none absolute inset-0 grid place-items-center px-6 text-center">
           <div>
-            <p #eyebrow class="mb-5 font-heading text-[10px] font-bold uppercase tracking-[0.5em] sm:text-xs" style="color: #00e5ff">
+            <p #eyebrow class="mb-5 font-heading text-[11px] font-semibold uppercase tracking-[0.6em] text-[#ff0019] sm:text-xs">
               Craiova &middot; Arte Martiale
             </p>
-
-            <h1
-              #title
-              class="font-display text-[11vw] leading-[1.05] text-white sm:text-[8vw] lg:text-[5.5rem]"
-            >
-              Academia<br /><span class="aia-text-liquid">Ion Andrei</span>
+            <h1 #title class="aia-glitch font-display text-[19vw] leading-[0.84] text-white sm:text-[14vw] lg:text-[10rem]" data-text="ACADEMIA ION ANDREI">
+              Academia<br /><span class="text-[#ff0019]">Ion Andrei</span>
             </h1>
-
-            <div #line class="mx-auto mt-8 h-[2px] w-0 rounded-full bg-gradient-to-r from-transparent via-[#e10600] to-transparent"></div>
-
-            <p #motto class="mt-7 text-xs tracking-[0.3em] sm:text-sm" style="color: #a5a7b3">
+            <div #line class="mx-auto mt-8 h-[4px] w-0 bg-[#ff0019] shadow-[0_0_30px_#ff0019]"></div>
+            <p #motto class="mt-7 font-heading text-xs uppercase tracking-[0.5em] text-white/70 sm:text-sm">
               Disciplina &middot; Performanta &middot; Mentalitate
             </p>
           </div>
@@ -71,10 +67,10 @@ import { AnimationService } from '../../core/services/animation.service';
         <!-- Intro-ul nu trebuie sa fie o inchisoare -->
         <button
           type="button"
-          class="absolute bottom-8 right-8 z-10 rounded-full border border-white/15 px-4 py-2 font-heading text-[10px] font-bold uppercase tracking-[0.24em] text-[#a5a7b3] transition-colors hover:border-white/40 hover:text-white"
+          class="aia-btn aia-btn-ghost absolute bottom-8 right-8 z-10 !px-5 !py-2.5 !text-[10px]"
           (click)="skip()"
         >
-          Skip intro &rarr;
+          <span>Skip intro &rarr;</span>
         </button>
       </div>
     }
@@ -84,12 +80,17 @@ import { AnimationService } from '../../core/services/animation.service';
       :host {
         display: contents;
       }
-      .intro-lens {
-        width: min(70vw, 560px);
-        aspect-ratio: 1;
-        border-radius: 50%;
-        background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.16), rgba(255, 31, 61, 0.08) 55%, rgba(94, 242, 255, 0.06));
+      .door-l { clip-path: polygon(0 0, 64% 0, 36% 100%, 0 100%); }
+      .door-r { clip-path: polygon(64% 0, 100% 0, 100% 100%, 36% 100%); }
+      .count {
+        grid-area: 1 / 1;
+        font-size: 62vh;
+        line-height: 0.8;
+        color: #ff0019;
+        opacity: 0;
+        text-shadow: 0 0 120px rgba(255, 0, 25, 0.6);
       }
+      .count.fight { font-size: 30vw; color: #fff; }
     `
   ]
 })
@@ -105,7 +106,10 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
   private readonly title = viewChild<ElementRef<HTMLElement>>('title');
   private readonly eyebrow = viewChild<ElementRef<HTMLElement>>('eyebrow');
   private readonly line = viewChild<ElementRef<HTMLElement>>('line');
-  private readonly lens = viewChild<ElementRef<HTMLElement>>('lens');
+  private readonly root = viewChild<ElementRef<HTMLElement>>('root');
+  private readonly cut = viewChild<ElementRef<SVGLineElement>>('cut');
+
+  readonly countdown = ['3', '2', '1', 'FIGHT'];
   private readonly motto = viewChild<ElementRef<HTMLElement>>('motto');
   private readonly canvasRef = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
 
@@ -143,26 +147,50 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
   private buildTimeline(): void {
     const tl = gsap.timeline({ onComplete: () => this.complete() });
     this.timeline = tl;
+    const root = this.root()!.nativeElement;
+    const counts = Array.from(root.querySelectorAll<HTMLElement>('.count'));
 
-    tl.from(this.lens()!.nativeElement, { scale: 0, opacity: 0, duration: 1.6, ease: 'expo.out' }, 0)
-      .from(this.eyebrow()!.nativeElement, { opacity: 0, y: 20, duration: 0.7, ease: 'power2.out' }, 0.1)
-      .from(
-        this.title()!.nativeElement,
-        { opacity: 0, scale: 1.25, filter: 'blur(22px)', duration: 1.1, ease: 'power3.out' },
-        '-=0.35'
+    // 3 · 2 · 1 · FIGHT — fiecare cifra se izbeste de ecran, cu flash si cutremur.
+    counts.forEach((el, i) => {
+      const fight = i === counts.length - 1;
+      tl.fromTo(
+        el,
+        { opacity: 0, scale: fight ? 3 : 2.4, filter: 'blur(20px)', rotate: fight ? -8 : 0 },
+        { opacity: 1, scale: 1, filter: 'blur(0px)', rotate: fight ? -4 : 0, duration: fight ? 0.28 : 0.2, ease: 'power4.in' },
+        i === 0 ? 0.15 : '>'
       )
-      .to(this.line()!.nativeElement, { width: 'min(420px, 70vw)', duration: 0.8, ease: 'power2.inOut' }, '-=0.5')
-      .from(this.motto()!.nativeElement, { opacity: 0, y: 16, duration: 0.6, ease: 'power2.out' }, '-=0.4')
-      // Pauza dramatica inainte de deschiderea usilor
-      .to({}, { duration: 0.55 })
-      .to(this.content()!.nativeElement, { opacity: 0, scale: 0.94, duration: 0.5, ease: 'power2.in' })
-      // Lentila "explodeaza" spre camera chiar cand se deschid usile.
-      .to(this.lens()!.nativeElement, { scale: 4, opacity: 0, duration: 1.2, ease: 'power3.in' }, '<')
+        .add(() => {
+          this.anim.flash(innerWidth / 2, innerHeight / 2, fight ? 1 : 0.6);
+          this.anim.shake(root, fight ? 22 : 10);
+        })
+        .to(el, { opacity: 0, scale: fight ? 1.25 : 0.85, duration: fight ? 0.35 : 0.22, ease: 'power2.in' }, fight ? '+=0.45' : '+=0.3');
+    });
+
+    tl.from(this.eyebrow()!.nativeElement, { opacity: 0, letterSpacing: '1.4em', duration: 0.5, ease: 'expo.out' })
+      .fromTo(
+        this.title()!.nativeElement,
+        { opacity: 0, scale: 2.2, filter: 'blur(24px)' },
+        { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.35, ease: 'power4.in' },
+        '<'
+      )
+      .add(() => {
+        this.anim.flash(innerWidth / 2, innerHeight / 2, 0.8);
+        this.anim.shake(root, 14);
+      })
+      .to(this.line()!.nativeElement, { width: 'min(520px, 80vw)', duration: 0.5, ease: 'expo.out' })
+      .from(this.motto()!.nativeElement, { opacity: 0, y: 16, duration: 0.4, ease: 'power2.out' }, '<')
+      .to({}, { duration: 0.45 })
+      // Lama taie ecranul pe diagonala
+      .to(this.cut()!.nativeElement, { attr: { 'stroke-dashoffset': 0 }, duration: 0.25, ease: 'expo.in' })
+      .add(() => this.anim.flash(innerWidth / 2, innerHeight / 2, 1))
+      .to(this.content()!.nativeElement, { opacity: 0, scale: 1.08, filter: 'blur(10px)', duration: 0.3, ease: 'power2.in' }, '<')
+      .to(this.canvasRef()!.nativeElement, { opacity: 0, duration: 0.3 }, '<')
       // Hero-ul isi porneste intrarea odata cu deschiderea usilor.
       .call(() => this.anim.markIntroDone(), [], 'doors')
-      // Split door: panourile ies din cadru simultan
-      .to(this.doorLeft()!.nativeElement, { xPercent: -100, duration: 1.15, ease: 'power4.inOut' }, 'doors')
-      .to(this.doorRight()!.nativeElement, { xPercent: 100, duration: 1.15, ease: 'power4.inOut' }, 'doors');
+      .to(this.cut()!.nativeElement, { opacity: 0, duration: 0.3 }, 'doors')
+      // Panourile se despart pe diagonala, in directii opuse
+      .to(this.doorLeft()!.nativeElement, { xPercent: -75, yPercent: -18, duration: 0.95, ease: 'expo.inOut' }, 'doors')
+      .to(this.doorRight()!.nativeElement, { xPercent: 75, yPercent: 18, duration: 0.95, ease: 'expo.inOut' }, 'doors');
   }
 
   private complete(): void {
@@ -226,7 +254,7 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
       radius: Math.random() * 1.8 + 0.4,
       speed: Math.random() * 1.6 + 0.3,
       life: Math.random() * 0.6 + 0.4,
-      tint: warm ? '225, 6, 0' : '0, 229, 255'
+      tint: warm ? '225, 6, 0' : '255, 255, 255'
     };
   }
 

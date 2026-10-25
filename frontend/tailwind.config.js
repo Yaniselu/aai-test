@@ -6,13 +6,13 @@ module.exports = {
     extend: {
       colors: {
         ink: { 950: '#050505', 900: '#0B0B10', 800: '#12121A', 700: '#1B1B24' },
-        blood: { DEFAULT: '#E10600', bright: '#FF2A24', deep: '#8F0000' },
-        cyan: { DEFAULT: '#00E5FF', soft: 'rgba(0,229,255,.14)' },
+        blood: { DEFAULT: '#FF0019', bright: '#FF2D3F', deep: '#8A0010' },
+        cyan: { DEFAULT: '#FFFFFF', soft: 'rgba(255,255,255,.14)' },
         steel: { 100: '#F2F2F2', 300: '#C7C7C7', 500: '#8A8A8A', 700: '#4A4A4A' }
       },
       fontFamily: {
-        display: ['Orbitron', 'system-ui', 'sans-serif'],
-        heading: ['Orbitron', 'system-ui', 'sans-serif'],
+        display: ['Anton', 'Impact', 'system-ui', 'sans-serif'],
+        heading: ['Oswald', 'system-ui', 'sans-serif'],
         body: ['Poppins', 'system-ui', 'sans-serif']
       },
       borderRadius: {

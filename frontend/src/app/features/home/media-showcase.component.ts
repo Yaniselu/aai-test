@@ -56,13 +56,13 @@ interface MediaItem {
       <!-- ═════════ 1. Teatrul fixat ═════════ -->
       <div #theatre class="theatre relative h-[100svh] min-h-[640px] overflow-hidden">
         <div #bigword class="bigword pointer-events-none absolute inset-0 grid place-items-center" aria-hidden="true">
-          <span class="font-display aia-text-outline whitespace-nowrap text-[30vw] leading-none lg:text-[24vw]">MEDIA</span>
+          <span class="font-display aia-text-outline-red whitespace-nowrap text-[30vw] leading-none lg:text-[24vw]">MEDIA</span>
         </div>
 
         <div #intro class="t-intro aia-container relative z-20 pt-24 lg:pt-28">
           <p class="aia-eyebrow">{{ 'media.eyebrow' | translate }}</p>
-          <h2 class="mt-4 max-w-3xl font-display text-[8vw] leading-[1] sm:text-[5vw] lg:text-[3.6rem]">
-            <span class="aia-text-liquid">{{ 'media.title' | translate }}</span>
+          <h2 class="mt-4 max-w-4xl font-display text-[12vw] leading-[0.88] sm:text-[7vw] lg:text-[5.6rem]">
+            <span class="aia-glitch" [attr.data-text]="'media.title' | translate">{{ 'media.title' | translate }}</span>
           </h2>
           <p class="mt-4 max-w-md text-sm leading-relaxed sm:text-[15px]" [style.color]="'var(--aia-text-muted)'">
             {{ 'media.subtitle' | translate }}
@@ -94,15 +94,15 @@ interface MediaItem {
           <span><b>maria.p</b> {{ 'media.notifLike' | translate }}<small>acum</small></span>
         </div>
         <div class="notif aia-glass n2" aria-hidden="true">
-          <span class="ico" style="background: linear-gradient(135deg,#f5b400,#ffdd66)"><aia-icon name="medal" [size]="14" /></span>
+          <span class="ico" style="background: linear-gradient(135deg,#ff1f3d,#ff6a7a)"><aia-icon name="medal" [size]="14" /></span>
           <span><b>{{ 'media.notifMedal' | translate }}</b><small>Craiova · 2025</small></span>
         </div>
         <div class="notif aia-glass n3" aria-hidden="true">
-          <span class="ico" style="background: linear-gradient(135deg,#8b5cff,#5ef2ff)"><aia-icon name="play" [size]="13" /></span>
+          <span class="ico" style="background: linear-gradient(135deg,#7a0010,#ffffff)"><aia-icon name="play" [size]="13" /></span>
           <span><b>{{ 'media.notifNew' | translate }}</b><small>KickBox Copii</small></span>
         </div>
         <div class="notif aia-glass n4" aria-hidden="true">
-          <span class="ico" style="background: linear-gradient(135deg,#00c27a,#5ef2ff)"><aia-icon name="users" [size]="14" /></span>
+          <span class="ico" style="background: linear-gradient(135deg,#1a1a1a,#ffffff)"><aia-icon name="users" [size]="14" /></span>
           <span><b>+48</b> {{ 'media.notifFollow' | translate }}<small>săptămâna asta</small></span>
         </div>
 

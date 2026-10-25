@@ -212,7 +212,7 @@ interface Burst {
       .media--empty {
         display: grid;
         place-items: center;
-        background: radial-gradient(circle at 30% 20%, #ff1f3d55, transparent 60%), radial-gradient(circle at 70% 80%, #5ef2ff44, transparent 60%), #08080e;
+        background: radial-gradient(circle at 30% 20%, #ff1f3d55, transparent 60%), radial-gradient(circle at 70% 80%, #ffffff44, transparent 60%), #08080e;
       }
 
       .shade {
@@ -294,7 +294,7 @@ interface Burst {
         width: 0.2em;
         height: 100%;
         border-radius: 0.1em;
-        background: #5ef2ff;
+        background: #ffffff;
         animation: phone-wave 0.9s ease-in-out infinite;
       }
       .island__wave i:nth-child(2) { animation-delay: 0.15s; }
@@ -326,9 +326,9 @@ interface Burst {
         flex-shrink: 0;
         border-radius: 50%;
         font-size: 0.75em;
-        font-family: 'Orbitron', sans-serif;
+        font-family: 'Oswald', sans-serif;
         font-weight: 800;
-        background: linear-gradient(135deg, #ff1f3d, #8b5cff);
+        background: linear-gradient(135deg, #ff1f3d, #7a0010);
         box-shadow: 0 0 0 0.16em #000, 0 0 0 0.3em #ff4d5e;
       }
       .muted { opacity: 0.6; font-weight: 400; }
@@ -370,7 +370,7 @@ interface Burst {
         height: 2.6em;
         border-radius: 0.7em;
         border: 0.2em solid #fff;
-        background: conic-gradient(#ff1f3d, #8b5cff, #5ef2ff, #ff1f3d);
+        background: conic-gradient(#ff1f3d, #7a0010, #ffffff, #ff1f3d);
         animation: aia-spin 5s linear infinite;
       }
 

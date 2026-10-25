@@ -89,34 +89,34 @@ export class LiquidDefsComponent {}
       }
       .b1 {
         width: 60vmax; height: 60vmax; left: -5%; top: 0%;
-        background: radial-gradient(circle, rgba(255, 31, 61, 0.42), transparent 62%);
+        background: radial-gradient(circle, rgba(255, 0, 25, 0.38), transparent 62%);
         animation: drift1 26s ease-in-out infinite alternate;
       }
       .b2 {
         width: 55vmax; height: 55vmax; right: -8%; top: 10%;
-        background: radial-gradient(circle, rgba(139, 92, 255, 0.34), transparent 62%);
+        background: radial-gradient(circle, rgba(138, 0, 16, 0.45), transparent 62%);
         animation: drift2 32s ease-in-out infinite alternate;
       }
       .b3 {
         width: 50vmax; height: 50vmax; left: 25%; bottom: -10%;
-        background: radial-gradient(circle, rgba(94, 242, 255, 0.24), transparent 62%);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent 62%);
         animation: drift3 28s ease-in-out infinite alternate;
       }
       .b4 {
         width: 34vmax; height: 34vmax; left: 55%; top: 40%;
-        background: radial-gradient(circle, rgba(255, 77, 94, 0.3), transparent 60%);
+        background: radial-gradient(circle, rgba(255, 0, 25, 0.22), transparent 60%);
         animation: drift2 21s ease-in-out infinite alternate-reverse;
       }
       .b5 {
         width: 28vmax; height: 28vmax; left: 10%; top: 55%;
-        background: radial-gradient(circle, rgba(94, 160, 255, 0.24), transparent 60%);
+        background: radial-gradient(circle, rgba(90, 0, 10, 0.5), transparent 60%);
         animation: drift1 24s ease-in-out infinite alternate-reverse;
       }
       .vignette {
         position: absolute;
         inset: 0;
-        background: radial-gradient(ellipse at center, transparent 40%, var(--aia-bg) 100%);
-        opacity: 0.85;
+        background: radial-gradient(ellipse at center, transparent 30%, var(--aia-bg) 92%);
+        opacity: 0.95;
       }
       :host-context(html.light) .blob { opacity: 0.55; }
       :host-context(html.light) .vignette { opacity: 0.4; }
@@ -188,65 +188,85 @@ export class AmbientComponent implements AfterViewInit, OnDestroy {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (enabled) {
-      <div #lens class="lens aia-refract" [class.is-hover]="hover()" [class.is-label]="!!label()" [class.is-down]="down()" [class.is-hidden]="hidden()" aria-hidden="true">
+      <div #lens class="reticle" [class.is-hover]="hover()" [class.is-label]="!!label()" [class.is-down]="down()" [class.is-hidden]="hidden()" aria-hidden="true">
+        <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
         <span class="label">{{ label() }}</span>
       </div>
       <div #dot class="dot" [class.is-hidden]="hidden()" aria-hidden="true"></div>
+      @for (w of waves(); track w.id) {
+        <span class="wave" [style.left.px]="w.x" [style.top.px]="w.y" aria-hidden="true"></span>
+      }
     }
   `,
   styles: [
     `
       :host { display: contents; }
-      .lens,
+      .reticle,
       .dot {
         position: fixed;
         left: 0;
         top: 0;
         z-index: 400;
         pointer-events: none;
-        border-radius: 50%;
         will-change: transform;
       }
-      .lens {
-        width: 46px;
-        height: 46px;
-        margin: -23px 0 0 -23px;
+      .reticle {
+        width: 44px;
+        height: 44px;
+        margin: -22px 0 0 -22px;
         display: grid;
         place-items: center;
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.03) 60%);
-        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6), inset 0 -4px 10px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.3);
-        transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-          margin 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s, background 0.4s, border-color 0.4s;
+        transition: width 0.35s var(--aia-snap), height 0.35s var(--aia-snap), margin 0.35s var(--aia-snap), opacity 0.2s;
       }
-      .lens.is-hover { width: 74px; height: 74px; margin: -37px 0 0 -37px; border-color: rgba(255, 77, 94, 0.6); }
-      .lens.is-label {
-        width: 96px;
-        height: 96px;
-        margin: -48px 0 0 -48px;
-        background: radial-gradient(circle at 30% 25%, rgba(255, 120, 135, 0.55), rgba(255, 31, 61, 0.35) 60%);
-        border-color: rgba(255, 255, 255, 0.5);
+      .c {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border: 0 solid #fff;
+        transition: border-color 0.25s, transform 0.4s var(--aia-snap);
       }
-      .lens.is-down { width: 34px; height: 34px; margin: -17px 0 0 -17px; }
+      .tl { left: 0; top: 0; border-left-width: 2px; border-top-width: 2px; }
+      .tr { right: 0; top: 0; border-right-width: 2px; border-top-width: 2px; }
+      .bl { left: 0; bottom: 0; border-left-width: 2px; border-bottom-width: 2px; }
+      .br { right: 0; bottom: 0; border-right-width: 2px; border-bottom-width: 2px; }
+      .reticle.is-hover { width: 64px; height: 64px; margin: -32px 0 0 -32px; }
+      .reticle.is-hover .c { border-color: var(--aia-blood); }
+      .reticle.is-label { width: 110px; height: 52px; margin: -26px 0 0 -55px; background: var(--aia-blood); clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+      .reticle.is-label .c { opacity: 0; }
+      .reticle.is-down { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+      .reticle.is-down .c { border-color: var(--aia-blood); }
       .label {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 0.16em;
+        font-family: 'Oswald', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.24em;
         text-transform: uppercase;
         color: #fff;
         opacity: 0;
-        transform: scale(0.6);
-        transition: opacity 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: opacity 0.2s;
       }
-      .is-label .label { opacity: 1; transform: scale(1); }
+      .is-label .label { opacity: 1; }
       .dot {
         width: 6px;
         height: 6px;
         margin: -3px 0 0 -3px;
         background: var(--aia-blood);
-        box-shadow: 0 0 12px var(--aia-blood);
+        box-shadow: 0 0 14px 2px var(--aia-blood);
         transition: opacity 0.3s;
+      }
+      .wave {
+        position: fixed;
+        z-index: 399;
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+        pointer-events: none;
+        border: 2px solid var(--aia-blood);
+        animation: wave 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes wave {
+        from { transform: scale(0.4) rotate(45deg); opacity: 1; }
+        to { transform: scale(7) rotate(45deg); opacity: 0; border-width: 1px; }
       }
       .is-hidden { opacity: 0 !important; }
     `
@@ -264,6 +284,8 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
   readonly label = signal('');
   readonly down = signal(false);
   readonly hidden = signal(true);
+  readonly waves = signal<{ id: number; x: number; y: number }[]>([]);
+  private waveId = 0;
 
   private raf?: number;
   private readonly pos = { x: -100, y: -100, lx: -100, ly: -100, vx: 0, vy: 0 };
@@ -297,7 +319,7 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
       const lens = this.lens()?.nativeElement;
       const dot = this.dot()?.nativeElement;
       if (lens) {
-        lens.style.transform = `translate3d(${p.lx}px, ${p.ly}px, 0) rotate(${stretch === 1 ? 0 : angle}rad) scale(${stretch}, ${1 / stretch})`;
+        lens.style.transform = `translate3d(${p.lx}px, ${p.ly}px, 0) rotate(${this.hover() || this.label() ? 0 : (stretch - 1) * 90 + angle * 0}deg)`;
       }
       if (dot) dot.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
       this.raf = requestAnimationFrame(loop);
@@ -334,7 +356,13 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
     this.hover.set(!!target?.closest('a, button, [role="button"], input, select, textarea, label'));
   };
 
-  private readonly onDown = () => this.down.set(true);
+  /** Fiecare click lasa o unda patrata rosie: impactul unei lovituri. */
+  private readonly onDown = (e: PointerEvent) => {
+    this.down.set(true);
+    const id = ++this.waveId;
+    this.waves.update((w) => [...w, { id, x: e.clientX, y: e.clientY }]);
+    setTimeout(() => this.waves.update((w) => w.filter((x) => x.id !== id)), 650);
+  };
   private readonly onUp = () => this.down.set(false);
   private readonly onLeaveDoc = () => this.hidden.set(true);
 
@@ -431,7 +459,7 @@ export interface SectionDot {
         top: 50%;
         transform: translate(8px, -50%);
         white-space: nowrap;
-        font-family: 'Orbitron', sans-serif;
+        font-family: 'Oswald', sans-serif;
         font-size: 9px;
         font-weight: 700;
         letter-spacing: 0.2em;
@@ -479,5 +507,67 @@ export class SectionDotsComponent implements AfterViewInit, OnDestroy {
 
   go(id: string): void {
     this.scroller.scrollTo('#' + id, -20);
+  }
+}
+
+/**
+ * Stratul de efecte de deasupra intregului site: scanlines CRT, granulatie
+ * care fierbe si flash-ul rosu de impact (declansat prin AnimationService.flash).
+ * In plus, marginile ecranului se inroșesc cand scroll-ul e rapid.
+ */
+@Component({
+  selector: 'aia-fx-layer',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="aia-scanlines" aria-hidden="true"></div>
+    @if (!reduced) {
+      <div class="aia-grain-live" aria-hidden="true"></div>
+    }
+    <div #flash class="aia-flash" aria-hidden="true"></div>
+    <div #rage class="rage" aria-hidden="true"></div>
+  `,
+  styles: [
+    `
+      :host { display: contents; }
+      .rage {
+        position: fixed;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        opacity: 0;
+        box-shadow: inset 0 0 160px 20px rgba(255, 0, 25, 0.55);
+      }
+    `
+  ]
+})
+export class FxLayerComponent implements AfterViewInit, OnDestroy {
+  private readonly anim = inject(AnimationService);
+  private readonly flash = viewChild.required<ElementRef<HTMLElement>>('flash');
+  private readonly rage = viewChild.required<ElementRef<HTMLElement>>('rage');
+
+  readonly reduced = this.anim.reducedMotion;
+  private raf?: number;
+  private lastY = 0;
+  private heat = 0;
+
+  ngAfterViewInit(): void {
+    this.anim.registerFlash(this.flash().nativeElement);
+    if (this.reduced) return;
+    this.lastY = window.scrollY;
+    const el = this.rage().nativeElement;
+    const loop = () => {
+      const y = window.scrollY;
+      const v = Math.abs(y - this.lastY);
+      this.lastY = y;
+      this.heat += (Math.min(v / 60, 1) - this.heat) * 0.12;
+      el.style.opacity = this.heat.toFixed(3);
+      this.raf = requestAnimationFrame(loop);
+    };
+    loop();
+  }
+
+  ngOnDestroy(): void {
+    if (this.raf) cancelAnimationFrame(this.raf);
   }
 }

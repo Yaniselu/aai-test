@@ -32,9 +32,9 @@ import {
   MagnetDirective,
   ParallaxDirective,
   RevealDirective,
-  SplitTextDirective,
   TiltDirective
 } from '../../shared/motion/motion.directives';
+import { ImpactDirective, KineticTextComponent, SlashComponent } from '../../shared/motion/aggressive.motion';
 import { ContactFormComponent } from './contact-form.component';
 import { LocationsMapComponent } from './locations-map.component';
 import { MediaShowcaseComponent } from './media-showcase.component';
@@ -64,7 +64,9 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     CountUpComponent,
     ScrambleTextComponent,
     VelocityMarqueeComponent,
-    SplitTextDirective,
+    ImpactDirective,
+    KineticTextComponent,
+    SlashComponent,
     MagnetDirective,
     RevealDirective,
     TiltDirective,
@@ -81,7 +83,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
         <img
           [src]="heroBgSrc()"
           alt=""
-          class="absolute inset-0 h-full w-full object-cover"
+          class="hero-img aia-flicker absolute inset-0 h-full w-full object-cover"
           fetchpriority="high"
           loading="eager"
           decoding="sync"
@@ -90,35 +92,50 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
         <div
           class="absolute inset-0"
           style="background:
-            radial-gradient(ellipse at 70% 40%, rgba(255,31,61,.18), transparent 55%),
+            radial-gradient(ellipse at 72% 45%, rgba(255,0,25,.35), transparent 50%),
             linear-gradient(90deg, var(--aia-bg) 4%, color-mix(in srgb, var(--aia-bg) 70%, transparent) 46%, color-mix(in srgb, var(--aia-bg) 30%, transparent) 100%),
             linear-gradient(180deg, color-mix(in srgb, var(--aia-bg) 40%, transparent), transparent 40%, var(--aia-bg) 98%)"
         ></div>
       </div>
 
-      <aia-mesh-background class="opacity-40" />
+      <aia-mesh-background class="opacity-50" />
 
-      <!-- Sfere de sticla care plutesc, cu adancimi diferite la cursor -->
-      <span class="orb aia-glass o1" data-depth="0.6" aria-hidden="true"></span>
-      <span class="orb aia-glass o2" data-depth="1.2" aria-hidden="true"></span>
-      <span class="orb aia-glass o3" data-depth="0.9" aria-hidden="true"></span>
-      <span class="orb aia-glass o4" data-depth="1.6" aria-hidden="true"></span>
+      <!-- Cuvantul urias din spate, contur rosu care palpaie ca un stroboscop -->
+      <div class="hero-word font-display aia-text-outline-red" aria-hidden="true">FIGHT</div>
+
+      <!-- Taieturi rosii care trec prin cadru la intrare -->
+      <span class="hero-slash s1" aria-hidden="true"></span>
+      <span class="hero-slash s2" aria-hidden="true"></span>
+
+      <!-- HUD de camera: colturi de vizor, REC, timecode, coordonate -->
+      <div class="hud pointer-events-none absolute inset-0 z-[5]" aria-hidden="true">
+        <i class="hc tl"></i><i class="hc tr"></i><i class="hc bl"></i><i class="hc br"></i>
+        <div class="hud-rec font-heading"><span class="rec-dot"></span>REC <span class="aia-index">{{ timecode() }}</span></div>
+        <div class="hud-geo font-heading">44.3182°N · 23.7684°E · CRAIOVA</div>
+        <div class="hud-side font-heading">ACADEMIA ION ANDREI — KICKBOX — KARATE — EST. 2020</div>
+        <div class="hud-iso font-heading">ISO 3200 · 1/250 · F1.8</div>
+      </div>
+
+      <!-- Benzi letterbox, cinemascope -->
+      <span class="lb-bar lb-top" aria-hidden="true"></span>
+      <span class="lb-bar lb-bot" aria-hidden="true"></span>
 
       <div class="aia-container relative z-10 grid h-full items-center gap-10 pb-16 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6 lg:py-0">
         <div #heroText class="hero-text">
-          <p class="hero-in aia-chip !gap-3 !py-2.5 !pl-3 !text-[var(--aia-text)]">
+          <p class="hero-in aia-chip !gap-3 !border-[var(--aia-blood)] !py-2.5 !pl-3 !text-[var(--aia-text)]">
             <span class="live-dot"></span>
             <aia-scramble [text]="'hero.eyebrow' | translate" />
           </p>
 
           <h1
-            class="hero-title mt-7 font-display text-[10vw] leading-[1.02] sm:text-[7vw] lg:text-[4.6rem] xl:text-[5.2rem]"
+            class="hero-title mt-6 font-display text-[16vw] leading-[0.86] sm:text-[11vw] lg:text-[6.2rem] xl:text-[7rem]"
             [attr.aria-label]="'hero.title' | translate"
+            [attr.data-text]="'hero.title' | translate"
           >
             @for (w of titleWords(); track $index; let wi = $index; let last = $last) {
               <span class="word" aria-hidden="true" [class.accent]="wi >= titleWords().length - 2">
                 @for (c of w.chars; track $index; let ci = $index) {
-                  <span class="ch" [style.color]="wi >= titleWords().length - 2 ? accentColor(ci, w.chars.length) : null">{{ c }}</span>
+                  <span class="ch">{{ c }}</span>
                 }
               </span>{{ last ? '' : ' ' }}
             }
@@ -128,7 +145,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
             {{ 'hero.subtitle' | translate }}
           </p>
 
-          <div class="hero-in mt-9 flex flex-wrap gap-3">
+          <div class="hero-in mt-8 flex flex-wrap gap-3">
             <a routerLink="/auth/register" aiaMagnet class="aia-btn aia-btn-primary !px-8 !py-4">
               <span>{{ 'hero.cta' | translate }}</span>
               <aia-icon name="arrow-right" [size]="16" />
@@ -138,10 +155,11 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
             </button>
           </div>
 
-          <dl class="mt-12 grid max-w-xl grid-cols-3 gap-3 sm:gap-4">
+          <dl class="mt-9 grid max-w-xl grid-cols-3 gap-3 sm:gap-4">
             @for (stat of stats; track stat.key; let i = $index) {
-              <div class="hero-in aia-card !rounded-[22px] p-4 sm:p-5" aiaTilt [tiltMax]="10">
-                <dd class="font-display text-2xl text-[var(--aia-blood-bright)] sm:text-3xl">
+              <div class="hero-in aia-card p-4 sm:p-5" aiaTilt [tiltMax]="10">
+                <span class="aia-corner"></span>
+                <dd class="font-display text-3xl text-[var(--aia-blood)] sm:text-4xl">
                   <aia-count-up [value]="stat.value" suffix="+" />
                 </dd>
                 <dt class="mt-2 text-[10px] leading-snug sm:text-[11px]" [style.color]="'var(--aia-text-muted)'">
@@ -181,14 +199,14 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
               <span class="font-heading text-[10px] font-bold uppercase tracking-[0.18em]">{{ 'hero.live' | translate }}</span>
             </div>
             <div class="badge aia-glass b-medal">
-              <span class="b-ico" style="background: linear-gradient(135deg,#f5b400,#ffe27a)"><aia-icon name="trophy" [size]="16" /></span>
+              <span class="b-ico" style="background: linear-gradient(135deg,#ff1f3d,#ffb3bb)"><aia-icon name="trophy" [size]="16" /></span>
               <span>
                 <b class="font-display text-lg leading-none">17</b>
                 <small>{{ 'hero.badgeMedals' | translate }}</small>
               </span>
             </div>
             <div class="badge aia-glass b-new">
-              <span class="b-ico" style="background: linear-gradient(135deg,#ff1f3d,#8b5cff)"><aia-icon name="play" [size]="14" /></span>
+              <span class="b-ico" style="background: linear-gradient(135deg,#ff1f3d,#7a0010)"><aia-icon name="play" [size]="14" /></span>
               <span>
                 <b>{{ 'hero.badgeNew' | translate }}</b>
                 <small>{{ 'hero.badgeNewSub' | translate }}</small>
@@ -211,14 +229,19 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
     <!-- ═══════════════ MARQUEE DUBLU ═══════════════ -->
     <div class="relative z-10 -my-4 overflow-hidden py-14">
-      <div class="aia-glass -mx-4 rotate-[-2.5deg] rounded-none border-y py-1" [style.borderColor]="'var(--aia-border)'">
-        <aia-velocity-marquee [items]="['DISCIPLINĂ', 'PERFORMANȚĂ', 'MENTALITATE', 'RESPECT']" />
+      <div class="aia-tape -mx-4 h-3 rotate-[-3deg]"></div>
+      <div class="-mx-4 rotate-[-3deg] bg-[var(--aia-blood)] py-1 text-white">
+        <aia-velocity-marquee
+          [items]="['DISCIPLINĂ', 'PERFORMANȚĂ', 'MENTALITATE', 'RESPECT', 'FĂRĂ SCUZE']"
+          klass="font-display text-5xl uppercase leading-none sm:text-7xl"
+        />
       </div>
-      <div class="-mx-4 mt-2 rotate-[1.5deg] opacity-60">
+      <div class="aia-tape -mx-4 h-3 rotate-[-3deg]"></div>
+      <div class="-mx-4 mt-6 rotate-[2deg] bg-black py-1">
         <aia-velocity-marquee
           [reverse]="true"
-          [items]="['KICKBOX', 'KARATE', 'CRAIOVA', 'CAMPIONI']"
-          klass="font-display aia-text-outline text-4xl uppercase leading-none tracking-wide sm:text-6xl"
+          [items]="['KICKBOX', 'KARATE', 'CRAIOVA', 'CAMPIONI', 'NO MERCY']"
+          klass="font-display aia-text-outline text-5xl uppercase leading-none sm:text-7xl"
         />
       </div>
     </div>
@@ -227,10 +250,10 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     <section id="despre" class="relative scroll-mt-28 py-24 lg:py-36">
       <div class="aia-container">
         <p class="aia-eyebrow" aiaReveal>{{ 'about.eyebrow' | translate }}</p>
-        <h2 class="aia-section-title mt-5 max-w-4xl" aiaSplitText>{{ 'about.title' | translate }}</h2>
+        <h2 class="aia-section-title mt-5 max-w-4xl" aiaImpact>{{ 'about.title' | translate }}</h2>
 
         <!-- Manifest care se aprinde cuvant cu cuvant la scroll -->
-        <p #manifesto class="manifesto mt-14 max-w-5xl font-display text-[6.4vw] font-semibold normal-case leading-[1.18] tracking-[0.01em] sm:text-[4vw] lg:text-[2.9rem]">
+        <p #manifesto class="manifesto mt-14 max-w-6xl font-display text-[9vw] uppercase leading-[0.98] sm:text-[6vw] lg:text-[4.4rem]">
           @for (w of manifestoWords(); track $index) {
             <span class="mw">{{ w.word }}</span>{{ ' ' }}
           }
@@ -239,6 +262,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
         <div #pillarsEl class="mt-20 grid gap-5 md:grid-cols-3" style="perspective: 1200px">
           @for (pillar of pillars; track pillar.key; let i = $index) {
             <article class="pillar aia-card p-8 lg:p-10" aiaTilt [tiltMax]="9">
+              <span class="aia-corner"></span>
               <div class="flex items-start justify-between">
                 <span class="pillar-ico aia-glass">
                   <aia-icon [name]="pillar.icon" [size]="26" />
@@ -276,13 +300,16 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
+    <aia-kinetic top="NO PAIN" bottom="NO GLORY" />
+    <aia-slash label="ROUND 01 · GRUPE" />
+
     <!-- ═══════════════ GRUPE — carduri care se stivuiesc ═══════════════ -->
     <section id="grupe" class="relative scroll-mt-20 py-24 lg:py-32">
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p class="aia-eyebrow" aiaReveal>{{ 'groups.eyebrow' | translate }}</p>
-            <h2 class="aia-section-title mt-5" aiaSplitText>{{ 'groups.title' | translate }}</h2>
+            <h2 class="aia-section-title mt-5" aiaImpact>{{ 'groups.title' | translate }}</h2>
           </div>
           <p class="aia-chip" aiaReveal><aia-icon name="arrow-down" [size]="12" /> {{ 'groups.pick' | translate }}</p>
         </div>
@@ -292,9 +319,10 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
             <!-- .stack-card = lipit + micsorat la scroll; .stack-inner = intrare + sticla -->
             <div class="stack-card" [style.top.px]="100 + i * 26">
             <article class="stack-inner aia-card h-full overflow-hidden">
+              <span class="aia-corner !z-30" style="--corner: 34px"></span>
               <div class="stack-dim pointer-events-none absolute inset-0 z-20 rounded-[inherit] bg-black opacity-0" aria-hidden="true"></div>
               <div class="grid h-full lg:grid-cols-[1.1fr_0.9fr]">
-                <div class="relative h-[260px] overflow-hidden sm:h-[340px] lg:h-full">
+                <div class="aia-duo relative h-[260px] overflow-hidden sm:h-[340px] lg:h-full">
                   <img
                     [src]="group.image"
                     [alt]="group.name"
@@ -307,8 +335,8 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
                 </div>
 
                 <div class="relative flex flex-col justify-center p-7 sm:p-10 lg:p-14">
-                  <span class="font-display aia-text-outline pointer-events-none absolute right-6 top-4 text-[90px] leading-none lg:text-[140px]">0{{ i + 1 }}</span>
-                  <h3 class="relative font-display text-3xl lg:text-5xl">{{ group.name }}</h3>
+                  <span class="font-display aia-text-outline-red pointer-events-none absolute right-6 top-4 text-[120px] leading-none lg:text-[200px]">0{{ i + 1 }}</span>
+                  <h3 class="relative font-display text-5xl lg:text-7xl">{{ group.name }}</h3>
                   <p class="relative mt-5 max-w-md text-[15px] leading-relaxed" [style.color]="'var(--aia-text-muted)'">
                     {{ group.textKey | translate }}
                   </p>
@@ -330,13 +358,15 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
+    <aia-slash label="ROUND 02 · PROGRAM" />
+
     <!-- ═══════════════ PROGRAM ═══════════════ -->
     <section id="program" class="relative scroll-mt-28 py-24 lg:py-32">
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p class="aia-eyebrow" aiaReveal>{{ 'schedule.eyebrow' | translate }}</p>
-            <h2 class="aia-section-title mt-5" aiaSplitText>{{ 'schedule.title' | translate }}</h2>
+            <h2 class="aia-section-title mt-5" aiaImpact>{{ 'schedule.title' | translate }}</h2>
           </div>
           <div class="aia-glass flex items-center gap-3 rounded-full px-5 py-3" aiaReveal>
             <aia-icon name="clock" [size]="16" />
@@ -351,13 +381,15 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
+    <aia-kinetic top="TRAIN HARD" bottom="FIGHT EASY" />
+
     <!-- ═══════════════ ANTRENORI — panouri care se extind ═══════════════ -->
     <section id="antrenori" class="relative scroll-mt-28 py-24 lg:py-32">
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p class="aia-eyebrow" aiaReveal>{{ 'coaches.eyebrow' | translate }}</p>
-            <h2 class="aia-section-title mt-5 max-w-3xl" aiaSplitText>{{ 'coaches.title' | translate }}</h2>
+            <h2 class="aia-section-title mt-5 max-w-3xl" aiaImpact>{{ 'coaches.title' | translate }}</h2>
           </div>
           <p class="hidden text-xs lg:block" [style.color]="'var(--aia-text-muted)'" aiaReveal>{{ 'coaches.hover' | translate }} &rarr;</p>
         </div>
@@ -372,7 +404,8 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
               tabindex="0"
             >
               <img [src]="coach.image" [alt]="coach.name" class="coach-img absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
-              <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 30%, rgba(4,4,10,.92))"></div>
+              <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(255,0,25,.25), transparent 35%, rgba(0,0,0,.95)); mix-blend-mode: multiply"></div>
+              <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,.9))"></div>
 
               <span class="coach-vert font-display" aria-hidden="true">{{ coach.name }}</span>
 
@@ -389,12 +422,14 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
+    <aia-slash label="ROUND 03 · VERDICT" />
+
     <!-- ═══════════════ REVIEW-URI — pachet de carti 3D ═══════════════ -->
     <section class="relative py-24 lg:py-32">
       <div class="aia-container grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
           <p class="aia-eyebrow" aiaReveal>{{ 'reviews.eyebrow' | translate }}</p>
-          <h2 class="aia-section-title mt-5" aiaSplitText>{{ 'reviews.title' | translate }}</h2>
+          <h2 class="aia-section-title mt-5" aiaImpact>{{ 'reviews.title' | translate }}</h2>
           <div class="mt-8 flex gap-3" aiaReveal>
             <button type="button" aiaMagnet class="aia-btn aia-btn-ghost h-14 w-14 !px-0" (click)="prevReview()" [attr.aria-label]="'reviews.previous' | translate">
               <aia-icon name="chevron-left" [size]="18" />
@@ -417,7 +452,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
           @for (r of reviews; track r.author; let i = $index) {
             <figure class="review aia-card absolute inset-0 flex flex-col p-7 sm:p-10" [style]="reviewStyle(i)" [attr.aria-hidden]="i !== reviewIndex()">
               <span class="quote font-display" aria-hidden="true">&ldquo;</span>
-              <div class="flex gap-1" [style.color]="'#f5b400'" aria-label="5/5">
+              <div class="flex gap-1" [style.color]="'#ff1f3d'" aria-label="5/5">
                 @for (star of stars; track star) {
                   <aia-icon name="star" [size]="15" />
                 }
@@ -436,8 +471,12 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
+    <aia-kinetic top="ON CAMERA" bottom="ALL ACCESS" />
+
     <!-- ═══════════════ MEDIA ═══════════════ -->
     <aia-media-showcase />
+
+    <aia-slash label="FINAL ROUND" />
 
     <!-- ═══════════════ CTA cu lentila ═══════════════ -->
     <section class="relative py-24 lg:py-36">
@@ -490,7 +529,76 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
         transform-origin: 50% 100%;
         will-change: transform;
       }
-      .hero-title .accent .ch { text-shadow: 0 0 40px currentColor; }
+      .hero-title .accent .ch { color: var(--aia-blood); text-shadow: 0 0 50px rgba(255, 0, 25, 0.55); }
+      .hero-title { text-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); }
+
+      .hero-img { filter: grayscale(1) contrast(1.4) brightness(0.7); }
+      .hero-bg::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(200deg, rgba(255, 0, 25, 0.5), transparent 55%);
+        mix-blend-mode: multiply;
+      }
+
+      .hero-word {
+        position: absolute;
+        z-index: 1;
+        right: -4vw;
+        top: 50%;
+        font-size: 34vw;
+        line-height: 0.8;
+        transform: translateY(-50%);
+        pointer-events: none;
+        opacity: 0.55;
+        animation: strobe 4s steps(1) infinite;
+      }
+      @keyframes strobe {
+        0%, 70%, 100% { opacity: 0.5; }
+        72%, 76% { opacity: 0.08; }
+        74%, 78% { opacity: 0.9; }
+      }
+      @media (max-width: 1023px) { .hero-word { font-size: 52vw; top: 72%; right: -10vw; } }
+
+      .hero-slash {
+        position: absolute;
+        z-index: 6;
+        left: -20%;
+        right: -20%;
+        height: 14px;
+        background: var(--aia-blood);
+        box-shadow: 0 0 50px 8px rgba(255, 0, 25, 0.7);
+        pointer-events: none;
+        transform-origin: left center;
+        transform: rotate(-14deg) scaleX(0);
+      }
+      .s1 { top: 38%; }
+      .s2 { top: 62%; height: 4px; transform: rotate(-14deg) scaleX(0); background: #fff; box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
+
+      .hc { position: absolute; width: 28px; height: 28px; border: 0 solid var(--aia-text); opacity: 0.7; }
+      .hc.tl { left: 18px; top: 104px; border-left-width: 2px; border-top-width: 2px; }
+      .hc.tr { right: 18px; top: 104px; border-right-width: 2px; border-top-width: 2px; }
+      .hc.bl { left: 18px; bottom: 18px; border-left-width: 2px; border-bottom-width: 2px; }
+      .hc.br { right: 18px; bottom: 18px; border-right-width: 2px; border-bottom-width: 2px; }
+      .hud-rec, .hud-geo, .hud-side, .hud-iso {
+        position: absolute;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.3em;
+        color: var(--aia-text);
+        opacity: 0.75;
+      }
+      .hud-rec { left: 56px; top: 108px; display: flex; align-items: center; gap: 10px; color: #fff; }
+      .rec-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--aia-blood); box-shadow: 0 0 12px var(--aia-blood); animation: rec 1s steps(1) infinite; }
+      @keyframes rec { 50% { opacity: 0; } }
+      .hud-geo { left: 56px; bottom: 24px; }
+      .hud-iso { right: 56px; bottom: 24px; }
+      .hud-side { right: 22px; top: 50%; writing-mode: vertical-rl; transform: translateY(-50%); font-size: 10px; }
+      @media (max-width: 1023px) { .hud-side, .hud-iso, .hc.tl, .hc.tr, .hud-rec { display: none; } }
+
+      .lb-bar { position: absolute; left: 0; right: 0; z-index: 7; height: 0; background: #000; pointer-events: none; }
+      .lb-top { top: 0; }
+      .lb-bot { bottom: 0; }
       .live-dot {
         width: 8px;
         height: 8px;
@@ -500,19 +608,6 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
         animation: aia-pulse-dot 1.6s ease-out infinite;
         flex-shrink: 0;
       }
-
-      .orb {
-        position: absolute;
-        border-radius: 50%;
-        z-index: 1;
-        pointer-events: none;
-        background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.04) 45%, rgba(255, 31, 61, 0.12) 100%);
-      }
-      .o1 { width: 140px; height: 140px; left: 46%; top: 14%; animation: aia-float 9s ease-in-out infinite; }
-      .o2 { width: 64px; height: 64px; left: 6%; bottom: 14%; animation: aia-float 7s ease-in-out infinite reverse; }
-      .o3 { width: 220px; height: 220px; right: -60px; bottom: 6%; animation: aia-float 12s ease-in-out infinite; }
-      .o4 { width: 34px; height: 34px; left: 40%; bottom: 22%; animation: aia-float 6s ease-in-out infinite; }
-      @media (max-width: 1023px) { .o1, .o3 { display: none; } }
 
       .stage { perspective: 1500px; }
       .stage-inner { transform-style: preserve-3d; will-change: transform; pointer-events: none; }
@@ -664,11 +759,11 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
         outline-offset: 4px;
       }
       .coach-img {
-        filter: grayscale(1) brightness(0.65);
+        filter: grayscale(1) contrast(1.4) brightness(0.55);
         transform: scale(1.12);
         transition: filter 0.8s, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
       }
-      .coach.open .coach-img { filter: grayscale(0) brightness(1); transform: scale(1); }
+      .coach.open .coach-img { filter: grayscale(1) contrast(1.3) brightness(0.95); transform: scale(1); }
       .coach-vert {
         position: absolute;
         left: 50%;
@@ -799,6 +894,8 @@ export class HomePage implements AfterViewInit, OnDestroy {
   readonly journeyStep = signal(-1);
   readonly lensOn = signal(false);
   readonly clock = signal(this.now());
+  readonly timecode = signal('00:00:00:00');
+  private readonly tcStart = performance.now();
 
   readonly stars = [1, 2, 3, 4, 5];
   readonly stats = ACADEMY.stats;
@@ -830,11 +927,19 @@ export class HomePage implements AfterViewInit, OnDestroy {
   private mm?: gsap.MatchMedia;
   private raf?: number;
   private clockTimer?: number;
+  private tcTimer?: number;
   private deckStartX = 0;
   private readonly tilt = { x: 0, y: 0, tx: 0, ty: 0 };
 
   ngAfterViewInit(): void {
     this.clockTimer = setInterval(() => this.clock.set(this.now()), 1000) as unknown as number;
+    this.tcTimer = setInterval(() => {
+      const ms = performance.now() - this.tcStart;
+      const f = Math.floor((ms / 1000) * 24) % 24;
+      const sec = Math.floor(ms / 1000);
+      const pad = (n: number) => String(n).padStart(2, '0');
+      this.timecode.set(`${pad(Math.floor(sec / 3600))}:${pad(Math.floor(sec / 60) % 60)}:${pad(sec % 60)}:${pad(f)}`);
+    }, 42) as unknown as number;
     if (this.anim.reducedMotion) {
       this.journeyStep.set(3);
       return;
@@ -857,36 +962,59 @@ export class HomePage implements AfterViewInit, OnDestroy {
     this.mm?.revert();
     if (this.raf) cancelAnimationFrame(this.raf);
     clearInterval(this.clockTimer);
+    clearInterval(this.tcTimer);
     window.removeEventListener('pointermove', this.onPointer);
     this.anim.killAll();
   }
 
   // ------------------------------------------------------------- hero
   private buildHeroIntro(): void {
+    const hero = this.hero().nativeElement;
     const tl = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' } });
 
-    tl.from('.hero-title .ch', {
-      yPercent: 120,
-      rotateX: -100,
-      opacity: 0,
-      duration: 1.5,
-      stagger: 0.022
-    })
-      .from('.hero-in', { y: 40, opacity: 0, filter: 'blur(10px)', duration: 1.2, stagger: 0.09 }, 0.25)
-      .from(
-        '.hp-in',
+    // Cinemascope: benzile negre intra, apoi se retrag ca o cortina.
+    tl.fromTo('.lb-bar', { height: '50vh' }, { height: '9vh', duration: 0.7, ease: 'expo.inOut' }, 0)
+      .to('.lb-bar', { height: 0, duration: 1.1, ease: 'expo.inOut' }, 1.9)
+
+      // Taieturile trec prin cadru
+      .to('.hero-slash', { scaleX: 1, duration: 0.32, ease: 'expo.in', stagger: 0.08 }, 0.35)
+      .to('.hero-slash', { scaleY: 0, opacity: 0, duration: 0.5, ease: 'power2.out', stagger: 0.08 }, 0.75)
+
+      // Literele cad din fata camerei si se infig
+      .fromTo(
+        '.hero-title .ch',
         {
-          y: 500,
-          rotateX: 50,
           opacity: 0,
-          duration: 1.9,
-          stagger: { each: 0.14, from: 'center' }
+          scale: () => gsap.utils.random(3, 5),
+          rotate: () => gsap.utils.random(-35, 35),
+          yPercent: () => gsap.utils.random(-80, 60),
+          filter: 'blur(16px)'
         },
-        0.1
+        {
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
+          yPercent: 0,
+          filter: 'blur(0px)',
+          duration: 0.45,
+          ease: 'power4.in',
+          stagger: { each: 0.03, from: 'random' }
+        },
+        0.55
       )
-      .from('.badge', { scale: 0, opacity: 0, duration: 1, ease: 'back.out(2.2)', stagger: 0.12 }, 0.9)
-      .from('.orb', { opacity: 0, filter: 'blur(20px)', duration: 1.6, stagger: 0.1 }, 0.4)
-      .from('.scroll-cue', { opacity: 0, y: 20, duration: 1 }, 1.2);
+      .add(() => {
+        const t = this.host.nativeElement.querySelector('.hero-title') as HTMLElement | null;
+        const r = t?.getBoundingClientRect();
+        if (r) this.anim.flash(r.left + r.width / 2, r.top + r.height / 2, 1);
+        this.anim.shake(hero, 16);
+        t?.classList.add('aia-glitch');
+      })
+      .fromTo('.hero-word', { scale: 1.6, opacity: 0 }, { scale: 1, opacity: 0.55, duration: 0.5, ease: 'power4.in', clearProps: 'opacity' }, '<-0.1')
+      .from('.hero-in', { x: -80, skewX: 25, opacity: 0, duration: 0.7, stagger: 0.07 }, '<0.1')
+      .from('.hp-in', { y: 600, rotateX: 60, opacity: 0, duration: 1.2, stagger: { each: 0.1, from: 'center' } }, '<')
+      .from('.badge', { scale: 0, rotate: () => gsap.utils.random(-20, 20), opacity: 0, duration: 0.6, ease: 'back.out(3)', stagger: 0.08 }, '<0.5')
+      .from('.hud > *', { opacity: 0, duration: 0.05, stagger: { each: 0.06, repeat: 3, yoyo: true } }, '<')
+      .from('.scroll-cue', { opacity: 0, y: 20, duration: 1 }, '<0.3');
 
     // Pozitiile de start se aplica imediat; timeline-ul porneste odata cu usile intro-ului.
     tl.progress(0);
@@ -898,6 +1026,8 @@ export class HomePage implements AfterViewInit, OnDestroy {
     const st = { trigger: hero, start: 'top top', end: 'bottom top', scrub: 0.8 };
 
     gsap.to('.hero-bg img', { scale: 1.3, yPercent: 12, ease: 'none', scrollTrigger: st });
+    gsap.to('.hero-word', { xPercent: -30, scale: 1.4, ease: 'none', scrollTrigger: st });
+    gsap.to('.hud', { opacity: 0, ease: 'none', scrollTrigger: { ...st, end: '40% top' } });
     gsap.to('.hero-text', { y: -140, opacity: 0, filter: 'blur(8px)', ease: 'none', scrollTrigger: { ...st, end: '80% top' } });
     // Telefoanele "explodeaza" in afara cadrului cand iesi din hero.
     gsap.to('.hp-left', { x: -220, y: -80, rotate: -16, ease: 'none', scrollTrigger: st });
@@ -911,7 +1041,6 @@ export class HomePage implements AfterViewInit, OnDestroy {
     if (window.matchMedia('(hover: none)').matches) return;
     window.addEventListener('pointermove', this.onPointer, { passive: true });
     const inner = this.stageInner().nativeElement;
-    const orbs = Array.from(this.host.nativeElement.querySelectorAll('.orb')) as HTMLElement[];
     const hero = this.hero().nativeElement;
 
     const loop = () => {
@@ -921,10 +1050,6 @@ export class HomePage implements AfterViewInit, OnDestroy {
       // Nu calculam nimic cand hero-ul a iesit din ecran.
       if (hero.getBoundingClientRect().bottom > 0) {
         inner.style.transform = `rotateY(${t.x * 16}deg) rotateX(${-t.y * 12}deg)`;
-        for (const o of orbs) {
-          const d = Number(o.dataset['depth'] ?? 1);
-          o.style.translate = `${t.x * 40 * d}px ${t.y * 40 * d}px`;
-        }
       }
       this.raf = requestAnimationFrame(loop);
     };
@@ -1048,21 +1173,6 @@ export class HomePage implements AfterViewInit, OnDestroy {
       title.style.setProperty('--lx', `${e.clientX - tr.left}px`);
       title.style.setProperty('--ly', `${e.clientY - tr.top}px`);
     }
-  }
-
-  /** Culoarea fiecarei litere din cuvintele accentuate: rosu -> violet -> cyan. */
-  accentColor(i: number, n: number): string {
-    const stops = [
-      [255, 77, 94],
-      [139, 92, 255],
-      [94, 242, 255]
-    ];
-    const t = n > 1 ? i / (n - 1) : 0;
-    const seg = t < 0.5 ? 0 : 1;
-    const local = seg === 0 ? t * 2 : (t - 0.5) * 2;
-    const [a, b] = [stops[seg], stops[seg + 1]];
-    const c = a.map((v, k) => Math.round(v + (b[k] - v) * local));
-    return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
   }
 
   // ------------------------------------------------------------- utilitare

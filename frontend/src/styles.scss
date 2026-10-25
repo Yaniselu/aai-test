@@ -3,76 +3,79 @@
 @tailwind utilities;
 
 /* ============================================================
-   ACADEMIA ION ANDREI — LIQUID GLASS
-   Tipografie Orbitron (titluri) + Poppins (text).
-   Toate suprafetele sunt "sticla lichida": blur + saturatie pe ce e in
-   spate, margine luminoasa (rim light), reflexie speculara care urmareste
-   cursorul si, pe Chromium, refractie reala prin filtrul SVG #aia-liquid.
-   In spatele sticlei curge un fundal ambiental (aia-ambient), fara de care
-   sticla n-ar avea ce sa refracte.
+   ACADEMIA ION ANDREI — BLACKOUT / LIQUID GLASS AGRESIV
+   Doar trei culori: negru absolut, alb, rosu sange.
+   Anton (titluri, condensat si brutal) + Oswald (etichete) + Poppins (text).
+   Suprafetele raman sticla, dar fumurie, cu colturi taiate si rim rosu;
+   peste tot: impact, glitch, taieturi, flicker si text cinetic.
    ============================================================ */
 :root {
-  --aia-bg: #04040a;
-  --aia-bg-soft: rgba(255, 255, 255, 0.015);
-  --aia-bg-elev: rgba(255, 255, 255, 0.06);
-  --aia-bg-elev-2: rgba(255, 255, 255, 0.1);
-  --aia-border: rgba(255, 255, 255, 0.12);
-  --aia-border-strong: rgba(255, 255, 255, 0.26);
+  --aia-bg: #000000;
+  --aia-bg-soft: rgba(255, 255, 255, 0.01);
+  --aia-bg-elev: rgba(255, 255, 255, 0.04);
+  --aia-bg-elev-2: rgba(255, 255, 255, 0.08);
+  --aia-border: rgba(255, 255, 255, 0.1);
+  --aia-border-strong: rgba(255, 255, 255, 0.3);
   --aia-text: #ffffff;
-  --aia-text-muted: #b1b3c2;
+  --aia-text-muted: #9a9a9a;
 
-  --aia-blood: #ff1f3d;
-  --aia-blood-bright: #ff4d5e;
-  --aia-blood-deep: #a3001c;
-  --aia-blood-soft: rgba(255, 31, 61, 0.2);
-  --aia-cyan: #5ef2ff;
-  --aia-cyan-soft: rgba(94, 242, 255, 0.16);
-  --aia-violet: #8b5cff;
-  --aia-metal: #c8cbd8;
+  --aia-blood: #ff0019;
+  --aia-blood-bright: #ff2d3f;
+  --aia-blood-deep: #8a0010;
+  --aia-blood-soft: rgba(255, 0, 25, 0.18);
+  /* Accentul secundar e albul: nu mai exista cyan sau violet. */
+  --aia-cyan: #ffffff;
+  --aia-cyan-soft: rgba(255, 255, 255, 0.14);
+  --aia-violet: #8a0010;
+  --aia-metal: #bdbdbd;
 
-  /* Sticla */
-  --lg-tint: rgba(255, 255, 255, 0.07);
-  --lg-tint-2: rgba(255, 255, 255, 0.02);
-  --lg-rim: rgba(255, 255, 255, 0.55);
-  --lg-rim-soft: rgba(255, 255, 255, 0.08);
-  --lg-inner: rgba(255, 255, 255, 0.28);
-  --lg-blur: 22px;
-  --lg-sat: 185%;
-  --lg-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6), 0 8px 24px -8px rgba(0, 0, 0, 0.45);
-  --lg-glint: rgba(255, 255, 255, 0.22);
+  /* Sticla fumurie */
+  --lg-tint: rgba(255, 255, 255, 0.045);
+  --lg-tint-2: rgba(255, 255, 255, 0.008);
+  --lg-rim: rgba(255, 255, 255, 0.5);
+  --lg-rim-red: rgba(255, 0, 25, 0.85);
+  --lg-rim-soft: rgba(255, 255, 255, 0.06);
+  --lg-inner: rgba(255, 255, 255, 0.18);
+  --lg-blur: 18px;
+  --lg-sat: 140%;
+  --lg-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.9), 0 8px 24px -8px rgba(0, 0, 0, 0.7);
+  --lg-glint: rgba(255, 255, 255, 0.16);
 
-  --aia-radius: 30px;
-  --aia-radius-sm: 20px;
-  --aia-radius-pill: 999px;
+  --aia-radius: 8px;
+  --aia-radius-sm: 4px;
+  --aia-radius-pill: 6px;
+  --aia-cut: 16px;
   --aia-shadow: var(--lg-shadow);
-  --aia-shadow-sm: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --aia-shadow-sm: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
 
-  --aia-grain: 0.04;
+  --aia-grain: 0.07;
   --aia-header-h: 76px;
   --aia-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --aia-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --aia-snap: cubic-bezier(0.85, 0, 0.15, 1);
 }
 
 html.light {
-  --aia-bg: #eceef5;
-  --aia-bg-soft: rgba(255, 255, 255, 0.2);
-  --aia-bg-elev: rgba(255, 255, 255, 0.45);
-  --aia-bg-elev-2: rgba(255, 255, 255, 0.65);
-  --aia-border: rgba(20, 20, 40, 0.1);
-  --aia-border-strong: rgba(20, 20, 40, 0.22);
-  --aia-text: #0a0a14;
-  --aia-text-muted: #545667;
-  --aia-cyan: #0088a3;
-  --aia-blood: #e0002a;
+  --aia-bg: #f2f2f2;
+  --aia-bg-soft: rgba(0, 0, 0, 0.02);
+  --aia-bg-elev: rgba(255, 255, 255, 0.5);
+  --aia-bg-elev-2: rgba(255, 255, 255, 0.75);
+  --aia-border: rgba(0, 0, 0, 0.12);
+  --aia-border-strong: rgba(0, 0, 0, 0.4);
+  --aia-text: #000000;
+  --aia-text-muted: #4a4a4a;
+  --aia-cyan: #000000;
+  --aia-cyan-soft: rgba(0, 0, 0, 0.1);
+  --aia-blood: #e60017;
 
-  --lg-tint: rgba(255, 255, 255, 0.5);
-  --lg-tint-2: rgba(255, 255, 255, 0.18);
-  --lg-rim: rgba(255, 255, 255, 0.95);
-  --lg-rim-soft: rgba(255, 255, 255, 0.35);
+  --lg-tint: rgba(255, 255, 255, 0.55);
+  --lg-tint-2: rgba(255, 255, 255, 0.2);
+  --lg-rim: rgba(0, 0, 0, 0.5);
+  --lg-rim-soft: rgba(255, 255, 255, 0.4);
   --lg-inner: rgba(255, 255, 255, 0.9);
-  --lg-shadow: 0 30px 70px -24px rgba(30, 30, 70, 0.28), 0 6px 18px -8px rgba(30, 30, 70, 0.18);
+  --lg-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.3), 0 6px 18px -8px rgba(0, 0, 0, 0.2);
   --lg-glint: rgba(255, 255, 255, 0.7);
-  --aia-grain: 0.025;
+  --aia-grain: 0.04;
 }
 
 * {
@@ -131,9 +134,11 @@ aia-root {
 }
 
 h1, h2, h3, .font-display {
-  font-family: 'Orbitron', system-ui, sans-serif;
-  font-weight: 800;
-  letter-spacing: 0.06em;
+  font-family: 'Anton', 'Impact', system-ui, sans-serif;
+  /* Anton are o singura grosime; orice alta valoare ar produce bold fals. */
+  font-weight: 400 !important;
+  letter-spacing: 0.01em;
+  line-height: 0.92;
   text-transform: uppercase;
 }
 
@@ -145,8 +150,8 @@ h1, h2, h3, .font-display {
 ::-webkit-scrollbar { width: 9px; height: 9px; }
 ::-webkit-scrollbar-track { background: var(--aia-bg); }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--aia-blood), var(--aia-violet));
-  border-radius: 999px;
+  background: var(--aia-blood);
+  border-radius: 0;
 }
 
 /* ---------- A11y ---------- */
@@ -237,10 +242,10 @@ h1, h2, h3, .font-display {
     background: linear-gradient(
       var(--lg-angle),
       var(--lg-rim) 0%,
-      rgba(255, 255, 255, 0.06) 28%,
-      rgba(255, 255, 255, 0.02) 52%,
-      rgba(255, 255, 255, 0.12) 74%,
-      var(--lg-rim) 100%
+      rgba(255, 255, 255, 0.05) 26%,
+      rgba(255, 255, 255, 0.015) 55%,
+      rgba(255, 0, 25, 0.25) 78%,
+      var(--lg-rim-red) 100%
     );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -259,7 +264,7 @@ h1, h2, h3, .font-display {
     transition: opacity 0.45s var(--aia-ease);
     background:
       radial-gradient(320px circle at var(--sx, 50%) var(--sy, 0%), var(--lg-glint), transparent 60%),
-      radial-gradient(600px circle at var(--sx, 50%) var(--sy, 0%), rgba(94, 242, 255, 0.08), transparent 70%);
+      radial-gradient(600px circle at var(--sx, 50%) var(--sy, 0%), rgba(255, 255, 255, 0.08), transparent 70%);
     mix-blend-mode: soft-light;
   }
 
@@ -273,10 +278,23 @@ h1, h2, h3, .font-display {
       inset 0 1px 0 0 var(--lg-inner),
       inset 0 -1px 0 0 var(--lg-rim-soft),
       inset 0 0 40px 0 rgba(255, 255, 255, 0.06),
-      0 40px 90px -24px rgba(255, 31, 61, 0.28),
+      0 40px 90px -24px rgba(255, 0, 25, 0.45),
       var(--lg-shadow);
   }
-  .aia-card:hover::before { animation: aia-rim-spin 3.5s linear infinite; }
+  .aia-card:hover::before { animation: aia-rim-spin 1.6s linear infinite; }
+  /* Coltul taiat rosu: semnatura agresiva a fiecarui card. */
+  .aia-card { --corner: 18px; }
+  .aia-card > .aia-corner {
+    position: absolute;
+    z-index: 4;
+    right: 0;
+    bottom: 0;
+    width: var(--corner);
+    height: var(--corner);
+    background: var(--aia-blood);
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    pointer-events: none;
+  }
 
   .aia-card-flat {
     border-radius: var(--aia-radius-sm);
@@ -291,76 +309,64 @@ h1, h2, h3, .font-display {
     backdrop-filter: url(#aia-liquid) blur(6px) saturate(var(--lg-sat)) brightness(1.08);
   }
 
-  /* ---------------- Butoane: pastile lichide ---------------- */
+  /* ---------------- Butoane: lame cu colturi taiate ----------------
+     clip-path taie doua colturi opuse; umplerea vine ca o lama diagonala
+     care trece prin buton, nu ca o picatura. */
   .aia-btn {
-    @apply relative inline-flex items-center justify-center gap-2.5 overflow-hidden px-7 py-3.5 font-heading text-[12px] font-bold uppercase tracking-[0.14em];
+    @apply relative inline-flex items-center justify-center gap-2.5 overflow-hidden px-8 py-4 font-heading text-[13px] font-semibold uppercase tracking-[0.2em];
     isolation: isolate;
-    border: 1px solid transparent;
-    border-radius: var(--aia-radius-pill);
+    border: 0;
+    border-radius: 0;
+    clip-path: polygon(var(--aia-cut) 0, 100% 0, 100% calc(100% - var(--aia-cut)), calc(100% - var(--aia-cut)) 100%, 0 100%, 0 var(--aia-cut));
     /* `scale` separat de `transform`: transform-ul e al directivei magnet (GSAP). */
-    transition: scale 0.5s var(--aia-spring), color 0.35s, box-shadow 0.5s var(--aia-ease);
+    transition: scale 0.25s var(--aia-snap), color 0.25s, background-color 0.25s, letter-spacing 0.4s var(--aia-ease);
   }
   .aia-btn > * { position: relative; z-index: 2; }
   .aia-btn::before {
-    /* Picatura care se umfla din punctul cursorului. */
     content: '';
     position: absolute;
     z-index: 1;
-    left: var(--bx, 50%);
-    top: var(--by, 50%);
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    transition: transform 0.7s var(--aia-ease);
+    inset: -2px -30%;
+    transform: translateX(-110%) skewX(-28deg);
+    transition: transform 0.45s var(--aia-snap);
   }
-  .aia-btn:hover::before { transform: translate(-50%, -50%) scale(50); }
+  .aia-btn:hover::before { transform: translateX(0) skewX(-28deg); }
+  .aia-btn:hover { letter-spacing: 0.26em; }
   .aia-btn::after {
-    /* Reflexie de sticla pe jumatatea de sus a pastilei. */
+    /* Muchie luminoasa sus: urma sticlei. */
     content: '';
     position: absolute;
-    z-index: 1;
-    inset: 1px 1px 52% 1px;
-    border-radius: 999px 999px 40% 40% / 999px 999px 100% 100%;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0));
+    z-index: 3;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
     pointer-events: none;
-    opacity: 0.7;
   }
-  .aia-btn:active { scale: 0.95; }
+  .aia-btn:active { scale: 0.94; }
 
   .aia-btn-primary {
     color: #fff;
-    background:
-      radial-gradient(120% 140% at 30% 0%, #ff6a7a 0%, var(--aia-blood) 45%, var(--aia-blood-deep) 100%);
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.6),
-      inset 0 -3px 8px rgba(80, 0, 20, 0.5),
-      0 12px 34px -8px rgba(255, 31, 61, 0.65);
+    background: var(--aia-blood);
+    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.35);
   }
-  .aia-btn-primary::before { background: radial-gradient(circle, #ff8090, var(--aia-blood-bright)); }
-  .aia-btn-primary:hover {
-    box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.7),
-      inset 0 -3px 8px rgba(80, 0, 20, 0.5),
-      0 18px 50px -6px rgba(255, 31, 61, 0.85);
-  }
+  .aia-btn-primary::before { background: #fff; }
+  .aia-btn-primary:hover { color: #000; }
 
   .aia-btn-ghost {
     color: var(--aia-text);
-    background: linear-gradient(160deg, var(--lg-tint), var(--lg-tint-2));
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    backdrop-filter: blur(16px) saturate(180%);
-    border-color: var(--aia-border);
-    box-shadow: inset 0 1px 0 var(--lg-inner), inset 0 -1px 0 var(--lg-rim-soft), var(--aia-shadow-sm);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: inset 0 0 0 1px var(--aia-border-strong);
   }
-  .aia-btn-ghost::before { background: radial-gradient(circle, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08)); }
-  .aia-btn-ghost:hover { border-color: var(--aia-border-strong); }
+  .aia-btn-ghost::before { background: var(--aia-blood); }
+  .aia-btn-ghost:hover { color: #fff; }
 
   .aia-btn:disabled {
     opacity: 0.35;
     cursor: not-allowed;
   }
-  .aia-btn:disabled::before { transform: translate(-50%, -50%) scale(0); }
+  .aia-btn:disabled::before { transform: translateX(-110%) skewX(-28deg); }
 
   /* Halou care urmareste cursorul (SpotlightDirective seteaza --sx/--sy). */
   .aia-spotlight { --s-opacity: 0; }
@@ -377,8 +383,8 @@ h1, h2, h3, .font-display {
     transition: border-color 0.3s, box-shadow 0.4s var(--aia-ease);
   }
   .aia-input:focus {
-    border-color: var(--aia-cyan);
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.18), 0 0 0 4px var(--aia-cyan-soft), 0 0 30px -6px var(--aia-cyan);
+    border-color: var(--aia-blood);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.18), 0 0 0 3px var(--aia-blood-soft), 0 0 30px -6px var(--aia-blood);
   }
   .aia-input::placeholder { color: var(--aia-text-muted); }
 
@@ -387,51 +393,47 @@ h1, h2, h3, .font-display {
     color: var(--aia-text-muted);
   }
 
-  /* Eticheta de sectiune: pastila de sticla cu punct pulsatoriu. */
+  /* Eticheta de sectiune: bara rosie taiata + text alb spatiat. */
   .aia-eyebrow {
-    @apply inline-flex items-center gap-2.5 font-heading text-[11px] font-bold uppercase tracking-[0.3em];
-    color: var(--aia-cyan);
+    @apply inline-flex items-center gap-3 font-heading text-[12px] font-semibold uppercase tracking-[0.42em];
+    color: var(--aia-text);
   }
   .aia-eyebrow::before {
     content: '';
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
+    width: 34px;
+    height: 10px;
     background: var(--aia-blood);
-    animation: aia-pulse-dot 1.8s ease-out infinite;
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    animation: aia-eyebrow-blink 2.4s steps(1) infinite;
   }
 
   .aia-section-title {
-    @apply text-[11vw] leading-[0.95] sm:text-[6.4vw] lg:text-[5rem];
+    @apply text-[17vw] leading-[0.86] sm:text-[10vw] lg:text-[8.5rem];
   }
 
   /* Text cu gradient metalic care curge. */
+  /* Text cu o lama rosie care trece prin el. */
   .aia-text-liquid {
-    background: linear-gradient(
-      100deg,
-      var(--aia-text) 0%,
-      var(--aia-text) 35%,
-      var(--aia-blood-bright) 45%,
-      var(--aia-violet) 52%,
-      var(--aia-cyan) 58%,
-      var(--aia-text) 68%,
-      var(--aia-text) 100%
-    );
-    background-size: 220% 100%;
+    background: linear-gradient(100deg, var(--aia-text) 0%, var(--aia-text) 40%, var(--aia-blood) 46%, var(--aia-blood) 54%, var(--aia-text) 60%, var(--aia-text) 100%);
+    background-size: 250% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: aia-shimmer 7s linear infinite;
+    animation: aia-shimmer 4s cubic-bezier(0.85, 0, 0.15, 1) infinite;
   }
 
   .aia-text-outline {
     color: transparent;
-    -webkit-text-stroke: 1px var(--aia-border-strong);
+    -webkit-text-stroke: 1.5px var(--aia-border-strong);
+  }
+  .aia-text-outline-red {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--aia-blood);
   }
 
   .aia-chip {
     @apply relative inline-flex items-center gap-2 px-4 py-2 font-heading text-[10px] font-bold uppercase tracking-[0.16em];
-    border-radius: var(--aia-radius-pill);
+    border-radius: 2px;
     border: 1px solid var(--aia-border);
     background: linear-gradient(160deg, var(--lg-tint), var(--lg-tint-2));
     -webkit-backdrop-filter: blur(14px) saturate(170%);
@@ -444,9 +446,148 @@ h1, h2, h3, .font-display {
 
   .aia-index {
     font-variant-numeric: tabular-nums;
-    font-family: 'Orbitron', monospace;
+    font-family: 'Oswald', sans-serif;
   }
 }
+
+
+/* ============================================================
+   MOTION AGRESIV — utilitare globale
+   ============================================================ */
+@keyframes aia-eyebrow-blink {
+  0%, 86%, 100% { opacity: 1; }
+  88%, 92% { opacity: 0.15; }
+  90%, 94% { opacity: 1; }
+}
+
+/* Glitch RGB: doua copii ale textului (din data-text), decalate rosu/alb
+   si taiate in felii care sar. Ruleaza in rafale scurte, nu continuu. */
+.aia-glitch {
+  position: relative;
+  display: inline-block;
+}
+.aia-glitch::before,
+.aia-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.aia-glitch::before {
+  color: var(--aia-blood);
+  -webkit-text-fill-color: var(--aia-blood);
+  animation: aia-glitch-a 3.2s steps(1) infinite;
+}
+.aia-glitch::after {
+  color: var(--aia-text);
+  -webkit-text-fill-color: var(--aia-text);
+  animation: aia-glitch-b 3.2s steps(1) infinite;
+}
+.aia-glitch:hover::before,
+.aia-glitch:hover::after { animation-duration: 0.45s; }
+@keyframes aia-glitch-a {
+  0%, 82%, 100% { opacity: 0; transform: none; clip-path: inset(0 0 0 0); }
+  84% { opacity: 0.9; transform: translate(-6px, 2px); clip-path: inset(12% 0 58% 0); }
+  86% { opacity: 0.9; transform: translate(5px, -1px); clip-path: inset(62% 0 8% 0); }
+  88% { opacity: 0.9; transform: translate(-3px, 0); clip-path: inset(30% 0 40% 0); }
+  90% { opacity: 0; }
+  94% { opacity: 0.9; transform: translate(8px, 1px); clip-path: inset(78% 0 2% 0); }
+  96% { opacity: 0; }
+}
+@keyframes aia-glitch-b {
+  0%, 83%, 100% { opacity: 0; transform: none; clip-path: inset(0 0 0 0); }
+  85% { opacity: 0.8; transform: translate(4px, -2px); clip-path: inset(40% 0 35% 0); }
+  87% { opacity: 0.8; transform: translate(-7px, 1px); clip-path: inset(5% 0 80% 0); }
+  89% { opacity: 0; }
+  95% { opacity: 0.8; transform: translate(-4px, 0); clip-path: inset(55% 0 20% 0); }
+  97% { opacity: 0; }
+}
+
+/* Lumina de neon care palpaie (titluri, imaginea din hero). */
+.aia-flicker { animation: aia-flicker 5s linear infinite; }
+@keyframes aia-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.35; }
+}
+
+/* Imagini alb-negru contrastate, cu spalare rosie; culoarea revine la hover. */
+.aia-duo {
+  position: relative;
+  overflow: hidden;
+}
+.aia-duo img,
+.aia-duo video {
+  filter: grayscale(1) contrast(1.35) brightness(0.8);
+  transition: filter 0.6s var(--aia-ease), transform 1.2s var(--aia-ease);
+}
+.aia-duo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(200deg, rgba(255, 0, 25, 0.55), rgba(0, 0, 0, 0.1) 60%);
+  mix-blend-mode: multiply;
+  transition: opacity 0.6s;
+}
+.aia-duo:hover img,
+.aia-duo:hover video { filter: grayscale(0.2) contrast(1.15) brightness(0.95); }
+.aia-duo:hover::after { opacity: 0.4; }
+
+/* Banda de avertizare, rosu/negru in diagonala. */
+.aia-tape {
+  background: repeating-linear-gradient(-45deg, var(--aia-blood) 0 18px, #000 18px 36px);
+}
+
+/* Scanlines CRT peste tot ecranul (fix, fara repaint: doar opacitate). */
+.aia-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px);
+  mix-blend-mode: multiply;
+  opacity: 0.4;
+}
+html.light .aia-scanlines { opacity: 0.18; }
+
+/* Flash rosu de impact, declansat din JS (AnimationService.flash()). */
+.aia-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--fx, 50%) var(--fy, 50%), rgba(255, 0, 25, 0.55), rgba(255, 0, 25, 0.12) 45%, transparent 75%);
+  opacity: 0;
+}
+
+/* Granulatie animata: stratul se muta in trepte, doar prin transform. */
+.aia-grain-live {
+  position: fixed;
+  inset: -50%;
+  z-index: 2;
+  pointer-events: none;
+  opacity: var(--aia-grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: aia-grain 0.6s steps(6) infinite;
+}
+@keyframes aia-grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-6%, 4%); }
+  40% { transform: translate(5%, -7%); }
+  60% { transform: translate(-3%, 8%); }
+  80% { transform: translate(7%, 2%); }
+  100% { transform: translate(-4%, -5%); }
+}
+
+@keyframes aia-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 3px) rotate(-0.4deg); }
+  40% { transform: translate(5px, -4px) rotate(0.3deg); }
+  60% { transform: translate(-4px, 2px); }
+  80% { transform: translate(3px, -1px); }
+}
+.aia-shake { animation: aia-shake 0.35s linear; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -470,7 +611,7 @@ h1, h2, h3, .font-display {
   body::before { display: none !important; }
   aia-header, aia-footer, aia-velocity-marquee, aia-cookie-banner, aia-back-to-top,
   aia-scroll-progress, aia-search-modal, aia-toast-host, aia-intro, aia-click-spark,
-  aia-mesh-background, aia-ambient, aia-liquid-cursor, aia-section-dots, video, .no-print, .aia-btn {
+  aia-mesh-background, aia-ambient, .aia-scanlines, .aia-grain-live, .aia-flash, aia-liquid-cursor, aia-section-dots, video, .no-print, .aia-btn {
     display: none !important;
   }
   .aia-card { border: 1px solid #ccc !important; box-shadow: none !important; break-inside: avoid; backdrop-filter: none !important; }

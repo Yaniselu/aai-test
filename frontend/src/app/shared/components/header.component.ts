@@ -35,7 +35,7 @@ import { LogoComponent } from './logo.component';
             (pointerleave)="ind.set(null)"
           >
             <span
-              class="ind aia-glass"
+              class="ind"
               aria-hidden="true"
               [style.opacity]="ind() ? 1 : 0"
               [style.left.px]="ind()?.left ?? 0"
@@ -199,14 +199,17 @@ import { LogoComponent } from './logo.component';
       .bar.hidden-up { transform: translateY(-140%); }
       .ind {
         position: absolute;
-        top: 50%;
-        height: 38px;
-        margin-top: -19px;
-        border-radius: 999px;
+        bottom: 4px;
+        height: 3px;
+        background: var(--aia-blood);
+        box-shadow: 0 0 14px var(--aia-blood);
         pointer-events: none;
-        transition: left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
-        --lg-tint: rgba(255, 255, 255, 0.14);
+        clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+        transition: left 0.3s var(--aia-snap), width 0.3s var(--aia-snap), opacity 0.2s;
       }
+      .nav a { font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; }
+      .nav a:hover { color: var(--aia-text) !important; }
+      .bar::after { display: none; }
       .mobile-menu {
         background: color-mix(in srgb, var(--aia-bg) 55%, transparent);
         -webkit-backdrop-filter: blur(30px) saturate(180%);
