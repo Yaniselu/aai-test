@@ -18,7 +18,7 @@ services:
   - type: web
     name: academia-ion-andrei-api
     runtime: docker
-    repo: https://github.com/LeutzuMarr/AcademiaIonAndrei
+    repo: https://github.com/Yaniselu/aai-test
     branch: main
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend

@@ -41,9 +41,13 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
             int port = uri.getPort() > 0 ? uri.getPort() : 5432;
             String database = uri.getPath() == null ? "" : uri.getPath().replaceFirst("^/", "");
 
+            // Parametrii din URL (ex. ?sslmode=require la Neon / Supabase) trebuie
+            // pastrati: fara ei, bazele care cer SSL refuza conexiunea.
+            String query = uri.getRawQuery() == null || uri.getRawQuery().isBlank() ? "" : "?" + uri.getRawQuery();
+
             Map<String, Object> resolved = new HashMap<>();
             resolved.put("spring.datasource.url",
-                    "jdbc:postgresql://" + uri.getHost() + ":" + port + "/" + database);
+                    "jdbc:postgresql://" + uri.getHost() + ":" + port + "/" + database + query);
             resolved.put("spring.datasource.driver-class-name", "org.postgresql.Driver");
 
             // Credentialele vin de obicei in URL; daca lipsesc, ramane ce e configurat.
