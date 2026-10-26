@@ -40,8 +40,8 @@ import { TranslatePipe } from '@ngx-translate/core';
           </div>
 
           <!-- Navigare -->
-          <nav aria-label="Legaturi rapide">
-            <h2 class="aia-eyebrow">{{ 'footer.academy' | translate }}</h2>
+          <nav [attr.aria-label]="'a11y.quickLinks' | translate">
+            <h2 class="font-display text-2xl">{{ 'footer.academy' | translate }}</h2>
             <ul class="mt-6 space-y-3 text-sm">
               @for (link of academyLinks; track link.label) {
                 <li>
@@ -50,7 +50,7 @@ import { TranslatePipe } from '@ngx-translate/core';
                     [fragment]="link.fragment"
                     class="transition-colors hover:text-[var(--aia-cyan)]"
                   >
-                    {{ link.label }}
+                    {{ link.label | translate }}
                   </a>
                 </li>
               }
@@ -58,8 +58,8 @@ import { TranslatePipe } from '@ngx-translate/core';
           </nav>
 
           <!-- Legal -->
-          <nav aria-label="Informatii legale">
-            <h2 class="aia-eyebrow">{{ 'footer.legal' | translate }}</h2>
+          <nav [attr.aria-label]="'a11y.legalLinks' | translate">
+            <h2 class="font-display text-2xl">{{ 'footer.legal' | translate }}</h2>
             <ul class="mt-6 space-y-3 text-sm">
               <li><a routerLink="/legal/confidentialitate" class="transition-colors hover:text-[var(--aia-cyan)]">{{ 'footer.privacy' | translate }}</a></li>
               <li><a routerLink="/legal/termeni" class="transition-colors hover:text-[var(--aia-cyan)]">{{ 'footer.terms' | translate }}</a></li>
@@ -84,7 +84,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
           <!-- Contact -->
           <div>
-            <h2 class="aia-eyebrow">{{ 'footer.contact' | translate }}</h2>
+            <h2 class="font-display text-2xl">{{ 'footer.contact' | translate }}</h2>
             <ul class="mt-6 space-y-4 text-sm">
               <li class="flex gap-3">
                 <span class="mt-0.5 shrink-0" [style.color]="'var(--aia-blood)'"><aia-icon name="pin" [size]="15" /></span>
@@ -106,7 +106,7 @@ import { TranslatePipe } from '@ngx-translate/core';
               </li>
               <li class="flex gap-3">
                 <span class="mt-0.5 shrink-0" [style.color]="'var(--aia-blood)'"><aia-icon name="clock" [size]="15" /></span>
-                <span [style.color]="'var(--aia-text-muted)'">{{ academy.schedule }}</span>
+                <span [style.color]="'var(--aia-text-muted)'">{{ 'contact.hours' | translate }}</span>
               </li>
             </ul>
           </div>
@@ -139,13 +139,13 @@ export class FooterComponent {
   ];
 
   readonly academyLinks = [
-    { label: 'Poveste', route: '/', fragment: 'despre' },
-    { label: 'Grupe', route: '/', fragment: 'grupe' },
-    { label: 'Program', route: '/', fragment: 'program' },
-    { label: 'Antrenori', route: '/', fragment: 'antrenori' },
-    { label: 'Galerie', route: '/', fragment: 'galerie' },
-    { label: 'Inscriere', route: '/auth/register', fragment: undefined },
-    { label: 'Autentificare', route: '/auth/login', fragment: undefined }
+    { label: 'nav.story', route: '/', fragment: 'despre' },
+    { label: 'nav.groups', route: '/', fragment: 'grupe' },
+    { label: 'nav.schedule', route: '/', fragment: 'program' },
+    { label: 'nav.coaches', route: '/', fragment: 'antrenori' },
+    { label: 'nav.gallery', route: '/', fragment: 'galerie' },
+    { label: 'nav.enroll', route: '/auth/register', fragment: undefined },
+    { label: 'auth.login', route: '/auth/login', fragment: undefined }
   ];
 
   resetCookies(): void {

@@ -1,13 +1,17 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
+  afterNextRender,
   computed,
   inject,
   input,
   signal
 } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AnimationService } from '../../core/services/animation.service';
+import { I18nService } from '../../core/services/i18n.service';
 import { IconComponent } from '../icons/icon.component';
 import { VideoTileComponent } from './video-tile.component';
 
@@ -36,9 +40,10 @@ interface Burst {
 @Component({
   selector: 'aia-phone',
   standalone: true,
-  imports: [IconComponent, VideoTileComponent],
+  imports: [IconComponent, VideoTileComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
+    '[class.off]': '!onScreen()',
     '(pointermove)': 'onMove($event)',
     '(pointerleave)': 'onLeave()'
   },
@@ -72,7 +77,7 @@ interface Burst {
         <!-- Dynamic Island -->
         <div class="island" aria-hidden="true">
           <span class="island__dot"></span>
-          <span class="island__text">{{ islandText() }}</span>
+          <span class="island__text">{{ islandText() || ('phone.live' | translate) }}</span>
           <span class="island__wave"><i></i><i></i><i></i><i></i></span>
         </div>
 
@@ -86,7 +91,7 @@ interface Burst {
             <div class="story__who">
               <span class="avatar">AI</span>
               <span>{{ handle() }}</span>
-              <span class="muted">· {{ ago() }}</span>
+              <span class="muted">· {{ agoLabel() }}</span>
             </div>
           </div>
         }
@@ -115,12 +120,12 @@ interface Burst {
               <div class="reel__who">
                 <span class="avatar">AI</span>
                 <b>{{ handle() }}</b>
-                <span class="follow">Follow</span>
+                <span class="follow">{{ 'phone.follow' | translate }}</span>
               </div>
               <p class="reel__caption">{{ caption() }}</p>
               <div class="reel__music">
                 <aia-icon name="music" [size]="0" class="ic-s" />
-                <span class="reel__track"><span>Academia Ion Andrei · sunet original · Academia Ion Andrei · sunet original ·</span></span>
+                <span class="reel__track"><span>Academia Ion Andrei · {{ 'phone.sound' | translate }} · Academia Ion Andrei · {{ 'phone.sound' | translate }} ·</span></span>
               </div>
             </div>
           </div>
@@ -139,10 +144,19 @@ interface Burst {
   `,
   styles: [
     `
+      /* Animatiile din telefon (unde, discul, banda cu muzica, barele de story)
+         stau pe pauza cand telefonul nu e pe ecran: pe pagina sunt pana la 16
+         telefoane, iar compozitorul le-ar anima pe toate, la fiecare cadru. */
+      :host(.off) *,
+      :host(.off) *::before,
+      :host(.off) *::after {
+        animation-play-state: paused !important;
+      }
       :host {
         display: block;
         position: relative;
         width: 280px;
+        contain: layout style;
         container-type: inline-size;
         aspect-ratio: 9 / 19.3;
         --gx: 30%;
@@ -296,6 +310,7 @@ interface Burst {
         border-radius: 0.1em;
         background: #ffffff;
         animation: phone-wave 0.9s ease-in-out infinite;
+        animation-play-state: paused;
       }
       .island__wave i:nth-child(2) { animation-delay: 0.15s; }
       .island__wave i:nth-child(3) { animation-delay: 0.3s; }
@@ -372,6 +387,7 @@ interface Burst {
         border: 0.2em solid #fff;
         background: conic-gradient(#ff1f3d, #7a0010, #ffffff, #ff1f3d);
         animation: aia-spin 5s linear infinite;
+        animation-play-state: paused;
       }
 
       .reel__meta { position: absolute; left: 1.4em; right: 5.4em; bottom: 2.8em; }
@@ -395,7 +411,14 @@ interface Burst {
       .reel__music { display: flex; align-items: center; gap: 0.5em; margin-top: 0.7em; font-size: 0.9em; }
       .ic-s { width: 1.1em; height: 1.1em; }
       .reel__track { overflow: hidden; white-space: nowrap; flex: 1; mask: linear-gradient(90deg, #000 80%, transparent); }
-      .reel__track span { display: inline-block; animation: phone-track 9s linear infinite; }
+      .reel__track span { display: inline-block; animation: phone-track 9s linear infinite; animation-play-state: paused; }
+      /* Decorurile care se misca permanent ruleaza doar pe telefonul activ sau la hover. */
+      :host(:hover) .reel__track span,
+      .phone--active .reel__track span,
+      :host(:hover) .disc,
+      .phone--active .disc,
+      :host(:hover) .island__wave i,
+      .phone--active .island__wave i { animation-play-state: running; }
 
       .burst {
         position: absolute;
@@ -418,9 +441,8 @@ interface Burst {
         pointer-events: none;
         border-radius: inherit;
         background:
-          radial-gradient(circle at var(--gx) var(--gy), rgba(255, 255, 255, 0.22), transparent 38%),
-          linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.1) 42%, transparent 50%);
-        mix-blend-mode: screen;
+          radial-gradient(circle at var(--gx) var(--gy), rgba(255, 255, 255, 0.12), transparent 38%),
+          linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.06) 42%, transparent 50%);
       }
 
       .home-bar {
@@ -470,18 +492,33 @@ export class PhoneMockupComponent {
   readonly poster = input('');
   readonly ui = input<PhoneUi>('reel');
   readonly handle = input('academiaionandrei');
-  readonly caption = input('Antrenament de seara · disciplina inainte de toate');
+  readonly caption = input('');
   readonly baseLikes = input(1284);
   readonly comments = input(86);
   readonly ago = input('2h');
-  readonly islandText = input('LIVE · Sala Craiova');
+  /** Gol = textul tradus implicit (phone.live). */
+  readonly islandText = input('');
   readonly time = input('9:41');
   /** Forteaza starea de hover (Dynamic Island deschis, glow) din exterior. */
   readonly active = input(false);
 
   readonly liked = signal(false);
+  readonly onScreen = signal(false);
+  private io?: IntersectionObserver;
+
+  constructor() {
+    afterNextRender(() => {
+      this.io = new IntersectionObserver(([e]) => this.onScreen.set(e.isIntersecting), { rootMargin: '100px' });
+      this.io.observe(this.host.nativeElement);
+    });
+    inject(DestroyRef).onDestroy(() => this.io?.disconnect());
+  }
   readonly extraLikes = signal(0);
   readonly bursts = signal<Burst[]>([]);
+
+  private readonly i18n = inject(I18nService);
+  /** "1d" in engleza, "1z" (zile) in romana. */
+  readonly agoLabel = computed(() => (this.i18n.current() === 'ro' ? this.ago().replace(/d$/, 'z') : this.ago()));
 
   readonly likeLabel = computed(() => {
     const n = this.baseLikes() + this.extraLikes();

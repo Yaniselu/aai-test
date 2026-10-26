@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ToastService } from '../../core/services/toast.service';
 import { IconComponent } from '../icons/icon.component';
@@ -6,20 +7,19 @@ import { IconComponent } from '../icons/icon.component';
 @Component({
   selector: 'aia-toast-host',
   standalone: true,
-  imports: [IconComponent],
+  imports: [TranslatePipe, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
       class="pointer-events-none fixed bottom-5 right-5 z-[150] flex w-[min(380px,calc(100vw-2.5rem))] flex-col gap-3"
       role="region"
       aria-live="polite"
-      aria-label="Notificari"
+      [attr.aria-label]="'a11y.notifications' | translate"
     >
       @for (toast of toasts.toasts(); track toast.id) {
         <div
           class="pointer-events-auto flex items-start gap-3 rounded-[var(--aia-radius-sm)] border border-l-4 p-4"
-          [style.backgroundColor]="'color-mix(in srgb, var(--aia-bg-soft) 94%, transparent)'"
-          [style.backdropFilter]="'blur(14px)'"
+          [style.backgroundColor]="'var(--card-base)'"
           [style.borderColor]="'var(--aia-border)'"
           [style.borderLeftColor]="accent(toast.kind)"
           [style.boxShadow]="'var(--aia-shadow)'"
@@ -40,7 +40,7 @@ import { IconComponent } from '../icons/icon.component';
             type="button"
             class="shrink-0 opacity-50 transition-opacity hover:opacity-100"
             (click)="toasts.dismiss(toast.id)"
-            aria-label="Inchide notificarea"
+            [attr.aria-label]="'a11y.closeNotification' | translate"
           >
             <aia-icon name="close" [size]="16" />
           </button>

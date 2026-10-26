@@ -39,7 +39,7 @@ import { IconComponent } from '../icons/icon.component';
             @for (s of day.slots; track s.time + s.key) {
               <li class="aia-card-flat flex items-center gap-4 px-4 py-3">
                 <span class="aia-index shrink-0 text-sm" [style.color]="'var(--aia-cyan)'">{{ s.time }}</span>
-                <span class="text-sm">{{ s.label }}</span>
+                <span class="text-sm">{{ 'schedule.classes.' + s.key | translate }}</span>
               </li>
             }
           </ul>
@@ -72,7 +72,7 @@ import { IconComponent } from '../icons/icon.component';
                 [style.borderColor]="'var(--aia-border)'"
                 [style.backgroundColor]="'var(--aia-bg-elev)'"
               >
-                <span class="block text-[12px] leading-snug">{{ s.label }}</span>
+                <span class="block text-[12px] leading-snug">{{ 'schedule.classes.' + s.key | translate }}</span>
                 <span class="aia-index mt-1 block text-[11px]" [style.color]="'var(--aia-cyan)'">{{ s.time }}</span>
               </li>
             } @empty {

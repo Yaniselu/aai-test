@@ -336,39 +336,65 @@ export class VelocityMarqueeComponent implements AfterViewInit, OnDestroy {
   private offset = 0;
   private velocity = 0;
   private lastScroll = 0;
+  private lastTime = 0;
+  /** Latimea unei treceri, masurata o data (si la resize), nu la fiecare cadru. */
+  private width = 0;
+  private visible = false;
+  private resize?: ResizeObserver;
+  private io?: IntersectionObserver;
 
   ngAfterViewInit(): void {
+    if (this.anim.reducedMotion) return;
     const el = this.track().nativeElement;
+    el.style.willChange = 'transform';
 
-    if (this.anim.reducedMotion) {
-      return;
-    }
+    const measure = () => (this.width = el.scrollWidth / this.passes.length);
+    measure();
+    this.resize = new ResizeObserver(measure);
+    this.resize.observe(el);
+
+    // Banda se misca doar cand e pe ecran.
+    this.io = new IntersectionObserver(([entry]) => {
+      this.visible = entry.isIntersecting;
+      if (this.visible && this.raf === undefined) {
+        this.lastTime = performance.now();
+        this.raf = requestAnimationFrame(this.loop);
+      }
+    });
+    this.io.observe(el);
 
     this.lastScroll = window.scrollY;
     window.addEventListener('scroll', this.onScroll, { passive: true });
-
-    const loop = () => {
-      const width = el.scrollWidth / this.passes.length;
-      // Direcția se inversează când derulezi în sus — banda "simte" scroll-ul.
-      const direction = (this.velocity < -0.5 ? -1 : 1) * (this.reverse() ? -1 : 1);
-      const speed = this.baseSpeed() + Math.min(Math.abs(this.velocity) * 0.35, 14);
-
-      this.offset += speed * direction;
-      if (this.offset > width) this.offset -= width;
-      if (this.offset < 0) this.offset += width;
-
-      el.style.transform = `translate3d(${-this.offset}px, 0, 0)`;
-      this.velocity *= 0.92;
-
-      this.raf = requestAnimationFrame(loop);
-    };
-    loop();
   }
 
   ngOnDestroy(): void {
     if (this.raf) cancelAnimationFrame(this.raf);
+    this.resize?.disconnect();
+    this.io?.disconnect();
     window.removeEventListener('scroll', this.onScroll);
   }
+
+  private readonly loop = (now: number) => {
+    if (!this.visible) {
+      this.raf = undefined;
+      return;
+    }
+    // Viteza raportata la timp, nu la cadre: identica la 60 si la 120 Hz.
+    const dt = Math.min((now - this.lastTime) / 16.67, 3);
+    this.lastTime = now;
+    // Directia se inverseaza cand derulezi in sus — banda "simte" scroll-ul.
+    const direction = (this.velocity < -0.5 ? -1 : 1) * (this.reverse() ? -1 : 1);
+    const speed = this.baseSpeed() + Math.min(Math.abs(this.velocity) * 0.35, 14);
+
+    this.offset += speed * direction * dt;
+    if (this.width > 0) {
+      if (this.offset > this.width) this.offset -= this.width;
+      if (this.offset < 0) this.offset += this.width;
+    }
+    this.track().nativeElement.style.transform = `translate3d(${(-this.offset).toFixed(2)}px, 0, 0)`;
+    this.velocity *= Math.pow(0.92, dt);
+    this.raf = requestAnimationFrame(this.loop);
+  };
 
   private readonly onScroll = () => {
     const current = window.scrollY;

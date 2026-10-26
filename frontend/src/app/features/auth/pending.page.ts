@@ -32,8 +32,7 @@ import { TranslatePipe } from '@ngx-translate/core';
           </span>
         </div>
 
-        <p class="aia-eyebrow mt-10">Etapa 2 din 2</p>
-        <h1 class="mt-4 font-display text-3xl leading-tight sm:text-4xl">{{ 'auth.pendingTitle' | translate }}</h1>
+        <h1 class="mt-10 font-display text-3xl leading-tight sm:text-4xl">{{ 'auth.pendingTitle' | translate }}</h1>
 
         <p class="mx-auto mt-6 max-w-md text-base leading-relaxed" [style.color]="'var(--aia-text-muted)'">
           {{ 'auth.pendingMessage' | translate }}

@@ -24,8 +24,7 @@ const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4'];
     <section>
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p class="aia-eyebrow">{{ 'stories.eyebrow' | translate }}</p>
-          <h2 class="mt-3 font-display text-3xl">{{ 'stories.title' | translate }}</h2>
+          <h2 class="font-display text-3xl">{{ 'stories.title' | translate }}</h2>
         </div>
 
         <label class="aia-btn aia-btn-primary cursor-pointer !px-5 !py-2.5">

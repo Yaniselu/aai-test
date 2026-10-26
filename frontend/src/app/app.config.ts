@@ -1,7 +1,7 @@
 import { provideHttpClient, withInterceptors, HttpClient } from '@angular/common/http';
 import {
   ApplicationConfig,
-  provideZoneChangeDetection,
+  provideZonelessChangeDetection,
   provideAppInitializer,
   inject,
   isDevMode
@@ -25,14 +25,18 @@ export function translateLoaderFactory(http: HttpClient): TranslateLoader {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    // Fara zone.js: altfel fiecare requestAnimationFrame (GSAP, Lenis, cursorul,
+    // caruselul...) declanseaza change detection pe toata aplicatia, la fiecare
+    // cadru. Toate componentele sunt OnPush + signals, deci nu depind de zone.
+    provideZonelessChangeDetection(),
     // Fara withViewTransitions(): API-ul de View Transitions intra in conflict
     // cu scroll-ul Lenis si cu montarea/demontarea intro-ului, iar tranzitiile
     // abortate ("Transition was aborted because of invalid state") blocau
     // complet navigarile de router - inclusiv redirectul de dupa autentificare.
     provideRouter(
       routes,
-      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })
+      // Ancorele si revenirea sus le trateaza SmoothScrollService, prin Lenis.
+      withInMemoryScrolling({ scrollPositionRestoration: 'disabled', anchorScrolling: 'disabled' })
     ),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideAnimationsAsync(),

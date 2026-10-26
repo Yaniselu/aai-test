@@ -1,24 +1,29 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { I18nService } from '../../core/services/i18n.service';
 
 /** Cadru comun pentru paginile legale, optimizat si pentru tiparire. */
 @Component({
   selector: 'aia-legal-shell',
   standalone: true,
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <article class="aia-container max-w-3xl py-16">
-      <p class="aia-eyebrow">Document legal</p>
-      <h1 class="mt-3 font-display text-5xl leading-none sm:text-6xl">{{ title() }}</h1>
+      <h1 class="font-display text-5xl leading-none sm:text-6xl">{{ title() }}</h1>
       <p class="mt-4 text-sm" style="color: var(--aia-text-muted)">
-        Ultima actualizare: {{ updated() }} &middot; Operator: Academia Ion Andrei S.R.L., CUI 12345678
+        {{ 'legal.updated' | translate }}: {{ updated() }} &middot; {{ 'legal.operator' | translate }}: Academia Ion Andrei S.R.L., CUI 12345678
       </p>
+      @if (i18n.current() === 'en') {
+        <p class="aia-card-flat mt-6 px-5 py-4 text-sm">{{ 'legal.onlyRo' | translate }}</p>
+      }
 
       <div class="legal-body mt-12">
         <ng-content />
       </div>
 
       <button type="button" class="aia-btn aia-btn-ghost no-print mt-14" (click)="print()">
-        Tipareste documentul
+        <span>{{ 'legal.print' | translate }}</span>
       </button>
     </article>
   `,
@@ -82,6 +87,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   ]
 })
 export class LegalShellComponent {
+  readonly i18n = inject(I18nService);
   readonly title = input('Document');
   readonly updated = input('1 ianuarie 2026');
 

@@ -38,8 +38,7 @@ import { MagnetDirective } from '../../../shared/motion/motion.directives';
       <aia-loader label="Se pregateste roata" />
     } @else if (status(); as st) {
       <section class="flex flex-col items-center">
-        <p class="aia-eyebrow">Bonus saptamanal</p>
-        <h2 class="mt-5 text-center font-display text-4xl leading-[1.1] sm:text-5xl">
+        <h2 class="text-center font-display text-4xl leading-[1.1] sm:text-5xl">
           Invarte-l<br />pe <span [style.color]="'var(--aia-blood)'">Birtu</span>
         </h2>
 
@@ -111,7 +110,7 @@ import { MagnetDirective } from '../../../shared/motion/motion.directives';
         <div class="mt-12 min-h-[130px] w-full max-w-lg text-center">
           @if (result(); as res) {
             <div style="animation: aia-prize-in .55s cubic-bezier(.16,1,.3,1)">
-              <p class="aia-eyebrow justify-center">
+              <p class="font-heading text-sm uppercase tracking-[0.3em]" [style.color]="'var(--aia-text-muted)'">
                 {{ res.grantsExtraSpin ? 'Ai noroc' : res.xpAwarded > 0 ? 'Ai castigat' : 'Rezultat' }}
               </p>
               <p class="mt-4 font-display text-4xl" [style.color]="res.xpAwarded > 0 || res.grantsExtraSpin ? 'var(--aia-blood)' : null">

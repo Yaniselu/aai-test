@@ -24,7 +24,6 @@ import { SectionDotsComponent } from '../../shared/motion/liquid.components';
 import { MeshBackgroundComponent } from '../../shared/motion/mesh-background.component';
 import {
   CountUpComponent,
-  ScrambleTextComponent,
   VelocityMarqueeComponent
 } from '../../shared/motion/motion.components';
 import {
@@ -61,7 +60,6 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     PhoneMockupComponent,
     SectionDotsComponent,
     CountUpComponent,
-    ScrambleTextComponent,
     VelocityMarqueeComponent,
     ImpactDirective,
     KineticTextComponent,
@@ -98,9 +96,10 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
 
       <aia-mesh-background class="opacity-50" />
+      <div class="hero-spot-wrap" aria-hidden="true"><span #spot class="hero-spot"></span></div>
 
       <!-- Cuvantul urias din spate, contur rosu care palpaie ca un stroboscop -->
-      <div class="hero-word font-display aia-text-outline-red" aria-hidden="true">FIGHT</div>
+      <div class="hero-word font-display aia-text-outline-red" aria-hidden="true">{{ 'hero.bigword' | translate }}</div>
 
       <!-- Taieturi rosii care trec prin cadru la intrare -->
       <span class="hero-slash s1" aria-hidden="true"></span>
@@ -122,13 +121,8 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
       <div class="aia-container relative z-10 grid h-full items-center gap-10 pb-16 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6 lg:py-0">
         <div #heroText class="hero-text">
-          <p class="hero-in aia-chip !gap-3 !border-[var(--aia-blood)] !py-2.5 !pl-3 !text-[var(--aia-text)]">
-            <span class="live-dot"></span>
-            <aia-scramble [text]="'hero.eyebrow' | translate" />
-          </p>
-
           <h1
-            class="hero-title mt-6 font-display text-[16vw] leading-[0.86] sm:text-[11vw] lg:text-[6.2rem] xl:text-[7rem]"
+            class="hero-title font-display text-[16vw] leading-[0.86] sm:text-[11vw] lg:text-[6.2rem] xl:text-[7rem] 2xl:text-[8.6rem]"
             [attr.aria-label]="'hero.title' | translate"
             [attr.data-text]="'hero.title' | translate"
           >
@@ -171,22 +165,22 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
         </div>
 
         <!-- Scena cu telefoane 3D -->
-        <div #stage class="stage relative mx-auto h-[520px] w-full max-w-[560px] sm:h-[600px] lg:h-[680px]" aria-hidden="true">
+        <div #stage class="stage relative mx-auto h-[520px] w-full max-w-[560px] sm:h-[600px] lg:h-[680px] 2xl:h-[820px] 2xl:max-w-[720px]" aria-hidden="true">
           <div #stageInner class="stage-inner absolute inset-0">
             <!-- .hp = scroll, .hp-in = intrare, .pose = pozitie 3D statica, aia-phone = plutire.
                  Fiecare strat are propriul transform, ca animatiile sa nu se suprascrie. -->
             <div class="hp hp-left"><div class="hp-in"><div class="pose">
-              <aia-phone class="hp-w" [image]="photos.competition" ui="story" caption="Ziua competiției" ago="3h" />
+              <aia-phone class="hp-w" [image]="photos.competition" ui="story" [caption]="'hero.phone1' | translate" ago="3h" />
             </div></div></div>
             <div class="hp hp-right"><div class="hp-in"><div class="pose">
-              <aia-phone class="hp-w" [video]="videos[1].src" [poster]="videos[1].poster" caption="Kata · pregătire pentru turneu" [baseLikes]="1560" />
+              <aia-phone class="hp-w" [video]="videos[1].src" [poster]="videos[1].poster" [caption]="'hero.phone2' | translate" [baseLikes]="1560" />
             </div></div></div>
             <div class="hp hp-center"><div class="hp-in"><div class="pose">
               <aia-phone
                 class="hp-w-lg"
                 [video]="videos[0].src"
                 [poster]="videos[0].poster"
-                caption="Antrenament de seară · disciplina înainte de toate"
+                [caption]="'hero.phone3' | translate"
                 [baseLikes]="2310"
                 [comments]="142"
                 [active]="true"
@@ -194,25 +188,25 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
             </div></div></div>
 
             <div class="badges">
-            <div class="badge aia-glass b-live">
+            <div class="badge aia-glass-lite b-live">
               <span class="live-dot"></span>
               <span class="font-heading text-[10px] font-bold uppercase tracking-[0.18em]">{{ 'hero.live' | translate }}</span>
             </div>
-            <div class="badge aia-glass b-medal">
+            <div class="badge aia-glass-lite b-medal">
               <span class="b-ico" style="background: linear-gradient(135deg,#ff1f3d,#ffb3bb)"><aia-icon name="trophy" [size]="16" /></span>
               <span>
                 <b class="font-display text-lg leading-none">17</b>
                 <small>{{ 'hero.badgeMedals' | translate }}</small>
               </span>
             </div>
-            <div class="badge aia-glass b-new">
+            <div class="badge aia-glass-lite b-new">
               <span class="b-ico" style="background: linear-gradient(135deg,#ff1f3d,#7a0010)"><aia-icon name="play" [size]="14" /></span>
               <span>
                 <b>{{ 'hero.badgeNew' | translate }}</b>
                 <small>{{ 'hero.badgeNewSub' | translate }}</small>
               </span>
             </div>
-            <div class="badge aia-glass b-heart">
+            <div class="badge aia-glass-lite b-heart">
               <aia-icon name="heart" [size]="18" />
               <b class="aia-index">+2.3K</b>
             </div>
@@ -232,7 +226,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       <div class="aia-tape -mx-4 h-3 rotate-[-3deg]"></div>
       <div class="-mx-4 rotate-[-3deg] bg-[var(--aia-blood)] py-1 text-white">
         <aia-velocity-marquee
-          [items]="['DISCIPLINĂ', 'PERFORMANȚĂ', 'MENTALITATE', 'RESPECT', 'FĂRĂ SCUZE']"
+          [items]="'marquee.a' | translate"
           klass="font-display text-5xl uppercase leading-none sm:text-7xl"
         />
       </div>
@@ -240,7 +234,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       <div class="-mx-4 mt-6 rotate-[2deg] bg-black py-1">
         <aia-velocity-marquee
           [reverse]="true"
-          [items]="['KICKBOX', 'KARATE', 'CRAIOVA', 'CAMPIONI', 'NO MERCY']"
+          [items]="'marquee.b' | translate"
           klass="font-display aia-text-outline text-5xl uppercase leading-none sm:text-7xl"
         />
       </div>
@@ -251,8 +245,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       <span class="aia-deco-slash left-[-6vw] top-[18%]" aiaParallax [parallaxSpeed]="1.6" aria-hidden="true"></span>
       <span class="aia-deco-slash right-[-8vw] top-[55%] !w-[30vw]" aiaParallax [parallaxSpeed]="-1.2" aria-hidden="true"></span>
       <div class="aia-container">
-        <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'about.eyebrow\' | translate" /></p>
-        <h2 class="aia-section-title mt-5 max-w-4xl" aiaImpact>{{ 'about.title' | translate }}</h2>
+        <h2 class="aia-section-title max-w-4xl" [aiaImpact]="'about.title' | translate"></h2>
 
         <!-- Manifest care se aprinde cuvant cu cuvant la scroll -->
         <p #manifesto class="manifesto mt-14 max-w-6xl font-display text-[9vw] uppercase leading-[0.98] sm:text-[6vw] lg:text-[4.4rem]">
@@ -266,7 +259,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
             <article class="pillar aia-card p-8 lg:p-10" aiaTilt [tiltMax]="9">
               <span class="aia-corner"></span>
               <div class="flex items-start justify-between">
-                <span class="pillar-ico aia-glass">
+                <span class="pillar-ico aia-glass-lite">
                   <aia-icon [name]="pillar.icon" [size]="26" />
                 </span>
                 <span class="font-display aia-text-outline text-6xl leading-none" aiaParallax [parallaxSpeed]="0.8">0{{ i + 1 }}</span>
@@ -279,19 +272,30 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
           }
         </div>
 
-        <!-- Traseul sportivului: linia se deseneaza odata cu scroll-ul -->
-        <div #journeyEl class="journey relative mt-24">
+      </div>
+    </section>
+
+    <!-- ═══════════════ TRASEUL SPORTIVULUI ═══════════════
+         Desktop: sectiune fixata, etapele defileaza orizontal odata cu scroll-ul.
+         Mobil: lista verticala, linia se deseneaza in jos. -->
+    <section class="journey-pin relative overflow-x-clip py-20 lg:py-0" [attr.aria-label]="'about.journeyTitle' | translate">
+      <div class="aia-container journey-head flex flex-wrap items-end justify-between gap-4">
+        <h2 class="aia-section-title" [aiaImpact]="'about.journeyTitle' | translate"></h2>
+        <p class="hidden font-heading text-xs uppercase tracking-[0.3em] lg:block" [style.color]="'var(--aia-text-muted)'">{{ 'journey.hint' | translate }} &rarr;</p>
+      </div>
+      <div #journeyEl class="journey relative mt-12 lg:mt-16">
+        <div class="journey-row relative">
           <div class="track absolute" aria-hidden="true">
             <div class="fill"></div>
           </div>
-          <ol class="relative grid gap-10 lg:grid-cols-4 lg:gap-6">
+          <ol class="j-list relative">
             @for (step of journey; track step; let i = $index) {
-              <li class="j-step relative pl-14 lg:pl-0 lg:pt-16" [class.on]="journeyStep() >= i">
+              <li class="j-step relative" [class.on]="journeyStep() >= i">
                 <span class="node" aria-hidden="true"><i></i></span>
-                <div class="aia-card-flat p-5 lg:p-6">
-                  <span class="aia-index text-xs" [style.color]="'var(--aia-cyan)'">0{{ i + 1 }}</span>
-                  <h3 class="mt-3 font-display text-base">{{ 'about.journey.' + step | translate }}</h3>
-                  <p class="mt-2 text-[13px] leading-relaxed" [style.color]="'var(--aia-text-muted)'">
+                <div class="j-card aia-card-flat">
+                  <span class="j-num font-display aia-text-outline-red" aria-hidden="true">0{{ i + 1 }}</span>
+                  <h3 class="relative font-display text-2xl lg:text-4xl">{{ 'about.journey.' + step | translate }}</h3>
+                  <p class="relative mt-3 text-sm leading-relaxed lg:text-[15px]" [style.color]="'var(--aia-text-muted)'">
                     {{ 'about.journey.' + step + 'Text' | translate }}
                   </p>
                 </div>
@@ -302,22 +306,20 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
-    <aia-kinetic top="NO PAIN" bottom="NO GLORY" />
-    <aia-slash label="ROUND 01 · GRUPE" />
+    <aia-kinetic [top]="'kinetic.k1a' | translate" [bottom]="'kinetic.k1b' | translate" />
+    <aia-slash [label]="'rounds.r1' | translate" />
 
     <!-- ═══════════════ GRUPE — carduri care se stivuiesc ═══════════════ -->
     <section id="grupe" class="relative scroll-mt-20 py-24 lg:py-32">
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'groups.eyebrow\' | translate" /></p>
-            <h2 class="aia-section-title mt-5" aiaImpact>{{ 'groups.title' | translate }}</h2>
+            <h2 class="aia-section-title" [aiaImpact]="'groups.title' | translate"></h2>
           </div>
-          <p class="aia-chip" aiaReveal><aia-icon name="arrow-down" [size]="12" /> {{ 'groups.pick' | translate }}</p>
         </div>
 
         <div #stackEl class="stack mt-14 pb-[6vh]">
-          @for (group of groups; track group.name; let i = $index) {
+          @for (group of groups; track group.id; let i = $index) {
             <!-- .stack-card = lipit + micsorat la scroll; .stack-inner = intrare + sticla -->
             <div class="stack-card" [style.top.px]="100 + i * 26">
             <article class="stack-inner solid aia-card h-full overflow-hidden">
@@ -327,7 +329,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
                 <div class="aia-duo relative h-[260px] overflow-hidden sm:h-[340px] lg:h-full" aiaWipe>
                   <img
                     [src]="group.image"
-                    [alt]="group.name"
+                    [alt]="group.nameKey | translate"
                     class="stack-img absolute inset-0 h-[120%] w-full object-cover"
                     loading="lazy"
                     decoding="async"
@@ -338,12 +340,12 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
                 <div class="relative flex flex-col justify-center p-7 pt-24 sm:p-10 sm:pt-28 lg:p-14">
                   <span class="font-display aia-text-outline-red pointer-events-none absolute right-5 top-3 text-[84px] leading-none sm:text-[110px] lg:right-8 lg:top-6 lg:text-[150px]">0{{ i + 1 }}</span>
-                  <h3 class="relative font-display text-5xl lg:text-7xl">{{ group.name }}</h3>
+                  <h3 class="relative font-display text-5xl lg:text-7xl">{{ group.nameKey | translate }}</h3>
                   <p class="relative mt-5 max-w-md text-[15px] leading-relaxed" [style.color]="'var(--aia-text-muted)'">
                     {{ group.textKey | translate }}
                   </p>
                   <div class="relative mt-6 flex flex-wrap gap-2">
-                    @for (tag of groupTags[i]; track tag) {
+                    @for (tag of asList(group.tagsKey | translate); track tag) {
                       <span class="aia-chip !text-[9px]">{{ tag }}</span>
                     }
                   </div>
@@ -360,17 +362,16 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
-    <aia-slash label="ROUND 02 · PROGRAM" />
+    <aia-slash [label]="'rounds.r2' | translate" />
 
     <!-- ═══════════════ PROGRAM ═══════════════ -->
     <section id="program" class="relative scroll-mt-28 py-24 lg:py-32">
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'schedule.eyebrow\' | translate" /></p>
-            <h2 class="aia-section-title mt-5" aiaImpact>{{ 'schedule.title' | translate }}</h2>
+            <h2 class="aia-section-title" [aiaImpact]="'schedule.title' | translate"></h2>
           </div>
-          <div class="aia-glass flex items-center gap-3 rounded-full px-5 py-3" aiaReveal>
+          <div class="aia-glass-lite flex items-center gap-3 rounded-full px-5 py-3" aiaReveal>
             <aia-icon name="clock" [size]="16" />
             <span class="aia-index text-lg">{{ clock() }}</span>
             <span class="text-[10px] uppercase tracking-[0.2em]" [style.color]="'var(--aia-text-muted)'">Craiova</span>
@@ -383,7 +384,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
-    <aia-kinetic top="TRAIN HARD" bottom="FIGHT EASY" />
+    <aia-kinetic [top]="'kinetic.k2a' | translate" [bottom]="'kinetic.k2b' | translate" />
 
     <!-- ═══════════════ ANTRENORI — panouri care se extind ═══════════════ -->
     <section id="antrenori" class="relative scroll-mt-28 overflow-x-clip py-24 lg:py-32">
@@ -391,14 +392,13 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'coaches.eyebrow\' | translate" /></p>
-            <h2 class="aia-section-title mt-5 max-w-3xl" aiaImpact>{{ 'coaches.title' | translate }}</h2>
+            <h2 class="aia-section-title max-w-3xl" [aiaImpact]="'coaches.title' | translate"></h2>
           </div>
           <p class="hidden text-xs lg:block" [style.color]="'var(--aia-text-muted)'" aiaReveal>{{ 'coaches.hover' | translate }} &rarr;</p>
         </div>
 
         <div class="coaches mt-12 flex flex-col gap-4 lg:h-[600px] lg:flex-row" aiaReveal>
-          @for (coach of coaches; track coach.name; let i = $index) {
+          @for (coach of coaches; track coach.id; let i = $index) {
             <article
               class="coach aia-card overflow-hidden"
               aiaWipe
@@ -408,17 +408,17 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
               (focusin)="activeCoach.set(i)"
               tabindex="0"
             >
-              <img [src]="coach.image" [alt]="coach.name" class="coach-img absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
-              <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(255,0,25,.25), transparent 35%, rgba(0,0,0,.95)); mix-blend-mode: multiply"></div>
+              <img [src]="coach.image" [alt]="coach.nameKey ? (coach.nameKey | translate) : coach.name" class="coach-img absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+              <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(255,0,25,.18), transparent 35%)"></div>
               <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,.9))"></div>
 
-              <span class="coach-vert font-display" aria-hidden="true">{{ coach.name }}</span>
+              <span class="coach-vert font-display" aria-hidden="true">{{ coach.nameKey ? (coach.nameKey | translate) : coach.name }}</span>
 
               <div class="coach-body absolute inset-x-0 bottom-0 p-6 lg:p-8">
-                <div class="aia-glass rounded-[22px] p-5 lg:p-6">
-                  <p class="text-[10px] uppercase tracking-[0.18em]" [style.color]="'var(--aia-cyan)'">{{ coach.role }}</p>
-                  <h3 class="mt-2 font-display text-xl text-white lg:text-3xl">{{ coach.name }}</h3>
-                  <p class="mt-2 text-sm text-white/70">{{ coach.focus }}</p>
+                <div class="aia-glass-lite rounded-[22px] p-5 lg:p-6">
+                  <p class="text-[10px] uppercase tracking-[0.18em]" [style.color]="'var(--aia-cyan)'">{{ 'coaches.list.' + coach.id + '.role' | translate }}</p>
+                  <h3 class="mt-2 font-display text-xl text-white lg:text-3xl">{{ coach.nameKey ? (coach.nameKey | translate) : coach.name }}</h3>
+                  <p class="mt-2 text-sm text-white/70">{{ 'coaches.list.' + coach.id + '.focus' | translate }}</p>
                 </div>
               </div>
             </article>
@@ -427,14 +427,13 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
-    <aia-slash label="ROUND 03 · VERDICT" />
+    <aia-slash [label]="'rounds.r3' | translate" />
 
     <!-- ═══════════════ REVIEW-URI — pachet de carti 3D ═══════════════ -->
     <section class="relative py-24 lg:py-32">
       <div class="aia-container grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
-          <p class="aia-eyebrow" aiaReveal><aia-scramble [text]="\'reviews.eyebrow\' | translate" /></p>
-          <h2 class="aia-section-title mt-5" aiaImpact>{{ 'reviews.title' | translate }}</h2>
+          <h2 class="aia-section-title" [aiaImpact]="'reviews.title' | translate"></h2>
           <div class="mt-8 flex gap-3" aiaReveal>
             <button type="button" aiaMagnet class="aia-btn aia-btn-ghost h-14 w-14 !px-0" (click)="prevReview()" [attr.aria-label]="'reviews.previous' | translate">
               <aia-icon name="chevron-left" [size]="18" />
@@ -454,7 +453,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
           data-cursor="Swipe"
           style="perspective: 1400px; touch-action: pan-y"
         >
-          @for (r of reviews; track r.author; let i = $index) {
+          @for (r of reviews; track r.id; let i = $index) {
             <figure class="review solid aia-card absolute inset-0 flex flex-col p-7 sm:p-10" [style]="reviewStyle(i)" [attr.aria-hidden]="i !== reviewIndex()">
               <span class="quote font-display" aria-hidden="true">&ldquo;</span>
               <div class="flex gap-1" [style.color]="'#ff1f3d'" aria-label="5/5">
@@ -462,10 +461,10 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
                   <aia-icon name="star" [size]="15" />
                 }
               </div>
-              <blockquote class="mt-5 text-lg leading-relaxed sm:text-2xl">{{ r.text }}</blockquote>
+              <blockquote class="mt-5 text-lg leading-relaxed sm:text-2xl">{{ 'reviews.list.' + r.id + '.text' | translate }}</blockquote>
               <figcaption class="mt-auto flex items-center gap-3 pt-6 text-sm" [style.color]="'var(--aia-text-muted)'">
-                <span class="grid h-10 w-10 place-items-center rounded-full font-display text-xs text-white" style="background: linear-gradient(135deg,var(--aia-blood),var(--aia-violet))">{{ r.author.charAt(0) }}</span>
-                {{ r.author }}
+                <span class="grid h-10 w-10 place-items-center rounded-full font-display text-xs text-white" style="background: linear-gradient(135deg,var(--aia-blood),var(--aia-violet))">{{ ('reviews.list.' + r.id + '.author' | translate).charAt(0) }}</span>
+                {{ 'reviews.list.' + r.id + '.author' | translate }}
               </figcaption>
               @if (i === reviewIndex()) {
                 <span class="progress" [class.paused]="reviewPaused()" (animationend)="nextReview()" aria-hidden="true"></span>
@@ -476,12 +475,32 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       </div>
     </section>
 
-    <aia-kinetic top="ON CAMERA" bottom="ALL ACCESS" />
+    <aia-kinetic [top]="'kinetic.k3a' | translate" [bottom]="'kinetic.k3b' | translate" />
 
     <!-- ═══════════════ MEDIA ═══════════════ -->
     <aia-media-showcase />
 
-    <aia-slash label="FINAL ROUND" />
+    <!-- ═══════════════ CIFRE — numaratoare legata de scroll ═══════════════ -->
+    <section class="stats-band relative overflow-x-clip py-24 lg:py-36">
+      <span class="aia-deco-slash left-[-10vw] top-[30%] !w-[50vw]" aiaParallax [parallaxSpeed]="1.4" aria-hidden="true"></span>
+      <div class="aia-container">
+        <h2 class="aia-section-title max-w-4xl" [aiaImpact]="'stats.title' | translate"></h2>
+        <div class="mt-14 grid grid-cols-2 gap-x-6 gap-y-14 lg:mt-20 lg:grid-cols-4">
+          @for (st of bigStats; track st.key; let i = $index) {
+            <div class="stat">
+              <div class="flex items-start leading-none">
+                <span class="stat-num font-display" [class.aia-text-outline-red]="i % 2 === 1" [attr.data-to]="st.value">{{ st.value }}</span>
+                <span class="font-display text-4xl text-[var(--aia-blood)] lg:text-6xl">+</span>
+              </div>
+              <span class="stat-bar" aria-hidden="true"><i></i></span>
+              <p class="mt-4 font-heading text-xs uppercase tracking-[0.3em] lg:text-sm" [style.color]="'var(--aia-text-muted)'">{{ st.key | translate }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <aia-slash [label]="'rounds.final' | translate" />
 
     <!-- ═══════════════ CTA cu lentila ═══════════════ -->
     <section class="relative py-24 lg:py-36">
@@ -493,8 +512,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
           (pointerleave)="lensOn.set(false)"
           (pointerenter)="lensOn.set(true)"
         >
-          <p class="aia-eyebrow justify-center">{{ 'cta.eyebrow' | translate }}</p>
-          <div class="relative mt-6">
+          <div class="relative">
             <h2 class="font-display text-[11vw] leading-[0.95] sm:text-[8vw] lg:text-[6.6rem]">{{ 'cta.title' | translate }}</h2>
             <h2
               class="lens-layer pointer-events-none absolute inset-0 font-display text-[11vw] leading-[0.95] sm:text-[8vw] lg:text-[6.6rem]"
@@ -516,7 +534,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
     <aia-locations-map />
     <aia-contact-form />
-    <aia-kinetic top="ACADEMIA" bottom="ION ANDREI" />
+    <aia-kinetic [top]="'kinetic.k4a' | translate" [bottom]="'kinetic.k4b' | translate" />
   `,
   styles: [
     `
@@ -539,12 +557,23 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       .hero-title { text-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); }
 
       .hero-img { filter: grayscale(1) contrast(1.4) brightness(0.7); }
+      .hero-spot-wrap { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+      .hero-spot {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 70vmax;
+        height: 70vmax;
+        margin: -35vmax 0 0 -35vmax;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 0, 25, 0.28), transparent 62%);
+        will-change: transform;
+      }
       .hero-bg::after {
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(200deg, rgba(255, 0, 25, 0.5), transparent 55%);
-        mix-blend-mode: multiply;
+        background: linear-gradient(200deg, rgba(255, 0, 25, 0.3), transparent 55%);
       }
 
       .hero-word {
@@ -654,6 +683,10 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       @media (min-width: 1280px) {
         .hp-w-lg { width: 280px; }
       }
+      @media (min-width: 1536px) {
+        .hp-w { width: 250px; }
+        .hp-w-lg { width: 330px; }
+      }
       .hp-left .pose { transform: translate3d(-86%, 5%, -200px) rotateY(28deg) rotateZ(-8deg); }
       .hp-right .pose { transform: translate3d(86%, -3%, -200px) rotateY(-28deg) rotateZ(8deg); }
       .hp-center .pose { transform: translate3d(0, 0, 40px); }
@@ -717,46 +750,81 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       }
       .pillar:hover .pillar-ico { transform: rotate(-12deg) scale(1.12); }
 
+      /* ---------- cifre ---------- */
+      .stat-num {
+        font-size: clamp(76px, 15vw, 210px);
+        line-height: 0.85;
+        font-variant-numeric: tabular-nums;
+        /* Latime fixa pe cifra: numaratoarea nu misca layout-ul in jurul ei. */
+        min-width: 1.6ch;
+      }
+      .stat-bar { display: block; height: 3px; margin-top: 18px; background: var(--aia-border); overflow: hidden; }
+      .stat-bar i { display: block; height: 100%; background: var(--aia-blood); transform-origin: left; transform: scaleX(0); }
+
+      /* ---------- traseul sportivului ---------- */
+      .j-list { display: grid; gap: 22px; padding: 0 20px 0 64px; }
       .journey .track {
-        left: 22px;
+        left: 42px;
         top: 0;
         bottom: 0;
         width: 2px;
         background: var(--aia-border);
-        border-radius: 2px;
       }
       .journey .fill {
         position: absolute;
         inset: 0;
         transform-origin: top;
         transform: scaleY(0);
-        background: linear-gradient(180deg, var(--aia-blood), var(--aia-violet), var(--aia-cyan));
+        background: linear-gradient(180deg, var(--aia-blood), var(--aia-blood-deep));
         box-shadow: 0 0 16px var(--aia-blood);
-        border-radius: inherit;
-      }
-      @media (min-width: 1024px) {
-        .journey .track { left: 0; right: 0; top: 22px; bottom: auto; width: auto; height: 2px; }
-        .journey .fill { transform-origin: left; transform: scaleX(0); }
       }
       .node {
         position: absolute;
-        left: 8px;
-        top: 12px;
+        left: -36px;
+        top: 26px;
         width: 30px;
         height: 30px;
-        border-radius: 50%;
         display: grid;
         place-items: center;
         background: var(--aia-bg);
         border: 2px solid var(--aia-border-strong);
-        transition: border-color 0.5s, box-shadow 0.5s, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        rotate: 45deg;
+        transition: border-color 0.4s, transform 0.5s var(--aia-spring);
       }
-      .node i { width: 10px; height: 10px; border-radius: 50%; background: var(--aia-border-strong); transition: background 0.5s; }
-      @media (min-width: 1024px) { .node { left: 0; top: 8px; } }
-      .j-step.on .node { border-color: var(--aia-blood); box-shadow: 0 0 24px var(--aia-blood); transform: scale(1.15); }
+      .node i { width: 10px; height: 10px; background: var(--aia-border-strong); transition: background 0.4s; }
+      .j-step.on .node { border-color: var(--aia-blood); transform: scale(1.2); }
       .j-step.on .node i { background: var(--aia-blood-bright); }
-      .j-step .aia-card-flat { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s; opacity: 0.45; transform: translateY(14px); }
-      .j-step.on .aia-card-flat { opacity: 1; transform: none; }
+      .j-card { position: relative; overflow: hidden; padding: 28px 24px; }
+      .j-num {
+        position: absolute;
+        right: 14px;
+        top: -6px;
+        font-size: 96px;
+        line-height: 1;
+        opacity: 0.5;
+        /* Fara tranzitie pe transform: transform-ul il conduce GSAP, legat de scroll. */
+        transition: opacity 0.4s, translate 0.6s var(--aia-ease);
+      }
+      .j-step .j-card { transition: opacity 0.5s, transform 0.6s var(--aia-ease); opacity: 0.45; transform: translateY(14px); }
+      .j-step.on .j-card { opacity: 1; transform: none; }
+      .j-step.on .j-num { opacity: 1; translate: 0 6px; }
+
+      @media (min-width: 1024px) {
+        /* Rand orizontal fixat: latimea vine din etape, GSAP il deplaseaza pe X. */
+        .journey-pin { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+        .journey-row { width: max-content; will-change: transform; }
+        .j-list {
+          display: flex;
+          gap: 3vw;
+          padding: 70px max(6vw, calc((100vw - 1280px) / 2)) 0;
+        }
+        .j-step { width: clamp(340px, 34vw, 540px); }
+        .journey .track { left: 0; right: 0; top: 22px; bottom: auto; width: auto; height: 2px; }
+        .journey .fill { transform-origin: left; transform: scaleX(0); }
+        .node { left: 0; top: -63px; }
+        .j-card { padding: 44px 40px 48px; min-height: 340px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .j-num { font-size: 180px; top: -20px; right: 22px; }
+      }
 
       /* Cardurile care se suprapun (stiva, pachetul de review-uri) sunt opace:
          prin sticla transparenta s-ar vedea textul cardului de dedesubt. */
@@ -892,6 +960,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
   private readonly stage = viewChild.required<ElementRef<HTMLElement>>('stage');
   private readonly stageInner = viewChild.required<ElementRef<HTMLElement>>('stageInner');
   private readonly lensEl = viewChild.required<ElementRef<HTMLElement>>('lensEl');
+  private readonly spot = viewChild.required<ElementRef<HTMLElement>>('spot');
 
   /** WebP intai, JPG ca rezerva, apoi gradientul de dedesubt. */
   private readonly heroCandidates = ['media/hero-bg.webp', 'media/hero-bg.jpg', ''];
@@ -935,12 +1004,6 @@ export class HomePage implements AfterViewInit, OnDestroy {
   readonly reviews = ACADEMY.reviews;
   readonly photos = ACADEMY.photos;
 
-  readonly groupTags = [
-    ['Coordonare', 'Respect', 'Joc & tehnică'],
-    ['Forță', 'Cardio', 'Sparring'],
-    ['Kata', 'Kumite', 'Competiții']
-  ];
-
   readonly videos = [
     { src: 'media/karate-video1.mp4', poster: 'media/karate-video1-poster.webp' },
     { src: 'media/karate-video2.mp4', poster: 'media/karate-video2-poster.webp' }
@@ -954,6 +1017,13 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
   readonly journey = ['beginner', 'evolution', 'competition', 'champion'];
 
+  readonly bigStats = [
+    { value: 293, key: 'stats.athletes' },
+    { value: 17, key: 'stats.medals' },
+    { value: 5, key: 'stats.years' },
+    { value: 340, key: 'stats.clips' }
+  ];
+
   private ctx?: gsap.Context;
   private mm?: gsap.MatchMedia;
   private raf?: number;
@@ -961,6 +1031,9 @@ export class HomePage implements AfterViewInit, OnDestroy {
   private tcTimer?: number;
   private deckStartX = 0;
   private readonly tilt = { x: 0, y: 0, tx: 0, ty: 0 };
+  private heroIo?: IntersectionObserver;
+  private heroVisible = true;
+  private tiltLast = 0;
 
   ngAfterViewInit(): void {
     this.clockTimer = setInterval(() => this.clock.set(this.now()), 1000) as unknown as number;
@@ -982,6 +1055,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
       this.buildSpirit();
       this.buildStack();
       this.buildBatches();
+      this.buildStats();
     }, this.host.nativeElement);
 
     this.startStageTilt();
@@ -996,6 +1070,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
     clearInterval(this.clockTimer);
     clearInterval(this.tcTimer);
     window.removeEventListener('pointermove', this.onPointer);
+    this.heroIo?.disconnect();
     this.anim.killAll();
   }
 
@@ -1019,15 +1094,13 @@ export class HomePage implements AfterViewInit, OnDestroy {
           opacity: 0,
           scale: () => gsap.utils.random(3, 5),
           rotate: () => gsap.utils.random(-35, 35),
-          yPercent: () => gsap.utils.random(-80, 60),
-          filter: 'blur(16px)'
+          yPercent: () => gsap.utils.random(-80, 60)
         },
         {
           opacity: 1,
           scale: 1,
           rotate: 0,
           yPercent: 0,
-          filter: 'blur(0px)',
           duration: 0.45,
           ease: 'power4.in',
           stagger: { each: 0.03, from: 'random' }
@@ -1038,7 +1111,9 @@ export class HomePage implements AfterViewInit, OnDestroy {
         const t = this.host.nativeElement.querySelector('.hero-title') as HTMLElement | null;
         const r = t?.getBoundingClientRect();
         if (r) this.anim.flash(r.left + r.width / 2, r.top + r.height / 2, 1);
-        this.anim.shake(hero, 16);
+        // Cutremurul doar pe titlu: un transform pe intreaga sectiune ar forta
+        // compozitia unui strat cat tot hero-ul.
+        if (t) this.anim.shake(t, 14);
         t?.classList.add('aia-glitch');
       })
       .fromTo('.hero-word', { scale: 1.6, opacity: 0 }, { scale: 1, opacity: 0.55, duration: 0.5, ease: 'power4.in', clearProps: 'opacity' }, '<-0.1')
@@ -1060,7 +1135,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
     gsap.to('.hero-bg img', { scale: 1.3, yPercent: 12, ease: 'none', scrollTrigger: st });
     gsap.to('.hero-word', { xPercent: -30, scale: 1.4, ease: 'none', scrollTrigger: st });
     gsap.to('.hud', { opacity: 0, ease: 'none', scrollTrigger: { ...st, end: '40% top' } });
-    gsap.to('.hero-text', { y: -140, opacity: 0, filter: 'blur(8px)', ease: 'none', scrollTrigger: { ...st, end: '80% top' } });
+    gsap.to('.hero-text', { y: -140, opacity: 0, ease: 'none', scrollTrigger: { ...st, end: '80% top' } });
     // Telefoanele "explodeaza" in afara cadrului cand iesi din hero.
     gsap.to('.hp-left', { x: -220, y: -80, rotate: -16, ease: 'none', scrollTrigger: st });
     gsap.to('.hp-right', { x: 220, y: -160, rotate: 16, ease: 'none', scrollTrigger: st });
@@ -1071,36 +1146,41 @@ export class HomePage implements AfterViewInit, OnDestroy {
   /** Scena se inclina dupa cursor, iar sferele se misca pe adancimi diferite. */
   private startStageTilt(): void {
     if (window.matchMedia('(hover: none)').matches) return;
-    window.addEventListener('pointermove', this.onPointer, { passive: true });
-    const inner = this.stageInner().nativeElement;
     const hero = this.hero().nativeElement;
-
-    const loop = () => {
-      const t = this.tilt;
-      t.x += (t.tx - t.x) * 0.06;
-      t.y += (t.ty - t.y) * 0.06;
-      // Nu calculam nimic cand hero-ul a iesit din ecran.
-      if (hero.getBoundingClientRect().bottom > 0) {
-        inner.style.transform = `rotateY(${t.x * 16}deg) rotateX(${-t.y * 12}deg)`;
-      }
-      this.raf = requestAnimationFrame(loop);
-    };
-    loop();
+    this.heroIo = new IntersectionObserver(([entry]) => (this.heroVisible = entry.isIntersecting));
+    this.heroIo.observe(hero);
+    window.addEventListener('pointermove', this.onPointer, { passive: true });
   }
+
+  /** Bucla ruleaza doar cand mouse-ul se misca peste hero si se opreste cand scena s-a asezat. */
+  private readonly tiltLoop = (now: number) => {
+    const t = this.tilt;
+    const dt = this.tiltLast ? Math.min((now - this.tiltLast) / 16.67, 3) : 1;
+    this.tiltLast = now;
+    const k = 1 - Math.pow(0.92, dt);
+    t.x += (t.tx - t.x) * k;
+    t.y += (t.ty - t.y) * k;
+    this.stageInner().nativeElement.style.transform = `rotateY(${(t.x * 16).toFixed(2)}deg) rotateX(${(-t.y * 12).toFixed(2)}deg)`;
+    // Lumina rosie din spate urmareste cursorul, mai lent decat scena.
+    this.spot().nativeElement.style.transform = `translate3d(${(t.x * 50).toFixed(1)}vw, ${(t.y * 50).toFixed(1)}vh, 0)`;
+    const settled = Math.abs(t.tx - t.x) < 0.001 && Math.abs(t.ty - t.y) < 0.001;
+    this.raf = settled || !this.heroVisible ? undefined : requestAnimationFrame(this.tiltLoop);
+    if (this.raf === undefined) this.tiltLast = 0;
+  };
 
   private readonly onPointer = (e: PointerEvent) => {
     this.tilt.tx = e.clientX / innerWidth - 0.5;
     this.tilt.ty = e.clientY / innerHeight - 0.5;
+    if (this.heroVisible && this.raf === undefined) this.raf = requestAnimationFrame(this.tiltLoop);
   };
 
   // ------------------------------------------------------------- spirit
   private buildSpirit(): void {
     gsap.fromTo(
       '.manifesto .mw',
-      { opacity: 0.1, filter: 'blur(5px)' },
+      { opacity: 0.1 },
       {
         opacity: 1,
-        filter: 'blur(0px)',
         stagger: 0.1,
         ease: 'none',
         scrollTrigger: { trigger: '.manifesto', start: 'top 80%', end: 'bottom 40%', scrub: 0.6 }
@@ -1118,17 +1198,43 @@ export class HomePage implements AfterViewInit, OnDestroy {
     });
 
     this.mm = gsap.matchMedia();
-    this.mm.add({ desktop: '(min-width: 1024px)', mobile: '(max-width: 1023px)' }, (c) => {
-      const desktop = c.conditions?.['desktop'];
+    const setStep = (p: number) => this.journeyStep.set(p > 0.01 ? Math.min(3, Math.floor(p * 4)) : -1);
+
+    // Desktop: sectiunea se fixeaza, iar randul de etape defileaza orizontal.
+    this.mm.add('(min-width: 1024px)', () => {
+      const row = document.querySelector<HTMLElement>('.journey-row');
+      if (!row) return;
+      const distance = () => Math.max(row.scrollWidth - window.innerWidth, 0);
+      gsap
+        .timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            trigger: '.journey-pin',
+            start: 'top top',
+            end: () => '+=' + distance(),
+            pin: true,
+            scrub: 0.6,
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+            onUpdate: (self) => setStep(self.progress)
+          }
+        })
+        .to(row, { x: () => -distance() }, 0)
+        .to('.journey .fill', { scaleX: 1 }, 0)
+        .fromTo('.j-num', { xPercent: 30 }, { xPercent: -30, stagger: 0.05 }, 0);
+    });
+
+    // Mobil: lista verticala, linia se umple odata cu scroll-ul.
+    this.mm.add('(max-width: 1023px)', () => {
       gsap.to('.journey .fill', {
-        [desktop ? 'scaleX' : 'scaleY']: 1,
+        scaleY: 1,
         ease: 'none',
         scrollTrigger: {
           trigger: '.journey',
           start: 'top 75%',
-          end: desktop ? 'bottom 55%' : 'bottom 60%',
+          end: 'bottom 60%',
           scrub: 0.5,
-          onUpdate: (self) => this.journeyStep.set(self.progress > 0.01 ? Math.min(3, Math.floor(self.progress * 4)) : -1)
+          onUpdate: (self) => setStep(self.progress)
         }
       });
     });
@@ -1189,6 +1295,32 @@ export class HomePage implements AfterViewInit, OnDestroy {
     }
   }
 
+  /** Cifrele cresc odata cu scroll-ul (scrub), iar barele de sub ele se umplu. */
+  private buildStats(): void {
+    const nums = gsap.utils.toArray<HTMLElement>('.stat-num');
+    const st = { trigger: '.stats-band', start: 'top 75%', end: 'center 45%', scrub: 0.6 };
+    nums.forEach((el) => {
+      const to = Number(el.dataset['to'] ?? 0);
+      const state = { v: 0 };
+      let shown = -1;
+      gsap.to(state, {
+        v: to,
+        ease: 'power1.out',
+        scrollTrigger: st,
+        onUpdate: () => {
+          const v = Math.round(state.v);
+          // Scriem in DOM doar cand se schimba cifra, nu la fiecare cadru.
+          if (v !== shown) {
+            shown = v;
+            el.textContent = String(v);
+          }
+        }
+      });
+    });
+    gsap.to('.stat-bar i', { scaleX: 1, ease: 'none', stagger: 0.08, scrollTrigger: { ...st } });
+    gsap.from('.stat', { y: 80, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '.stats-band', start: 'top 80%', once: true } });
+  }
+
   // ------------------------------------------------------------- review-uri
   reviewStyle(i: number): Record<string, string> {
     const n = this.reviews.length;
@@ -1234,6 +1366,11 @@ export class HomePage implements AfterViewInit, OnDestroy {
       title.style.setProperty('--lx', `${e.clientX - tr.left}px`);
       title.style.setProperty('--ly', `${e.clientY - tr.top}px`);
     }
+  }
+
+  /** Pipe-ul translate intoarce cheia (string) pana se incarca fisierul; @for vrea o lista. */
+  asList(value: unknown): string[] {
+    return Array.isArray(value) ? value : [];
   }
 
   // ------------------------------------------------------------- utilitare

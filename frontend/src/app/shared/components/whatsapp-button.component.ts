@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { ChangeDetectionStrategy, Component, HostListener, signal } from '@angular/core';
 import { ACADEMY } from '../../core/academy.data';
 
@@ -11,6 +12,7 @@ import { ACADEMY } from '../../core/academy.data';
 @Component({
   selector: 'aia-whatsapp-button',
   standalone: true,
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a
@@ -23,7 +25,7 @@ import { ACADEMY } from '../../core/academy.data';
       [style.backgroundColor]="'#25D366'"
       [style.color]="'#08120c'"
       [style.boxShadow]="'var(--aia-shadow)'"
-      aria-label="Scrie-ne pe WhatsApp"
+      [attr.aria-label]="'a11y.whatsapp' | translate"
     >
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path
@@ -36,7 +38,7 @@ import { ACADEMY } from '../../core/academy.data';
         [style.maxWidth.px]="compact() ? 0 : 230"
         [style.opacity]="compact() ? 0 : 1"
       >
-        Scrie-ne pe WhatsApp
+        {{ 'a11y.whatsapp' | translate }}
       </span>
     </a>
   `,

@@ -25,8 +25,7 @@ import { IconComponent } from '../../../shared/icons/icon.component';
       <aia-loader label="Se incarca Battle Pass-ul" />
     } @else if (state(); as bp) {
       <section>
-        <p class="aia-eyebrow">Sezonul curent</p>
-        <h2 class="mt-4 font-display text-4xl leading-tight">Battle Pass</h2>
+        <h2 class="font-display text-4xl leading-tight">Battle Pass</h2>
         <p class="mt-4 max-w-2xl text-sm leading-relaxed" [style.color]="'var(--aia-text-muted)'">
           Prezenta adauga 50 XP, absenta scade 50 XP. Pe langa prag, fiecare recompensa cere
           <strong [style.color]="'var(--aia-blood-bright)'">maximum 2 absente in luna curenta</strong>.

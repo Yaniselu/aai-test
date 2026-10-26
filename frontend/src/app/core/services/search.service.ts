@@ -1,33 +1,39 @@
 import { Injectable, computed, signal } from '@angular/core';
 
 export interface SearchEntry {
+  /** Cheia de traducere: search.items.<id>.title / .desc */
+  id: string;
+  /** Titlul in romana, folosit doar pentru potrivirea cautarii (afisarea e tradusa). */
   title: string;
   description: string;
   route: string;
   fragment?: string;
+  /** Cheia sectiunii: search.sections.<section> */
   section: string;
+  /** Cuvinte cheie in ambele limbi, ca rezultatele sa apara indiferent de limba aleasa. */
   keywords: string[];
 }
 
 /** Index static de căutare (Ctrl/Cmd+K). Alimentează modalul de search. */
 const INDEX: SearchEntry[] = [
-  { title: 'Acasă', description: 'Pagina principală a academiei', route: '/', section: 'Navigare', keywords: ['home', 'start', 'principal'] },
-  { title: 'Programe', description: 'Grupe de inițiere, juniori, seniori și performanță', route: '/', fragment: 'programe', section: 'Navigare', keywords: ['about', 'grupe', 'program', 'varsta'] },
-  { title: 'Antrenori', description: 'Echipa de antrenori și palmaresul lor', route: '/', fragment: 'antrenori', section: 'Navigare', keywords: ['coach', 'sensei', 'echipa'] },
-  { title: 'Galerie', description: 'Fotografii și clipuri de la competiții', route: '/', fragment: 'galerie', section: 'Navigare', keywords: ['poze', 'video', 'media'] },
-  { title: 'Locații', description: 'Sălile academiei pe hartă', route: '/', fragment: 'locatii', section: 'Navigare', keywords: ['harta', 'maps', 'adresa', 'sala'] },
-  { title: 'Înscriere', description: 'Creează un cont nou de sportiv', route: '/auth/register', section: 'Cont', keywords: ['register', 'cont nou', 'sign up'] },
-  { title: 'Autentificare', description: 'Intră în contul tău', route: '/auth/login', section: 'Cont', keywords: ['login', 'sign in', 'conectare'] },
-  { title: 'Profilul meu', description: 'XP, badge-uri și evoluție', route: '/dashboard', section: 'Sportiv', keywords: ['profil', 'xp', 'evolutie'] },
-  { title: 'Battle Pass', description: 'Recompense deblocate prin prezență', route: '/dashboard/battlepass', section: 'Sportiv', keywords: ['recompense', 'premii', 'nivel', 'claim'] },
-  { title: 'Învârte-l pe Birtu', description: 'Roata academiei, o învârtire pe săptămână', route: '/dashboard/roata', section: 'Sportiv', keywords: ['roata', 'wheel', 'spin', 'birtu', 'premii', 'xp'] },
-  { title: 'Story-uri', description: 'Momente din sală, vizibile 24 de ore', route: '/dashboard/stories', section: 'Sportiv', keywords: ['story', 'poze', '24h'] },
-  { title: 'Calendar competiții', description: 'Competițiile viitoare ale academiei', route: '/dashboard/competitii', section: 'Sportiv', keywords: ['calendar', 'concurs', 'competitie'] },
-  { title: 'Prezență', description: 'Panoul antrenorului pentru marcarea prezenței', route: '/antrenor/prezenta', section: 'Antrenor', keywords: ['prezenta', 'attendance', 'catalog'] },
-  { title: 'Aprobare conturi', description: 'Validarea conturilor noi', route: '/antrenor/aprobari', section: 'Admin', keywords: ['approve', 'aprobare', 'conturi'] },
-  { title: 'Politică de confidențialitate', description: 'Cum prelucrăm datele tale', route: '/legal/confidentialitate', section: 'Legal', keywords: ['gdpr', 'privacy', 'date'] },
-  { title: 'Termeni și condiții', description: 'Regulamentul de utilizare', route: '/legal/termeni', section: 'Legal', keywords: ['terms', 'regulament'] },
-  { title: 'Politica de cookie-uri', description: 'Ce cookie-uri folosim și de ce', route: '/legal/cookies', section: 'Legal', keywords: ['cookie', 'consent'] }
+  { id: 'home', title: 'Acasă', description: 'Pagina principală a academiei', route: '/', section: 'nav', keywords: ['acasa', 'home', 'start', 'principal'] },
+  { id: 'groups', title: 'Grupe', description: 'Grupe pentru copii, adulți și karate', route: '/', fragment: 'grupe', section: 'nav', keywords: ['grupe', 'groups', 'copii', 'kids', 'adulti', 'adults', 'karate', 'kickbox'] },
+  { id: 'schedule', title: 'Program', description: 'Programul săptămânal al antrenamentelor', route: '/', fragment: 'program', section: 'nav', keywords: ['program', 'schedule', 'orar', 'ore', 'hours'] },
+  { id: 'coaches', title: 'Antrenori', description: 'Echipa de antrenori', route: '/', fragment: 'antrenori', section: 'nav', keywords: ['antrenori', 'coach', 'coaches', 'sensei', 'echipa', 'team'] },
+  { id: 'gallery', title: 'Galerie', description: 'Fotografii și clipuri din sală și de la competiții', route: '/', fragment: 'galerie', section: 'nav', keywords: ['galerie', 'gallery', 'poze', 'photos', 'video', 'media'] },
+  { id: 'location', title: 'Locație', description: 'Sala academiei pe hartă', route: '/', fragment: 'locatii', section: 'nav', keywords: ['locatie', 'location', 'harta', 'map', 'adresa', 'address', 'sala', 'gym'] },
+  { id: 'register', title: 'Înscriere', description: 'Creează un cont nou de sportiv', route: '/auth/register', section: 'account', keywords: ['inscriere', 'register', 'cont nou', 'sign up', 'join'] },
+  { id: 'login', title: 'Autentificare', description: 'Intră în contul tău', route: '/auth/login', section: 'account', keywords: ['autentificare', 'login', 'sign in', 'conectare'] },
+  { id: 'profile', title: 'Profilul meu', description: 'XP, badge-uri și evoluție', route: '/dashboard', section: 'athlete', keywords: ['profil', 'profile', 'xp', 'evolutie', 'progress'] },
+  { id: 'battlepass', title: 'Battle Pass', description: 'Recompense deblocate prin prezență', route: '/dashboard/battlepass', section: 'athlete', keywords: ['battle pass', 'recompense', 'rewards', 'premii', 'nivel', 'level', 'claim'] },
+  { id: 'wheel', title: 'Învârte-l pe Birtu', description: 'Roata academiei, o învârtire pe săptămână', route: '/dashboard/roata', section: 'athlete', keywords: ['roata', 'wheel', 'spin', 'birtu', 'premii', 'xp'] },
+  { id: 'stories', title: 'Story-uri', description: 'Momente din sală, vizibile 24 de ore', route: '/dashboard/stories', section: 'athlete', keywords: ['story', 'stories', 'poze', '24h'] },
+  { id: 'competitions', title: 'Calendar competiții', description: 'Competițiile viitoare ale academiei', route: '/dashboard/competitii', section: 'athlete', keywords: ['calendar', 'competitii', 'competitions', 'concurs', 'tournament'] },
+  { id: 'attendance', title: 'Prezență', description: 'Panoul antrenorului pentru marcarea prezenței', route: '/antrenor/prezenta', section: 'coach', keywords: ['prezenta', 'attendance', 'catalog'] },
+  { id: 'approvals', title: 'Aprobare conturi', description: 'Validarea conturilor noi', route: '/antrenor/aprobari', section: 'admin', keywords: ['aprobare', 'approve', 'approvals', 'conturi', 'accounts'] },
+  { id: 'privacy', title: 'Politică de confidențialitate', description: 'Cum prelucrăm datele tale', route: '/legal/confidentialitate', section: 'legal', keywords: ['gdpr', 'privacy', 'confidentialitate', 'date', 'data'] },
+  { id: 'terms', title: 'Termeni și condiții', description: 'Regulamentul de utilizare', route: '/legal/termeni', section: 'legal', keywords: ['terms', 'termeni', 'regulament'] },
+  { id: 'cookies', title: 'Politica de cookie-uri', description: 'Ce cookie-uri folosim și de ce', route: '/legal/cookies', section: 'legal', keywords: ['cookie', 'cookies', 'consent'] }
 ];
 
 @Injectable({ providedIn: 'root' })

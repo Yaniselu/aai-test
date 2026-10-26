@@ -37,8 +37,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <!-- Formular -->
       <div class="flex items-center justify-center px-6 py-16">
         <div class="w-full max-w-md">
-          <p class="aia-eyebrow">{{ eyebrow() }}</p>
-          <h1 class="mt-4 font-display text-4xl leading-tight">{{ title() }}</h1>
+          <h1 class="font-display text-4xl leading-tight">{{ title() }}</h1>
           <p class="mt-4 text-sm leading-relaxed" style="color: var(--aia-text-muted)">{{ subtitle() }}</p>
 
           <div class="mt-10">

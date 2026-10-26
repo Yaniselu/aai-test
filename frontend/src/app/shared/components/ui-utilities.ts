@@ -1,51 +1,76 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   HostListener,
+  OnDestroy,
   inject,
   input,
   output,
-  signal
+  signal,
+  viewChild
 } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ClipboardService } from '../../core/services/clipboard.service';
 import { IconComponent } from '../icons/icon.component';
 import { SmoothScrollService } from '../../core/services/smooth-scroll.service';
 
-/** Bara de progres a scroll-ului, fixata in partea de sus a paginii. */
+/**
+ * Bara de progres a scroll-ului, fixata in partea de sus a paginii.
+ * Scrie direct transform-ul, o data pe cadru: un signal actualizat la fiecare
+ * eveniment de scroll ar porni change detection de zeci de ori pe secunda.
+ */
 @Component({
   selector: 'aia-scroll-progress',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
+      #bar
       class="fixed inset-x-0 top-0 z-[120] h-[3px] origin-left"
-      style="background: linear-gradient(90deg, var(--aia-blood-deep), var(--aia-blood-bright))"
-      [style.transform]="'scaleX(' + progress() + ')'"
-      role="progressbar"
-      aria-label="Progresul citirii paginii"
-      [attr.aria-valuenow]="Math.round(progress() * 100)"
-      aria-valuemin="0"
-      aria-valuemax="100"
+      style="background: linear-gradient(90deg, var(--aia-blood-deep), var(--aia-blood-bright)); transform: scaleX(0); will-change: transform"
+      aria-hidden="true"
     ></div>
   `
 })
-export class ScrollProgressComponent {
-  readonly Math = Math;
-  readonly progress = signal(0);
+export class ScrollProgressComponent implements AfterViewInit, OnDestroy {
+  private readonly bar = viewChild.required<ElementRef<HTMLElement>>('bar');
+  private frame?: number;
+  private max = 1;
+  private resize?: ResizeObserver;
 
-  @HostListener('window:scroll')
-  @HostListener('window:resize')
-  onScroll(): void {
-    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-    this.progress.set(scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0);
+  ngAfterViewInit(): void {
+    const measure = () => (this.max = Math.max(document.documentElement.scrollHeight - innerHeight, 1));
+    measure();
+    // Inaltimea paginii se schimba (imagini, pin-uri GSAP): o masuram doar cand chiar se schimba.
+    this.resize = new ResizeObserver(measure);
+    this.resize.observe(document.body);
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.update();
   }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('scroll', this.onScroll);
+    this.resize?.disconnect();
+    if (this.frame) cancelAnimationFrame(this.frame);
+  }
+
+  private readonly onScroll = () => {
+    if (this.frame === undefined) this.frame = requestAnimationFrame(this.update);
+  };
+
+  private readonly update = () => {
+    this.frame = undefined;
+    this.bar().nativeElement.style.transform = `scaleX(${Math.min(window.scrollY / this.max, 1).toFixed(4)})`;
+  };
 }
 
 /** Buton "inapoi sus", vizibil dupa ce utilizatorul a coborat suficient. */
 @Component({
   selector: 'aia-back-to-top',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
@@ -57,7 +82,7 @@ export class ScrollProgressComponent {
       [style.transform]="visible() ? 'translateY(0)' : 'translateY(20px)'"
       [style.pointerEvents]="visible() ? 'auto' : 'none'"
       (click)="toTop()"
-      aria-label="Inapoi sus"
+      [attr.aria-label]="'a11y.backToTop' | translate"
     >
       <aia-icon name="arrow-up" [size]="18" />
     </button>
@@ -82,7 +107,7 @@ export class BackToTopComponent {
 @Component({
   selector: 'aia-copy-button',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
@@ -90,10 +115,10 @@ export class BackToTopComponent {
       class="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 font-heading text-[10px] font-bold uppercase tracking-[0.14em] transition-colors hover:border-[var(--aia-cyan)]"
       [style.borderColor]="copied() ? 'var(--aia-blood)' : 'var(--aia-border)'"
       (click)="copy()"
-      [attr.aria-label]="'Copiaza ' + label()"
+      [attr.aria-label]="('common.copy' | translate) + ' ' + label()"
     >
       <aia-icon [name]="copied() ? 'check' : 'copy'" [size]="13" />
-      <span>{{ copied() ? 'Copiat' : 'Copiaza' }}</span>
+      <span>{{ (copied() ? 'common.copied' : 'common.copy') | translate }}</span>
     </button>
   `
 })
@@ -121,7 +146,7 @@ export class CopyButtonComponent {
     @if (open()) {
       <div
         class="fixed inset-0 z-[170] grid place-items-center px-4"
-        style="background: rgba(0,0,0,.75); backdrop-filter: blur(4px)"
+        style="background: rgba(0,0,0,.88)"
         (click)="cancelled.emit()"
       >
         <div

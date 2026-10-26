@@ -43,8 +43,8 @@ export class MeshBackgroundComponent implements AfterViewInit, OnDestroy {
   private readonly cv = viewChild.required<ElementRef<HTMLCanvasElement>>('cv');
 
   /** Cate linii pe latime. Mai putine = mai rarefiat si mai ieftin. */
-  readonly cols = input(26);
-  readonly rows = input(18);
+  readonly cols = input(22);
+  readonly rows = input(15);
   readonly amplitude = input(26);
   readonly speed = input(0.00042);
 
@@ -59,7 +59,9 @@ export class MeshBackgroundComponent implements AfterViewInit, OnDestroy {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Linii subtiri, estompate: la densitate 1x nu se vede nicio diferenta, iar
+    // pe un ecran retina canvas-ul ar avea de patru ori mai multi pixeli de desenat.
+    const dpr = 1;
     const resize = () => {
       canvas.width = Math.max(canvas.offsetWidth, 1) * dpr;
       canvas.height = Math.max(canvas.offsetHeight, 1) * dpr;
@@ -72,21 +74,18 @@ export class MeshBackgroundComponent implements AfterViewInit, OnDestroy {
       window.addEventListener('pointermove', this.onPointer, { passive: true });
     }
 
-    // Fara asta, plasa continua sa deseneze 60 de cadre pe secunda si dupa ce
-    // hero-ul a iesit de pe ecran - vizibil ca sacadare la scroll in restul paginii.
-    this.visibility = new IntersectionObserver(
-      (entries) => {
-        this.onScreen = entries.some((e) => e.isIntersecting);
-      },
-      { threshold: 0 }
-    );
-    this.visibility.observe(canvas);
-
+    let lastDraw = 0;
     const draw = (time: number) => {
       if (!this.onScreen) {
+        this.raf = undefined;
+        return;
+      }
+      // E un fundal: 30 de cadre pe secunda ajung si lasa timp liber pentru restul paginii.
+      if (time - lastDraw < 32) {
         this.raf = requestAnimationFrame(draw);
         return;
       }
+      lastDraw = time;
 
       const { width, height } = canvas;
       ctx.clearRect(0, 0, width, height);
@@ -171,6 +170,17 @@ export class MeshBackgroundComponent implements AfterViewInit, OnDestroy {
       this.raf = requestAnimationFrame(draw);
     };
 
+    // Fara asta, plasa continua sa deseneze 60 de cadre pe secunda si dupa ce
+    // hero-ul a iesit de pe ecran - vizibil ca sacadare la scroll in restul paginii.
+    this.visibility = new IntersectionObserver(
+      (entries) => {
+        this.onScreen = entries.some((e) => e.isIntersecting);
+        // Bucla se opreste de tot cand plasa iese din ecran si reporneste la intoarcere.
+        if (this.onScreen && this.raf === undefined) this.raf = requestAnimationFrame(draw);
+      },
+      { threshold: 0 }
+    );
+    this.visibility.observe(canvas);
     this.raf = requestAnimationFrame(draw);
   }
 

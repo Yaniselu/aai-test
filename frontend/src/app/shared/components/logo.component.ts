@@ -47,7 +47,7 @@ import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core
       </span>
 
       @if (showText()) {
-        <span class="leading-none">
+        <span class="logo-text leading-none">
           <span class="block font-display text-[15px] font-extrabold tracking-[0.1em]">Academia</span>
           <span class="mt-1 block text-[11px] tracking-[0.22em]" [style.color]="'var(--aia-text-muted)'">
             Ion Andrei

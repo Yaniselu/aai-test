@@ -25,9 +25,10 @@ export const ACADEMY = {
   ],
 
   groups: [
-    { name: 'KickBox Copii', ageKey: 'groups.kidsAge', textKey: 'groups.kidsText', image: 'media/grupa-copii.webp' },
-    { name: 'KickBox Adulti', ageKey: 'groups.adultsAge', textKey: 'groups.adultsText', image: 'media/grupa-adulti.webp' },
-    { name: 'Karate', ageKey: 'groups.karateAge', textKey: 'groups.karateText', image: 'media/grupa-karate.webp' }
+    // Textele vizibile sunt chei de traducere (ro.json / en.json), nu text direct.
+    { id: 'kids', nameKey: 'groups.names.kids', tagsKey: 'groups.tags.kids', ageKey: 'groups.kidsAge', textKey: 'groups.kidsText', image: 'media/grupa-copii.webp' },
+    { id: 'adults', nameKey: 'groups.names.adults', tagsKey: 'groups.tags.adults', ageKey: 'groups.adultsAge', textKey: 'groups.adultsText', image: 'media/grupa-adulti.webp' },
+    { id: 'karate', nameKey: 'groups.names.karate', tagsKey: 'groups.tags.karate', ageKey: 'groups.karateAge', textKey: 'groups.karateText', image: 'media/grupa-karate.webp' }
   ],
 
   /** Fotografii reale din sala, folosite in galerie si pe carduri. */
@@ -41,38 +42,11 @@ export const ACADEMY = {
   },
 
   coaches: [
-    {
-      name: 'Ion Andrei',
-      role: 'Head Coach · Strategie · Competitii',
-      focus: 'Leadership, tehnica, performanta',
-      image: 'media/echipa.webp'
-    },
-    {
-      name: 'Antrenor Tehnic',
-      role: 'Coordonare · Juniori · Progres',
-      focus: 'Control, viteza, disciplina',
-      image: 'media/antrenament.webp'
-    },
-    {
-      name: 'Antrenor Performanta',
-      role: 'Forta · Rezistenta · Focus',
-      focus: 'Pregatire pentru nivel avansat',
-      image: 'media/competitie.webp'
-    }
+    { id: 'ion', name: 'Ion Andrei', nameKey: null, image: 'media/echipa.webp' },
+    { id: 'tech', name: 'Antrenor Tehnic', nameKey: 'coaches.list.tech.name', image: 'media/antrenament.webp' },
+    { id: 'perf', name: 'Antrenor Performanta', nameKey: 'coaches.list.perf.name', image: 'media/competitie.webp' }
   ],
 
-  reviews: [
-    {
-      text: 'Cel mai bun loc pentru copii. Se vede disciplina, seriozitate si grija reala pentru evolutia lor.',
-      author: 'Parinte sportiv'
-    },
-    {
-      text: 'Antrenamente puternice, atmosfera premium si foarte multa motivatie. Copilul meu are alta incredere.',
-      author: 'Familie din academie'
-    },
-    {
-      text: 'Nu e doar sport. Este formare de caracter. Exact genul de academie de care ai nevoie.',
-      author: 'Parinte competitor'
-    }
-  ]
+  /** Textul si autorul fiecarui review sunt in reviews.list.<id> din fisierele de traducere. */
+  reviews: [{ id: 'r1' }, { id: 'r2' }, { id: 'r3' }]
 } as const;

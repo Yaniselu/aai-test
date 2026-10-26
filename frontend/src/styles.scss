@@ -39,7 +39,11 @@
   --lg-blur: 18px;
   --lg-sat: 140%;
   --lg-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.9), 0 8px 24px -8px rgba(0, 0, 0, 0.7);
-  --lg-glint: rgba(255, 255, 255, 0.16);
+  --lg-glint: rgba(255, 255, 255, 0.07);
+  /* Baza aproape opaca a cardurilor: fara backdrop-filter (care re-randeaza tot
+     ce e in spate la fiecare cadru), dar cu aceeasi senzatie de sticla fumurie. */
+  --card-base: rgba(12, 12, 14, 0.88);
+  --glass-base: rgba(10, 10, 12, 0.58);
 
   --aia-radius: 8px;
   --aia-radius-sm: 4px;
@@ -74,7 +78,9 @@ html.light {
   --lg-rim-soft: rgba(255, 255, 255, 0.4);
   --lg-inner: rgba(255, 255, 255, 0.9);
   --lg-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.3), 0 6px 18px -8px rgba(0, 0, 0, 0.2);
-  --lg-glint: rgba(255, 255, 255, 0.7);
+  --lg-glint: rgba(255, 255, 255, 0.5);
+  --card-base: rgba(255, 255, 255, 0.86);
+  --glass-base: rgba(255, 255, 255, 0.62);
   --aia-grain: 0.04;
 }
 
@@ -188,9 +194,10 @@ h1, h2, h3, .font-display {
   0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
   50% { transform: translate3d(0, -18px, 0) rotate(1.5deg); }
 }
+/* Doar transform + opacity: compozitorul le anima fara repaint. */
 @keyframes aia-pulse-dot {
-  0% { box-shadow: 0 0 0 0 rgba(255, 31, 61, 0.7); }
-  100% { box-shadow: 0 0 0 12px rgba(255, 31, 61, 0); }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.6); opacity: 0.45; }
 }
 @keyframes aia-spin {
   to { transform: rotate(360deg); }
@@ -214,47 +221,37 @@ h1, h2, h3, .font-display {
     @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 2xl:max-w-[1480px];
   }
 
-  /* ---------------- Suprafata de baza: sticla lichida ----------------
-     ::before = margine luminoasa (rim) desenata cu mask, deci nu ocupa layout
-     si urmeaza orice border-radius. ::after = reflexie speculara mobila. */
+  /* ---------------- Suprafata de baza: sticla fumurie ----------------
+     Marginea luminoasa (rim) e un gradient pe border-box, sub un fundal pe
+     padding-box: fara pseudo-element si fara mask, deci fara straturi de
+     compozitie in plus. ::after ramane pentru reflexia care urmareste cursorul. */
   .aia-glass,
+  .aia-glass-lite,
   .aia-card,
   .aia-card-flat {
     position: relative;
     isolation: isolate;
-    background:
-      linear-gradient(160deg, var(--lg-tint), var(--lg-tint-2) 55%, var(--lg-tint) 100%);
-    -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
-    backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-sat));
     border: 1px solid transparent;
-    box-shadow:
-      inset 0 1px 0 0 var(--lg-inner),
-      inset 0 -1px 0 0 var(--lg-rim-soft),
-      inset 0 0 24px 0 rgba(255, 255, 255, 0.04),
-      var(--lg-shadow);
+    background:
+      linear-gradient(160deg, var(--lg-tint), var(--lg-tint-2) 55%, var(--lg-tint) 100%) padding-box,
+      linear-gradient(var(--card-base), var(--card-base)) padding-box,
+      linear-gradient(
+        var(--lg-angle),
+        var(--lg-rim) 0%,
+        rgba(255, 255, 255, 0.05) 26%,
+        rgba(255, 255, 255, 0.015) 55%,
+        rgba(255, 0, 25, 0.25) 78%,
+        var(--lg-rim-red) 100%
+      ) border-box;
+    box-shadow: inset 0 1px 0 0 var(--lg-inner), var(--lg-shadow);
   }
 
-  .aia-glass::before,
-  .aia-card::before,
-  .aia-card-flat::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    z-index: -1;
-    border-radius: inherit;
-    padding: 1px;
-    pointer-events: none;
-    background: linear-gradient(
-      var(--lg-angle),
-      var(--lg-rim) 0%,
-      rgba(255, 255, 255, 0.05) 26%,
-      rgba(255, 255, 255, 0.015) 55%,
-      rgba(255, 0, 25, 0.25) 78%,
-      var(--lg-rim-red) 100%
-    );
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  /* Sticla adevarata (blur pe fundal), doar pentru elemente mici sau fixe:
+     header, meniul mobil, legenda din lightbox. */
+  .aia-glass {
+    --card-base: var(--glass-base);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
   }
 
   .aia-glass::after,
@@ -267,10 +264,7 @@ h1, h2, h3, .font-display {
     pointer-events: none;
     opacity: var(--s-opacity, 0);
     transition: opacity 0.45s var(--aia-ease);
-    background:
-      radial-gradient(320px circle at var(--sx, 50%) var(--sy, 0%), var(--lg-glint), transparent 60%),
-      radial-gradient(600px circle at var(--sx, 50%) var(--sy, 0%), rgba(255, 255, 255, 0.08), transparent 70%);
-    mix-blend-mode: soft-light;
+    background: radial-gradient(360px circle at var(--sx, 50%) var(--sy, 0%), var(--lg-glint), transparent 65%);
   }
 
   .aia-card {
@@ -278,15 +272,7 @@ h1, h2, h3, .font-display {
     transition: box-shadow 0.6s var(--aia-ease);
   }
   .aia-card > * { position: relative; z-index: 1; }
-  .aia-card:hover {
-    box-shadow:
-      inset 0 1px 0 0 var(--lg-inner),
-      inset 0 -1px 0 0 var(--lg-rim-soft),
-      inset 0 0 40px 0 rgba(255, 255, 255, 0.06),
-      0 40px 90px -24px rgba(255, 0, 25, 0.45),
-      var(--lg-shadow);
-  }
-  .aia-card:hover::before { animation: aia-rim-spin 1.6s linear infinite; }
+  .aia-card:hover { animation: aia-rim-spin 1.6s linear infinite; }
   /* Coltul taiat rosu: semnatura agresiva a fiecarui card. */
   .aia-card { --corner: 18px; }
   .aia-card > .aia-corner {
@@ -310,8 +296,8 @@ h1, h2, h3, .font-display {
      a doua ca invalida si raman pe blur-ul de mai sus. Rezervat elementelor
      mici: filtrul ruleaza pe tot ce e in spatele lor, la fiecare cadru. */
   .aia-refract {
-    -webkit-backdrop-filter: blur(6px) saturate(var(--lg-sat));
-    backdrop-filter: url(#aia-liquid) blur(6px) saturate(var(--lg-sat)) brightness(1.08);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
 
   /* ---------------- Butoane: lame cu colturi taiate ----------------
@@ -359,9 +345,7 @@ h1, h2, h3, .font-display {
 
   .aia-btn-ghost {
     color: var(--aia-text);
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
-    backdrop-filter: blur(14px) saturate(140%);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)), var(--card-base);
     box-shadow: inset 0 0 0 1px var(--aia-border-strong);
   }
   .aia-btn-ghost::before { background: var(--aia-blood); }
@@ -378,9 +362,7 @@ h1, h2, h3, .font-display {
 
   .aia-input {
     @apply w-full px-5 py-3.5 text-base outline-none;
-    background: linear-gradient(160deg, var(--lg-tint), var(--lg-tint-2));
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    backdrop-filter: blur(14px) saturate(160%);
+    background: linear-gradient(160deg, var(--lg-tint), var(--lg-tint-2)), var(--card-base);
     border: 1px solid var(--aia-border);
     border-radius: var(--aia-radius-sm);
     color: var(--aia-text);
@@ -398,22 +380,8 @@ h1, h2, h3, .font-display {
     color: var(--aia-text-muted);
   }
 
-  /* Eticheta de sectiune: bara rosie taiata + text alb spatiat. */
-  .aia-eyebrow {
-    @apply inline-flex items-center gap-3 font-heading text-[12px] font-semibold uppercase tracking-[0.42em];
-    color: var(--aia-text);
-  }
-  .aia-eyebrow::before {
-    content: '';
-    width: 34px;
-    height: 10px;
-    background: var(--aia-blood);
-    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
-    animation: aia-eyebrow-blink 2.4s steps(1) infinite;
-  }
-
   .aia-section-title {
-    @apply text-[17vw] leading-[0.86] sm:text-[10vw] lg:text-[8.5rem];
+    @apply text-[17vw] leading-[0.86] sm:text-[10vw] lg:text-[8.5rem] 2xl:text-[10.5rem];
   }
 
   /* Text cu gradient metalic care curge. */
@@ -440,9 +408,7 @@ h1, h2, h3, .font-display {
     @apply relative inline-flex items-center gap-2 px-4 py-2 font-heading text-[10px] font-bold uppercase tracking-[0.16em];
     border-radius: 2px;
     border: 1px solid var(--aia-border);
-    background: linear-gradient(160deg, var(--lg-tint), var(--lg-tint-2));
-    -webkit-backdrop-filter: blur(14px) saturate(170%);
-    backdrop-filter: blur(14px) saturate(170%);
+    background: linear-gradient(160deg, var(--lg-tint), var(--lg-tint-2)), var(--card-base);
     box-shadow: inset 0 1px 0 var(--lg-inner);
     color: var(--aia-text-muted);
     transition: color 0.3s, border-color 0.3s, translate 0.4s var(--aia-spring);
@@ -459,11 +425,6 @@ h1, h2, h3, .font-display {
 /* ============================================================
    MOTION AGRESIV — utilitare globale
    ============================================================ */
-@keyframes aia-eyebrow-blink {
-  0%, 86%, 100% { opacity: 1; }
-  88%, 92% { opacity: 0.15; }
-  90%, 94% { opacity: 1; }
-}
 
 /* Glitch RGB: umbre rosii/albe decalate si un mic salt orizontal, in rafale
    scurte. Se aplica pe elementul insusi (text-shadow), deci nu depinde de cum
@@ -482,18 +443,17 @@ h1, h2, h3, .font-display {
   97% { text-shadow: none; translate: none; }
 }
 
-/* Titlurile se inclina dupa viteza scroll-ului (FxLayer seteaza --vskew).
-   Literele sar la hover; `translate` e separat de transform-ul pus de GSAP. */
-.aia-section-title {
-  transform: skewY(calc(var(--vskew, 0) * 1deg));
-  transform-origin: left center;
-}
-.aia-section-title span span,
+/* Literele titlurilor cu impact (ImpactDirective). */
+.aia-impact-word { display: inline-block; white-space: nowrap; }
+.aia-impact-ch { display: inline-block; }
+
+/* Literele sar la hover; `translate` e separat de transform-ul pus de GSAP. */
+.aia-impact-ch,
 .hero-title .ch {
   transition: translate 0.35s var(--aia-spring), color 0.2s;
 }
 @media (hover: hover) {
-  .aia-section-title span span:hover,
+  .aia-impact-ch:hover,
   .hero-title .ch:hover {
     translate: 0 -12%;
     color: var(--aia-blood);
@@ -551,8 +511,9 @@ h1, h2, h3, .font-display {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(200deg, rgba(255, 0, 25, 0.55), rgba(0, 0, 0, 0.1) 60%);
-  mix-blend-mode: multiply;
+  /* Spalare rosie cu amestec normal: mix-blend-mode peste o imagine animata
+     ar forta recompozitia intregului strat la fiecare cadru. */
+  background: linear-gradient(200deg, rgba(255, 0, 25, 0.34), rgba(120, 0, 10, 0.12) 45%, rgba(0, 0, 0, 0.2));
   transition: opacity 0.6s;
 }
 .aia-duo:hover img,
@@ -564,17 +525,20 @@ h1, h2, h3, .font-display {
   background: repeating-linear-gradient(-45deg, var(--aia-blood) 0 18px, #000 18px 36px);
 }
 
-/* Scanlines CRT peste tot ecranul (fix, fara repaint: doar opacitate). */
+/* Scanlines CRT, statice. Doar pe ecrane cu mouse: pe telefon un strat in plus
+   cat tot ecranul, la densitate mare de pixeli, costa mai mult decat aduce. */
 .aia-scanlines {
   position: fixed;
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 4px);
-  mix-blend-mode: multiply;
-  opacity: 0.28;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 4px);
+  opacity: 0.3;
 }
-html.light .aia-scanlines { opacity: 0.18; }
+html.light .aia-scanlines { opacity: 0.12; }
+@media (hover: none), (max-width: 1023px) {
+  .aia-scanlines { display: none; }
+}
 
 /* Flash rosu de impact, declansat din JS (AnimationService.flash()). */
 .aia-flash {
@@ -584,25 +548,6 @@ html.light .aia-scanlines { opacity: 0.18; }
   pointer-events: none;
   background: radial-gradient(circle at var(--fx, 50%) var(--fy, 50%), rgba(255, 0, 25, 0.55), rgba(255, 0, 25, 0.12) 45%, transparent 75%);
   opacity: 0;
-}
-
-/* Granulatie animata: stratul se muta in trepte, doar prin transform. */
-.aia-grain-live {
-  position: fixed;
-  inset: -50%;
-  z-index: 2;
-  pointer-events: none;
-  opacity: var(--aia-grain);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: aia-grain 0.6s steps(6) infinite;
-}
-@keyframes aia-grain {
-  0% { transform: translate(0, 0); }
-  20% { transform: translate(-6%, 4%); }
-  40% { transform: translate(5%, -7%); }
-  60% { transform: translate(-3%, 8%); }
-  80% { transform: translate(7%, 2%); }
-  100% { transform: translate(-4%, -5%); }
 }
 
 @keyframes aia-shake {
@@ -636,7 +581,7 @@ html.light .aia-scanlines { opacity: 0.18; }
   body::before { display: none !important; }
   aia-header, aia-footer, aia-velocity-marquee, aia-cookie-banner, aia-back-to-top,
   aia-scroll-progress, aia-search-modal, aia-toast-host, aia-intro, aia-click-spark,
-  aia-mesh-background, aia-ambient, .aia-scanlines, .aia-grain-live, .aia-flash, aia-liquid-cursor, aia-section-dots, video, .no-print, .aia-btn {
+  aia-mesh-background, aia-ambient, .aia-scanlines, .aia-flash, aia-liquid-cursor, aia-section-dots, video, .no-print, .aia-btn {
     display: none !important;
   }
   .aia-card { border: 1px solid #ccc !important; box-shadow: none !important; break-inside: avoid; backdrop-filter: none !important; }

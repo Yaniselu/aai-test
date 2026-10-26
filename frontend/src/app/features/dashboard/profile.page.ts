@@ -121,8 +121,7 @@ const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
       <!-- ───── Evolutie ───── -->
       <div>
-        <p class="aia-eyebrow">{{ 'dashboard.level' | translate }}</p>
-        <h2 class="mt-3 font-display text-2xl lg:text-3xl">{{ 'dashboard.xp' | translate }}</h2>
+        <h2 class="font-display text-2xl lg:text-3xl">{{ 'dashboard.xp' | translate }}</h2>
 
         <div class="aia-card mt-5 p-6 lg:p-7">
           <div class="flex flex-wrap items-end justify-between gap-4">
@@ -153,7 +152,7 @@ const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
       <!-- ───── Badge-uri ───── -->
       <div>
-        <p class="aia-eyebrow">Realizari</p>
+        <h2 class="font-display text-2xl lg:text-3xl">Realizari</h2>
         <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           @for (badge of badges(); track badge.name) {
             <div class="aia-card-flat p-5 text-center" [style.opacity]="badge.earned ? 1 : 0.4">
@@ -169,8 +168,7 @@ const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
       <!-- ───── Program ───── -->
       <div>
-        <p class="aia-eyebrow">{{ 'schedule.eyebrow' | translate }}</p>
-        <h2 class="mt-3 font-display text-2xl lg:text-3xl">{{ 'schedule.title' | translate }}</h2>
+        <h2 class="font-display text-2xl lg:text-3xl">{{ 'schedule.title' | translate }}</h2>
         <div class="mt-5">
           <aia-schedule [showNote]="false" />
         </div>
@@ -178,7 +176,7 @@ const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
       <!-- ───── Prezente ───── -->
       <div>
-        <p class="aia-eyebrow">{{ 'dashboard.attendance' | translate }}</p>
+        <h2 class="font-display text-2xl lg:text-3xl">{{ 'dashboard.attendance' | translate }}</h2>
 
         @if (attendance().length) {
           <div class="mt-5 flex flex-wrap gap-1.5">

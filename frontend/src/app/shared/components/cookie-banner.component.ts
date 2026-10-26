@@ -18,8 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     @if (consent.needsDecision()) {
       <div
         class="fixed inset-x-0 bottom-0 z-[140] p-3 sm:p-5"
-        [style.backgroundColor]="'color-mix(in srgb, var(--aia-bg) 88%, transparent)'"
-        [style.backdropFilter]="'blur(18px)'"
+        [style.backgroundColor]="'color-mix(in srgb, var(--aia-bg) 97%, transparent)'"
         [style.borderTop]="'1px solid var(--aia-border)'"
         style="animation: aia-cookie-in .5s cubic-bezier(.16,1,.3,1)"
         role="dialog"

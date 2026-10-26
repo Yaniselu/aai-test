@@ -27,7 +27,10 @@
     "retry": "Retry",
     "edit": "Edit",
     "optional": "optional",
-    "required": "required"
+    "required": "required",
+    "copy": "Copy",
+    "copied": "Copied",
+    "skip": "Skip to content"
   },
   "hero": {
     "eyebrow": "MARTIAL ARTS FOR KIDS AND ADULTS",
@@ -45,7 +48,11 @@
     "badgeMedals": "medals in 2025",
     "badgeNew": "New clip from the gym",
     "badgeNewSub": "2 minutes ago",
-    "manifesto": "We don’t just train bodies. We build characters that don’t give up, athletes who respect and people who win — on the mat and in life."
+    "manifesto": "We don’t just train bodies. We build characters that don’t give up, athletes who respect and people who win — on the mat and in life.",
+    "bigword": "FIGHT",
+    "phone1": "Competition day",
+    "phone2": "Kata · tournament prep",
+    "phone3": "Evening training · discipline first"
   },
   "about": {
     "eyebrow": "The academy spirit",
@@ -65,7 +72,8 @@
       "competitionText": "Serious preparation for tournaments and gradings.",
       "champion": "Champion",
       "championText": "Character and performance at the highest level."
-    }
+    },
+    "journeyTitle": "The road to champion"
   },
   "groups": {
     "eyebrow": "Academy groups",
@@ -77,18 +85,70 @@
     "kidsText": "Discipline, coordination, respect and confidence in a motivating environment.",
     "adultsText": "Technique, strength, speed and a fighter's mindset, with visible progress.",
     "karateText": "Intense training for athletes who want to push their level to the maximum.",
-    "pick": "Pick your group"
+    "pick": "Pick your group",
+    "names": {
+      "kids": "KickBox Kids",
+      "adults": "KickBox Adults",
+      "karate": "Karate"
+    },
+    "tags": {
+      "kids": [
+        "Coordination",
+        "Respect",
+        "Play & technique"
+      ],
+      "adults": [
+        "Strength",
+        "Cardio",
+        "Sparring"
+      ],
+      "karate": [
+        "Kata",
+        "Kumite",
+        "Competitions"
+      ]
+    }
   },
   "coaches": {
     "eyebrow": "Our coaches",
     "title": "Experience. Respect. Leadership.",
-    "hover": "Hover over the coaches"
+    "hover": "Hover over the coaches",
+    "list": {
+      "ion": {
+        "role": "Head Coach · Strategy · Competitions",
+        "focus": "Leadership, technique, performance"
+      },
+      "tech": {
+        "name": "Technical Coach",
+        "role": "Coordination · Juniors · Progress",
+        "focus": "Control, speed, discipline"
+      },
+      "perf": {
+        "name": "Performance Coach",
+        "role": "Strength · Endurance · Focus",
+        "focus": "Preparation for the advanced level"
+      }
+    }
   },
   "reviews": {
     "eyebrow": "Reviews",
     "title": "What parents say",
     "previous": "Previous review",
-    "next": "Next review"
+    "next": "Next review",
+    "list": {
+      "r1": {
+        "text": "The best place for kids. You can see the discipline, the seriousness and real care for their progress.",
+        "author": "Athlete parent"
+      },
+      "r2": {
+        "text": "Powerful sessions, a premium atmosphere and loads of motivation. My child has a whole new confidence.",
+        "author": "Academy family"
+      },
+      "r3": {
+        "text": "It is not just a sport. It builds character. Exactly the kind of academy you need.",
+        "author": "Competitor parent"
+      }
+    }
   },
   "gallery": {
     "eyebrow": "Gallery",
@@ -112,6 +172,18 @@
       "friday": "Friday",
       "saturday": "Saturday",
       "sunday": "Sunday"
+    },
+    "classes": {
+      "aerobic": "Aerobics",
+      "dance": "Dance",
+      "karate": "Karate",
+      "karate5": "Karate 5 yrs",
+      "karate5plus": "Karate 5+ yrs",
+      "kickAdults": "Kick Box Adults",
+      "kickKids": "Kick Box Kids",
+      "mma": "MMA",
+      "salvy": "Salvy Fight Club",
+      "workshop": "Creative Workshop"
     }
   },
   "contact": {
@@ -136,6 +208,12 @@
       "size": "Maximum 16 athletes per group",
       "noFee": "No registration fee",
       "platform": "Access to the platform with XP and Battle Pass"
+    },
+    "hours": "Monday – Saturday · 16:00 – 21:00",
+    "options": {
+      "kids": "KickBox Kids (5 – 12 yrs)",
+      "adults": "KickBox Adults (12+)",
+      "karate": "Karate (advanced)"
     }
   },
   "auth": {
@@ -366,12 +444,187 @@
     "notifFollow": "new followers",
     "stat1": "clips published",
     "stat2": "views",
-    "stat3": "connected parents"
+    "stat3": "connected parents",
+    "nowAgo": "now",
+    "thisWeek": "this week",
+    "items": {
+      "i1": "Evening training · bag combinations",
+      "i2": "Competition day · the team is ready",
+      "i3": "Technique, speed, control",
+      "i4": "Academy team · proud of every athlete",
+      "i5": "Karate · kata before the tournament",
+      "i6": "Karate group · advanced level",
+      "i7": "The little ones, their first tournament",
+      "i8": "Adult KickBox · strength and endurance"
+    }
   },
   "cta": {
     "eyebrow": "Start today",
     "title": "First session is free",
     "text": "Come for a trial class. Gear is on us, motivation comes naturally.",
     "button": "Book the session"
+  },
+  "intro": {
+    "eyebrow": "Craiova · Martial Arts",
+    "motto": "Discipline · Performance · Mindset",
+    "skip": "Skip intro",
+    "fight": "FIGHT"
+  },
+  "phone": {
+    "follow": "Follow",
+    "sound": "original sound",
+    "live": "LIVE · Craiova gym",
+    "ago": {
+      "h": "h",
+      "d": "d"
+    }
+  },
+  "marquee": {
+    "a": [
+      "DISCIPLINE",
+      "PERFORMANCE",
+      "MINDSET",
+      "RESPECT",
+      "NO EXCUSES"
+    ],
+    "b": [
+      "KICKBOX",
+      "KARATE",
+      "CRAIOVA",
+      "CHAMPIONS",
+      "NO MERCY"
+    ]
+  },
+  "kinetic": {
+    "k1a": "NO PAIN",
+    "k1b": "NO GLORY",
+    "k2a": "TRAIN HARD",
+    "k2b": "FIGHT EASY",
+    "k3a": "ON CAMERA",
+    "k3b": "ALL ACCESS",
+    "k4a": "ACADEMIA",
+    "k4b": "ION ANDREI"
+  },
+  "rounds": {
+    "r1": "ROUND 01 · GROUPS",
+    "r2": "ROUND 02 · SCHEDULE",
+    "r3": "ROUND 03 · VERDICT",
+    "final": "FINAL ROUND"
+  },
+  "stats": {
+    "title": "The numbers that matter",
+    "athletes": "athletes trained",
+    "medals": "medals and podiums",
+    "years": "years of experience",
+    "clips": "clips published"
+  },
+  "journey": {
+    "hint": "Scroll · the athlete journey"
+  },
+  "legal": {
+    "onlyRo": "This legal document is available in Romanian only. The Romanian version is the legally binding one.",
+    "updated": "Last updated",
+    "operator": "Operator",
+    "print": "Print this document"
+  },
+  "search": {
+    "placeholder": "Search pages, sections, features...",
+    "label": "Site search",
+    "term": "Search term",
+    "none": "No results for",
+    "navigate": "navigate",
+    "open": "open",
+    "close": "close",
+    "items": {
+      "home": {
+        "title": "Home",
+        "desc": "The academy home page"
+      },
+      "groups": {
+        "title": "Groups",
+        "desc": "Kids, adults and karate groups"
+      },
+      "schedule": {
+        "title": "Schedule",
+        "desc": "The weekly training schedule"
+      },
+      "coaches": {
+        "title": "Coaches",
+        "desc": "The coaching team"
+      },
+      "gallery": {
+        "title": "Gallery",
+        "desc": "Photos and clips from the gym and competitions"
+      },
+      "location": {
+        "title": "Location",
+        "desc": "The academy gym on the map"
+      },
+      "register": {
+        "title": "Sign up",
+        "desc": "Create a new athlete account"
+      },
+      "login": {
+        "title": "Sign in",
+        "desc": "Log into your account"
+      },
+      "profile": {
+        "title": "My profile",
+        "desc": "XP, badges and progress"
+      },
+      "battlepass": {
+        "title": "Battle Pass",
+        "desc": "Rewards unlocked by attendance"
+      },
+      "wheel": {
+        "title": "Spin Birtu",
+        "desc": "The academy wheel, one spin a week"
+      },
+      "stories": {
+        "title": "Stories",
+        "desc": "Moments from the gym, visible for 24 hours"
+      },
+      "competitions": {
+        "title": "Competition calendar",
+        "desc": "Upcoming academy competitions"
+      },
+      "attendance": {
+        "title": "Attendance",
+        "desc": "Coach panel for marking attendance"
+      },
+      "approvals": {
+        "title": "Account approvals",
+        "desc": "Approving new accounts"
+      },
+      "privacy": {
+        "title": "Privacy policy",
+        "desc": "How we process your data"
+      },
+      "terms": {
+        "title": "Terms and conditions",
+        "desc": "Terms of use"
+      },
+      "cookies": {
+        "title": "Cookie policy",
+        "desc": "Which cookies we use and why"
+      }
+    },
+    "sections": {
+      "nav": "Navigation",
+      "account": "Account",
+      "athlete": "Athlete",
+      "coach": "Coach",
+      "admin": "Admin",
+      "legal": "Legal"
+    }
+  },
+  "a11y": {
+    "whatsapp": "Message us on WhatsApp",
+    "backToTop": "Back to top",
+    "quickLinks": "Quick links",
+    "legalLinks": "Legal information",
+    "notifications": "Notifications",
+    "closeNotification": "Close notification",
+    "sections": "Sections"
   }
 }

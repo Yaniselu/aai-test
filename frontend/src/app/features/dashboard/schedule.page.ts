@@ -12,8 +12,7 @@ import { IconComponent } from '../../shared/icons/icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section>
-      <p class="aia-eyebrow">{{ 'schedule.eyebrow' | translate }}</p>
-      <h2 class="mt-3 font-display text-3xl lg:text-4xl">{{ 'schedule.title' | translate }}</h2>
+      <h2 class="font-display text-3xl lg:text-4xl">{{ 'schedule.title' | translate }}</h2>
 
       <div class="mt-8">
         <aia-schedule />

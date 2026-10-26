@@ -1,18 +1,20 @@
 import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../core/services/auth.service';
-import { I18nService, SUPPORTED_LANGS } from '../../core/services/i18n.service';
+import { I18nService } from '../../core/services/i18n.service';
+import { SmoothScrollService } from '../../core/services/smooth-scroll.service';
 import { SearchService } from '../../core/services/search.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { IconComponent } from '../icons/icon.component';
+import { LangToggleComponent } from './lang-toggle.component';
 import { LogoComponent } from './logo.component';
 
 /** Header sticky, cu bara care devine "pilula" de sticla la scroll. */
 @Component({
   selector: 'aia-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, TranslatePipe, IconComponent, LogoComponent],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, IconComponent, LogoComponent, LangToggleComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="fixed inset-x-0 top-0 z-50 transition-all duration-500" [style.paddingTop.px]="shrunk() ? 10 : 20">
@@ -47,6 +49,7 @@ import { LogoComponent } from './logo.component';
                 (focus)="moveInd($event)"
                 [routerLink]="item.route"
                 [fragment]="item.fragment"
+                (click)="onNav(item.fragment)"
                 routerLinkActive="!text-[var(--aia-text)]"
                 [routerLinkActiveOptions]="{ exact: item.route === '/' && !item.fragment }"
                 class="relative z-[1] rounded-full px-3.5 py-2 text-[13px] transition-colors hover:text-[var(--aia-text)]"
@@ -58,7 +61,7 @@ import { LogoComponent } from './logo.component';
           </nav>
 
           <!-- Actiuni -->
-          <div class="flex items-center gap-2">
+          <div class="actions flex items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               class="hidden h-10 w-10 place-items-center rounded-full border transition-colors hover:border-[var(--aia-cyan)] hover:text-[var(--aia-cyan)] sm:grid"
@@ -69,15 +72,7 @@ import { LogoComponent } from './logo.component';
               <aia-icon name="search" [size]="16" />
             </button>
 
-            <button
-              type="button"
-              class="h-10 rounded-full border px-3 font-heading text-[10px] font-bold uppercase tracking-[0.14em] transition-colors hover:border-[var(--aia-cyan)] hover:text-[var(--aia-cyan)]"
-              [style.borderColor]="'var(--aia-border)'"
-              (click)="i18n.toggle()"
-              [attr.aria-label]="'nav.language' | translate"
-            >
-              {{ i18n.current() === 'ro' ? 'EN' : 'RO' }}
-            </button>
+            <aia-lang-toggle />
 
             <button
               type="button"
@@ -136,6 +131,7 @@ import { LogoComponent } from './logo.component';
       <div
         id="aia-mobile-menu"
         class="mobile-menu fixed inset-0 z-40 flex flex-col overflow-y-auto px-8 pb-10 pt-28 lg:hidden"
+        data-lenis-prevent
         style="animation: aia-menu-in .6s cubic-bezier(.16,1,.3,1)"
       >
         <nav class="flex flex-col" [attr.aria-label]="'nav.main' | translate">
@@ -143,7 +139,7 @@ import { LogoComponent } from './logo.component';
             <a
               [routerLink]="item.route"
               [fragment]="item.fragment"
-              (click)="closeMenu()"
+              (click)="closeMenu(); onNav(item.fragment)"
               class="border-b py-4 font-display text-4xl transition-colors hover:text-[var(--aia-blood)] sm:py-5"
               [style.borderColor]="'var(--aia-border)'"
               [style.animation]="'aia-item-in .5s cubic-bezier(.16,1,.3,1) both'"
@@ -169,17 +165,8 @@ import { LogoComponent } from './logo.component';
           }
         </div>
 
-        <div class="mt-8 flex gap-2">
-          @for (lang of languages; track lang.code) {
-            <button
-              type="button"
-              class="aia-chip"
-              [style.borderColor]="i18n.current() === lang.code ? 'var(--aia-blood)' : 'var(--aia-border)'"
-              (click)="i18n.use(lang.code)"
-            >
-              {{ lang.label }}
-            </button>
-          }
+        <div class="mt-8">
+          <aia-lang-toggle size="lg" />
         </div>
       </div>
     }
@@ -207,13 +194,20 @@ import { LogoComponent } from './logo.component';
         clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
         transition: left 0.3s var(--aia-snap), width 0.3s var(--aia-snap), opacity 0.2s;
       }
+      /* Pe telefoane foarte inguste (320-374px) logo + comutator + tema + meniu
+         nu incap la dimensiunea normala: le strangem putin. */
+      @media (max-width: 374px) {
+        .actions > button { width: 36px; height: 36px; }
+        .actions aia-lang-toggle { --w: 30px; }
+        :host ::ng-deep .actions aia-lang-toggle .toggle { height: 36px; --w: 30px; }
+        :host ::ng-deep aia-logo .logo-text { display: none; }
+      }
       .nav a { font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; }
       .nav a:hover { color: var(--aia-text) !important; }
       .bar::after { display: none; }
       .mobile-menu {
-        background: color-mix(in srgb, var(--aia-bg) 55%, transparent);
-        -webkit-backdrop-filter: blur(30px) saturate(180%);
-        backdrop-filter: blur(30px) saturate(180%);
+        /* Opac: meniul acopera tot ecranul, un blur pe fundal n-ar mai fi vizibil. */
+        background: color-mix(in srgb, var(--aia-bg) 96%, transparent);
       }
       @keyframes aia-menu-in {
         from {
@@ -244,7 +238,8 @@ export class HeaderComponent {
   readonly i18n = inject(I18nService);
   readonly search = inject(SearchService);
 
-  readonly languages = SUPPORTED_LANGS;
+  private readonly router = inject(Router);
+  private readonly scroller = inject(SmoothScrollService);
   readonly shrunk = signal(false);
   /** Bara se ascunde la scroll in jos si revine la scroll in sus. */
   readonly hiddenUp = signal(false);
@@ -269,6 +264,15 @@ export class HeaderComponent {
     if (!this.menuOpen()) this.hiddenUp.set(y > 400 && y > this.lastY + 2);
     if (y < this.lastY - 2 || y < 400) this.hiddenUp.set(false);
     this.lastY = y;
+  }
+
+  /**
+   * Click pe o ancora cand esti deja pe pagina principala: router-ul nu
+   * navigheaza a doua oara spre aceeasi adresa, asa ca derulam noi, lin.
+   */
+  onNav(fragment: string | undefined): void {
+    if (this.router.url.split(/[?#]/)[0] !== '/') return;
+    this.scroller.scrollTo(fragment ? '#' + fragment : 0, fragment ? -20 : 0);
   }
 
   /** Pastila de sticla aluneca sub linkul de sub cursor. */

@@ -21,8 +21,7 @@ import { IconComponent } from '../../shared/icons/icon.component';
     <header class="border-b pb-8" [style.borderColor]="'var(--aia-border)'">
       <div class="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p class="aia-eyebrow">{{ auth.isAdmin() ? 'Panou administrator' : 'Panou antrenor' }}</p>
-          <h1 class="mt-4 font-display text-3xl leading-tight sm:text-4xl">{{ title() }}</h1>
+          <h1 class="font-display text-3xl leading-tight sm:text-4xl">{{ title() }}</h1>
         </div>
 
         <a routerLink="/dashboard" class="aia-btn aia-btn-ghost !px-5 !py-2.5">

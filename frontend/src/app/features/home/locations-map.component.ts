@@ -23,8 +23,7 @@ import { RevealDirective } from '../../shared/motion/motion.directives';
   template: `
     <section id="locatii" class="scroll-mt-28 py-20 lg:py-32">
       <div class="aia-container">
-        <p class="aia-eyebrow" aiaReveal>{{ 'contact.eyebrow' | translate }}</p>
-        <h2 class="aia-section-title mt-5" aiaReveal>{{ 'contact.title' | translate }}</h2>
+        <h2 class="aia-section-title" aiaReveal>{{ 'contact.title' | translate }}</h2>
 
         <div class="mt-12 grid gap-5 lg:grid-cols-[380px_1fr]">
           <!-- Detalii de contact -->
@@ -72,7 +71,7 @@ import { RevealDirective } from '../../shared/motion/motion.directives';
                 <span class="mt-0.5 shrink-0" [style.color]="'var(--aia-blood)'">
                   <aia-icon name="clock" [size]="18" />
                 </span>
-                <span class="text-sm" [style.color]="'var(--aia-text-muted)'">{{ academy.schedule }}</span>
+                <span class="text-sm" [style.color]="'var(--aia-text-muted)'">{{ 'contact.hours' | translate }}</span>
               </li>
             </ul>
 

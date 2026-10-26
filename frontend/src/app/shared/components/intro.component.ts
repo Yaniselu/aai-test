@@ -10,6 +10,7 @@ import {
   viewChild
 } from '@angular/core';
 import gsap from 'gsap';
+import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { AnimationService } from '../../core/services/animation.service';
 
@@ -26,6 +27,7 @@ import { AnimationService } from '../../core/services/animation.service';
 @Component({
   selector: 'aia-intro',
   standalone: true,
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
@@ -44,7 +46,7 @@ import { AnimationService } from '../../core/services/animation.service';
         <!-- Numaratoarea inversa -->
         <div class="pointer-events-none absolute inset-0 grid place-items-center">
           @for (n of countdown; track n) {
-            <span class="count font-display" [class.fight]="n === 'FIGHT'">{{ n }}</span>
+            <span class="count font-display" [class.fight]="n === 'FIGHT'">{{ n === 'FIGHT' ? ('intro.fight' | translate) : n }}</span>
           }
         </div>
 
@@ -52,14 +54,14 @@ import { AnimationService } from '../../core/services/animation.service';
         <div #content class="pointer-events-none absolute inset-0 grid place-items-center px-6 text-center">
           <div>
             <p #eyebrow class="mb-5 font-heading text-[11px] font-semibold uppercase tracking-[0.6em] text-[#ff0019] sm:text-xs">
-              Craiova &middot; Arte Martiale
+              {{ 'intro.eyebrow' | translate }}
             </p>
             <h1 #title class="font-display text-[19vw] leading-[0.84] text-white sm:text-[14vw] lg:text-[10rem]" data-text="ACADEMIA ION ANDREI">
               Academia<br /><span class="text-[#ff0019]">Ion Andrei</span>
             </h1>
             <div #line class="mx-auto mt-8 h-[4px] w-0 bg-[#ff0019] shadow-[0_0_30px_#ff0019]"></div>
             <p #motto class="mt-7 font-heading text-xs uppercase tracking-[0.5em] text-white/70 sm:text-sm">
-              Disciplina &middot; Performanta &middot; Mentalitate
+              {{ 'intro.motto' | translate }}
             </p>
           </div>
         </div>
@@ -70,7 +72,7 @@ import { AnimationService } from '../../core/services/animation.service';
           class="aia-btn aia-btn-ghost absolute bottom-8 right-8 z-10 !px-5 !py-2.5 !text-[10px]"
           (click)="skip()"
         >
-          <span>Skip intro &rarr;</span>
+          <span>{{ 'intro.skip' | translate }} &rarr;</span>
         </button>
       </div>
     }
@@ -155,8 +157,8 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
       const fight = i === counts.length - 1;
       tl.fromTo(
         el,
-        { opacity: 0, scale: fight ? 3 : 2.4, filter: 'blur(20px)', rotate: fight ? -8 : 0 },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', rotate: fight ? -4 : 0, duration: fight ? 0.28 : 0.2, ease: 'power4.in' },
+        { opacity: 0, scale: fight ? 3 : 2.4, rotate: fight ? -8 : 0 },
+        { opacity: 1, scale: 1, rotate: fight ? -4 : 0, duration: fight ? 0.28 : 0.2, ease: 'power4.in' },
         i === 0 ? 0.15 : '>'
       )
         .add(() => {
@@ -169,8 +171,8 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
     tl.from(this.eyebrow()!.nativeElement, { opacity: 0, letterSpacing: '1.4em', duration: 0.5, ease: 'expo.out' })
       .fromTo(
         this.title()!.nativeElement,
-        { opacity: 0, scale: 2.2, filter: 'blur(24px)' },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.35, ease: 'power4.in' },
+        { opacity: 0, scale: 2.2 },
+        { opacity: 1, scale: 1, duration: 0.35, ease: 'power4.in' },
         '<'
       )
       .add(() => {
@@ -184,7 +186,7 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
       // Lama taie ecranul pe diagonala
       .to(this.cut()!.nativeElement, { attr: { 'stroke-dashoffset': 0 }, duration: 0.25, ease: 'expo.in' })
       .add(() => this.anim.flash(innerWidth / 2, innerHeight / 2, 1))
-      .to(this.content()!.nativeElement, { opacity: 0, scale: 1.08, filter: 'blur(10px)', duration: 0.3, ease: 'power2.in' }, '<')
+      .to(this.content()!.nativeElement, { opacity: 0, scale: 1.08, duration: 0.3, ease: 'power2.in' }, '<')
       .to(this.canvasRef()!.nativeElement, { opacity: 0, duration: 0.3 }, '<')
       // Hero-ul isi porneste intrarea odata cu deschiderea usilor.
       .call(() => this.anim.markIntroDone(), [], 'doors')

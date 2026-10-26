@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { environment } from '../../../environments/environment';
 import { StorageService } from './storage.service';
 
@@ -28,6 +29,13 @@ export class I18nService {
     this.current.set(lang);
     this.storage.set(environment.storageKeys.lang, lang);
     document.documentElement.lang = lang;
+    // Linkul de acces rapid sta in index.html, in afara Angular: il traducem aici.
+    this.translate.get('common.skip').subscribe((text: string) => {
+      const skip = document.querySelector('.skip-link');
+      if (skip && text && text !== 'common.skip') skip.textContent = text;
+      // Textele noi au alte lungimi: pozitiile animatiilor legate de scroll se recalculeaza.
+      setTimeout(() => ScrollTrigger.refresh(), 250);
+    });
   }
 
   toggle(): void {

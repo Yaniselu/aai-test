@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -50,10 +51,10 @@ export class LiquidDefsComponent {}
 
 /**
  * Fundalul ambiental din spatele intregului site: pete mari de culoare care
- * curg lent, se apleaca spre cursor si se rotesc odata cu scroll-ul.
+ * curg lent.
  *
- * Sunt gradienti radiali pe elemente mari, animate doar prin `transform`:
- * compozitorul le muta fara repaint, deci costul real e aproape zero.
+ * Sunt gradienti radiali pe elemente mari, animate doar prin `transform` din
+ * CSS: compozitorul le muta fara repaint si fara niciun cod pe firul principal.
  */
 @Component({
   selector: 'aia-ambient',
@@ -64,8 +65,6 @@ export class LiquidDefsComponent {}
       <span class="blob b1"></span>
       <span class="blob b2"></span>
       <span class="blob b3"></span>
-      <span class="blob b4"></span>
-      <span class="blob b5"></span>
     </div>
     <div class="vignette" aria-hidden="true"></div>
   `,
@@ -82,7 +81,7 @@ export class LiquidDefsComponent {}
       .layer {
         position: absolute;
         inset: -20%;
-        will-change: transform;
+        contain: strict;
       }
       .blob {
         position: absolute;
@@ -142,38 +141,7 @@ export class LiquidDefsComponent {}
     `
   ]
 })
-export class AmbientComponent implements AfterViewInit, OnDestroy {
-  private readonly anim = inject(AnimationService);
-  private readonly layer = viewChild.required<ElementRef<HTMLElement>>('layer');
-
-  private raf?: number;
-  private readonly p = { x: 0, y: 0, tx: 0, ty: 0 };
-
-  ngAfterViewInit(): void {
-    if (this.anim.reducedMotion) return;
-    window.addEventListener('pointermove', this.onPointer, { passive: true });
-
-    const el = this.layer().nativeElement;
-    const loop = () => {
-      this.p.x += (this.p.tx - this.p.x) * 0.035;
-      this.p.y += (this.p.ty - this.p.y) * 0.035;
-      const scroll = window.scrollY / Math.max(document.documentElement.scrollHeight - innerHeight, 1);
-      el.style.transform = `translate3d(${this.p.x * 4}vw, ${this.p.y * 4 - scroll * 10}vh, 0) rotate(${scroll * 50}deg)`;
-      this.raf = requestAnimationFrame(loop);
-    };
-    loop();
-  }
-
-  ngOnDestroy(): void {
-    if (this.raf) cancelAnimationFrame(this.raf);
-    window.removeEventListener('pointermove', this.onPointer);
-  }
-
-  private readonly onPointer = (e: PointerEvent) => {
-    this.p.tx = e.clientX / innerWidth - 0.5;
-    this.p.ty = e.clientY / innerHeight - 0.5;
-  };
-}
+export class AmbientComponent {}
 
 /**
  * Cursor lichid: un punct rosu precis si o lentila de sticla care il urmeaza
@@ -181,9 +149,8 @@ export class AmbientComponent implements AfterViewInit, OnDestroy {
  * eticheta din `data-cursor` ("Play", "Drag", ...).
  *
  * Tot aici, un singur ascultator global hraneste reflexiile: seteaza --sx/--sy
- * pe orice card de sticla si --bx/--by pe butoane, ca picatura de hover sa
- * porneasca exact din punctul in care a intrat cursorul. Un ascultator pe
- * document in loc de unul pe fiecare card.
+ * pe cardul de sub cursor. Un ascultator pe document in loc de unul pe card.
+ * Bucla de animatie ruleaza doar cat timp cursorul se misca.
  */
 @Component({
   selector: 'aia-liquid-cursor',
@@ -293,6 +260,9 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
   private raf?: number;
   private readonly pos = { x: -100, y: -100, lx: -100, ly: -100, vx: 0, vy: 0 };
   private glassEl: HTMLElement | null = null;
+  private loop: () => void = () => {};
+  private glassEvent?: PointerEvent;
+  private glassFrame?: number;
 
   ngAfterViewInit(): void {
     document.addEventListener('pointermove', this.onGlass, { passive: true });
@@ -305,7 +275,7 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
     document.addEventListener('pointerleave', this.onLeaveDoc);
     document.addEventListener('pointerover', this.onOver, { passive: true });
 
-    const loop = () => {
+    this.loop = () => {
       const p = this.pos;
       // Arc amortizat: lentila are inertie si "se intinde" pe directia miscarii.
       p.vx += (p.x - p.lx) * 0.18;
@@ -315,23 +285,25 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
       p.lx += p.vx;
       p.ly += p.vy;
       const speed = Math.min(Math.hypot(p.vx, p.vy), 40);
-      const angle = Math.atan2(p.vy, p.vx);
       // Cu eticheta afisata lentila nu se intinde, altfel textul s-ar roti cu ea.
       const stretch = this.label() ? 1 : 1 + speed / 90;
 
       const lens = this.lens()?.nativeElement;
       const dot = this.dot()?.nativeElement;
       if (lens) {
-        lens.style.transform = `translate3d(${p.lx}px, ${p.ly}px, 0) rotate(${this.hover() || this.label() ? 0 : (stretch - 1) * 90 + angle * 0}deg)`;
+        lens.style.transform = `translate3d(${p.lx}px, ${p.ly}px, 0) rotate(${this.hover() || this.label() ? 0 : (stretch - 1) * 90}deg)`;
       }
       if (dot) dot.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
-      this.raf = requestAnimationFrame(loop);
+      // Bucla se opreste singura cand lentila a ajuns pe cursor; reporneste la miscare.
+      const settled = Math.abs(p.x - p.lx) < 0.1 && Math.abs(p.y - p.ly) < 0.1 && speed < 0.05;
+      this.raf = settled ? undefined : requestAnimationFrame(this.loop);
     };
-    loop();
+    this.loop();
   }
 
   ngOnDestroy(): void {
     if (this.raf) cancelAnimationFrame(this.raf);
+    if (this.glassFrame) cancelAnimationFrame(this.glassFrame);
     document.documentElement.classList.remove('aia-has-cursor');
     document.removeEventListener('pointermove', this.onGlass);
     window.removeEventListener('pointermove', this.onMove);
@@ -350,6 +322,7 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
       this.pos.ly = e.clientY;
       this.hidden.set(false);
     }
+    if (this.raf === undefined) this.raf = requestAnimationFrame(this.loop);
   };
 
   private readonly onOver = (e: PointerEvent) => {
@@ -369,9 +342,18 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
   private readonly onUp = () => this.down.set(false);
   private readonly onLeaveDoc = () => this.hidden.set(true);
 
+  /** pointermove vine si de 1000 de ori pe secunda pe mouse-uri rapide: procesam doar ultimul, o data pe cadru. */
   private readonly onGlass = (e: PointerEvent) => {
+    this.glassEvent = e;
+    if (this.glassFrame === undefined) this.glassFrame = requestAnimationFrame(this.updateGlass);
+  };
+
+  private readonly updateGlass = () => {
+    this.glassFrame = undefined;
+    const e = this.glassEvent;
+    if (!e) return;
     const target = e.target as HTMLElement | null;
-    const glass = target?.closest<HTMLElement>('.aia-card, .aia-glass') ?? null;
+    const glass = target?.closest<HTMLElement>('.aia-card, .aia-glass, .aia-glass-lite') ?? null;
 
     if (glass !== this.glassEl) {
       this.glassEl?.style.setProperty('--s-opacity', '0');
@@ -382,13 +364,6 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
       glass.style.setProperty('--sx', `${e.clientX - r.left}px`);
       glass.style.setProperty('--sy', `${e.clientY - r.top}px`);
       glass.style.setProperty('--s-opacity', '1');
-    }
-
-    const btn = target?.closest<HTMLElement>('.aia-btn');
-    if (btn) {
-      const r = btn.getBoundingClientRect();
-      btn.style.setProperty('--bx', `${e.clientX - r.left}px`);
-      btn.style.setProperty('--by', `${e.clientY - r.top}px`);
     }
   };
 }
@@ -405,9 +380,10 @@ export interface SectionDot {
 @Component({
   selector: 'aia-section-dots',
   standalone: true,
+  imports: [TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <nav class="dots aia-glass" aria-label="Sectiuni">
+    <nav class="dots aia-glass-lite" [attr.aria-label]="'a11y.sections' | translate">
       @for (s of sections(); track s.id; let i = $index) {
         <button
           type="button"
@@ -484,29 +460,36 @@ export class SectionDotsComponent implements AfterViewInit, OnDestroy {
   readonly sections = input.required<SectionDot[]>();
   readonly active = signal(0);
 
-  private triggers: ScrollTrigger[] = [];
+  private frame?: number;
 
   ngAfterViewInit(): void {
-    // Asteptam un cadru: sectiunile fixate (pin) isi adauga spatiul abia dupa init.
-    requestAnimationFrame(() => {
-      this.sections().forEach((s, i) => {
-        const el = document.getElementById(s.id);
-        if (!el) return;
-        this.triggers.push(
-          ScrollTrigger.create({
-            trigger: el,
-            start: 'top 55%',
-            end: 'bottom 55%',
-            onToggle: (self) => self.isActive && this.active.set(i)
-          })
-        );
-      });
-    });
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.onScroll();
   }
 
   ngOnDestroy(): void {
-    this.triggers.forEach((t) => t.kill());
+    window.removeEventListener('scroll', this.onScroll);
+    if (this.frame) cancelAnimationFrame(this.frame);
   }
+
+  /**
+   * Sectiunea activa se calculeaza din pozitia reala a sectiunilor, o data pe
+   * cadru: pin-urile GSAP adauga si scot spatiu in pagina, iar niste praguri
+   * calculate o singura data ar ramane decalate.
+   */
+  private readonly onScroll = () => {
+    if (this.frame !== undefined) return;
+    this.frame = requestAnimationFrame(() => {
+      this.frame = undefined;
+      const line = window.innerHeight * 0.55;
+      let current = 0;
+      this.sections().forEach((s, i) => {
+        const el = document.getElementById(s.id);
+        if (el && el.getBoundingClientRect().top <= line) current = i;
+      });
+      this.active.set(current);
+    });
+  };
 
   go(id: string): void {
     this.scroller.scrollTo('#' + id, -20);
@@ -524,9 +507,6 @@ export class SectionDotsComponent implements AfterViewInit, OnDestroy {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="aia-scanlines" aria-hidden="true"></div>
-    @if (!reduced) {
-      <div class="aia-grain-live" aria-hidden="true"></div>
-    }
     <div #flash class="aia-flash" aria-hidden="true"></div>
     <div #rage class="rage" aria-hidden="true"></div>
     <div #curtain class="curtain" aria-hidden="true">
@@ -582,36 +562,39 @@ export class FxLayerComponent implements AfterViewInit, OnDestroy {
   readonly reduced = this.anim.reducedMotion;
   private raf?: number;
   private lastY = 0;
-  private prevY = 0;
   private heat = 0;
-  private skew = 0;
+  private shown = 0;
 
   ngAfterViewInit(): void {
     this.anim.registerFlash(this.flash().nativeElement);
     if (this.reduced) return;
     this.watchNavigation();
     this.lastY = window.scrollY;
-    const el = this.rage().nativeElement;
-    const loop = () => {
-      const y = window.scrollY;
-      const v = Math.abs(y - this.lastY);
-      this.lastY = y;
-      const dir = y > this.prevY ? 1 : -1;
-      this.prevY = y;
-      this.heat += (Math.min(v / 60, 1) - this.heat) * 0.12;
-      el.style.opacity = this.heat.toFixed(3);
-      // Inclinarea titlurilor dupa viteza: maxim 4 grade, amortizata.
-      this.skew += (Math.max(-4, Math.min(4, (v / 14) * dir)) - this.skew) * 0.1;
-      document.documentElement.style.setProperty('--vskew', this.skew.toFixed(2));
-      this.raf = requestAnimationFrame(loop);
-    };
-    loop();
+    window.addEventListener('scroll', this.onScroll, { passive: true });
   }
 
   ngOnDestroy(): void {
     if (this.raf) cancelAnimationFrame(this.raf);
+    window.removeEventListener('scroll', this.onScroll);
     this.navSub?.unsubscribe();
   }
+
+  /** Bucla porneste la scroll si se opreste singura cand marginile s-au stins. */
+  private readonly onScroll = () => {
+    if (this.raf === undefined) this.raf = requestAnimationFrame(this.tick);
+  };
+
+  private readonly tick = () => {
+    const y = window.scrollY;
+    const v = Math.abs(y - this.lastY);
+    this.lastY = y;
+    this.heat += (Math.min(v / 60, 1) - this.heat) * 0.12;
+    if (Math.abs(this.heat - this.shown) > 0.01) {
+      this.shown = this.heat;
+      this.rage().nativeElement.style.opacity = this.heat.toFixed(2);
+    }
+    this.raf = this.heat < 0.005 && v === 0 ? undefined : requestAnimationFrame(this.tick);
+  };
 
   /**
    * La schimbarea paginii (nu si la salturi pe ancore in aceeasi pagina),

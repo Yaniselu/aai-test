@@ -16,8 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     <section id="contact" class="scroll-mt-24 py-28">
       <div class="aia-container grid gap-16 lg:grid-cols-2">
         <div>
-          <p class="aia-eyebrow">{{ 'contact.firstStep' | translate }}</p>
-          <h2 class="aia-section-title mt-5">{{ 'contact.freeTitle' | translate }}</h2>
+          <h2 class="aia-section-title">{{ 'contact.freeTitle' | translate }}</h2>
 
           <ul class="mt-10 space-y-3">
             @for (point of points; track point) {
@@ -75,9 +74,9 @@ import { TranslatePipe } from '@ngx-translate/core';
             <div>
               <label class="aia-label" for="c-group">{{ 'contact.group' | translate }}</label>
               <select id="c-group" class="aia-input" formControlName="group">
-                <option value="kickbox-copii">KickBox Copii (5 - 12 ani)</option>
-                <option value="kickbox-adulti">KickBox Adulti (12+)</option>
-                <option value="karate">Karate (avansat)</option>
+                <option value="kickbox-copii">{{ 'contact.options.kids' | translate }}</option>
+                <option value="kickbox-adulti">{{ 'contact.options.adults' | translate }}</option>
+                <option value="karate">{{ 'contact.options.karate' | translate }}</option>
               </select>
             </div>
 

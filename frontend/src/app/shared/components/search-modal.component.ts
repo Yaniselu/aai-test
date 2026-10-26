@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,13 +17,13 @@ import { IconComponent } from '../icons/icon.component';
 @Component({
   selector: 'aia-search-modal',
   standalone: true,
-  imports: [IconComponent],
+  imports: [TranslatePipe, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (search.isOpen()) {
       <div
         class="fixed inset-0 z-[160] flex items-start justify-center px-4 pt-[12vh]"
-        style="background: rgba(0,0,0,.72); backdrop-filter: blur(6px); animation: aia-fade .2s ease"
+        style="background: rgba(0,0,0,.9); animation: aia-fade .2s ease"
         (click)="search.close()"
       >
         <div
@@ -32,7 +33,7 @@ import { IconComponent } from '../icons/icon.component';
           (click)="$event.stopPropagation()"
           role="dialog"
           aria-modal="true"
-          aria-label="Cautare in site"
+          [attr.aria-label]="'search.label' | translate"
         >
           <div class="flex items-center gap-3 border-b px-5 py-4" [style.borderColor]="'var(--aia-border)'">
             <span class="opacity-50"><aia-icon name="search" [size]="18" /></span>
@@ -40,11 +41,11 @@ import { IconComponent } from '../icons/icon.component';
               #input
               type="search"
               class="w-full bg-transparent text-lg outline-none"
-              placeholder="Cauta pagini, sectiuni, functii..."
+              [placeholder]="'search.placeholder' | translate"
               [value]="search.query()"
               (input)="onInput($any($event.target).value)"
               autocomplete="off"
-              aria-label="Termen de cautare"
+              [attr.aria-label]="'search.term' | translate"
             />
             <kbd class="rounded-md border px-2 py-1 text-[10px] opacity-50" [style.borderColor]="'var(--aia-border)'">ESC</kbd>
           </div>
@@ -62,19 +63,19 @@ import { IconComponent } from '../icons/icon.component';
                   role="option"
                 >
                   <span class="min-w-0">
-                    <span class="block font-heading text-sm uppercase tracking-wide">{{ entry.title }}</span>
+                    <span class="block font-heading text-sm uppercase tracking-wide">{{ 'search.items.' + entry.id + '.title' | translate }}</span>
                     <span class="block truncate text-sm" [style.color]="'var(--aia-text-muted)'">
-                      {{ entry.description }}
+                      {{ 'search.items.' + entry.id + '.desc' | translate }}
                     </span>
                   </span>
                   <span class="shrink-0 font-heading text-[10px] font-bold uppercase tracking-[0.18em]" [style.color]="'var(--aia-cyan)'">
-                    {{ entry.section }}
+                    {{ 'search.sections.' + entry.section | translate }}
                   </span>
                 </button>
               </li>
             } @empty {
               <li class="px-5 py-10 text-center" [style.color]="'var(--aia-text-muted)'">
-                Niciun rezultat pentru &laquo;{{ search.query() }}&raquo;.
+                {{ 'search.none' | translate }} &laquo;{{ search.query() }}&raquo;.
               </li>
             }
           </ul>
@@ -84,9 +85,9 @@ import { IconComponent } from '../icons/icon.component';
             [style.borderColor]="'var(--aia-border)'"
             [style.color]="'var(--aia-text-muted)'"
           >
-            <span>&uarr;&darr; navigare</span>
-            <span>&crarr; deschide</span>
-            <span>ESC inchide</span>
+            <span>&uarr;&darr; {{ 'search.navigate' | translate }}</span>
+            <span>&crarr; {{ 'search.open' | translate }}</span>
+            <span>ESC {{ 'search.close' | translate }}</span>
           </div>
         </div>
       </div>

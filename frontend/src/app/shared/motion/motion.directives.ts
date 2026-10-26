@@ -66,7 +66,6 @@ export class SplitTextDirective implements AfterViewInit, OnDestroy {
       span.textContent = unit;
       span.setAttribute('aria-hidden', 'true');
       span.style.display = 'inline-block';
-      span.style.willChange = 'transform, opacity, filter';
       el.appendChild(span);
       spans.push(span);
     }
@@ -75,11 +74,10 @@ export class SplitTextDirective implements AfterViewInit, OnDestroy {
     // vizibil daca declansatorul nu apuca sa ruleze.
     this.tween = gsap.fromTo(
       spans,
-      { opacity: 0, yPercent: 115, filter: 'blur(10px)' },
+      { opacity: 0, yPercent: 115 },
       {
         opacity: 1,
         yPercent: 0,
-        filter: 'blur(0px)',
         duration: 1.05,
         ease: 'power3.out',
         stagger: this.splitStagger(),
@@ -343,10 +341,9 @@ export class ScrubWordsDirective implements AfterViewInit, OnDestroy {
 
     this.tween = gsap.fromTo(
       spans,
-      { opacity: 0.12, filter: 'blur(6px)', y: 12 },
+      { opacity: 0.12, y: 12 },
       {
         opacity: 1,
-        filter: 'blur(0px)',
         y: 0,
         stagger: 0.08,
         ease: 'power1.out',

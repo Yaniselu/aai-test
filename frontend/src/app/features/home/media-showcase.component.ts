@@ -25,7 +25,7 @@ interface MediaItem {
   id: number;
   category: 'competitions' | 'training' | 'performance';
   ui: 'reel' | 'story';
-  caption: string;
+  captionKey: string;
   likes: number;
   comments: number;
   ago: string;
@@ -60,8 +60,7 @@ interface MediaItem {
         </div>
 
         <div #intro class="t-intro aia-container relative z-20 pt-24 lg:pt-28">
-          <p class="aia-eyebrow">{{ 'media.eyebrow' | translate }}</p>
-          <h2 class="mt-4 max-w-4xl font-display text-[12vw] leading-[0.88] sm:text-[7vw] lg:text-[5.6rem]">
+          <h2 class="max-w-4xl font-display text-[12vw] leading-[0.88] sm:text-[7vw] lg:text-[5.6rem]">
             <span class="aia-glitch" [attr.data-text]="'media.title' | translate">{{ 'media.title' | translate }}</span>
           </h2>
           <p class="mt-4 max-w-md text-sm leading-relaxed sm:text-[15px]" [style.color]="'var(--aia-text-muted)'">
@@ -78,7 +77,7 @@ interface MediaItem {
                 [image]="p.image ?? null"
                 [poster]="p.poster ?? ''"
                 [ui]="p.ui"
-                [caption]="p.caption"
+                [caption]="p.captionKey | translate"
                 [baseLikes]="p.likes"
                 [comments]="p.comments"
                 [ago]="p.ago"
@@ -89,26 +88,26 @@ interface MediaItem {
         </div>
 
         <!-- Notificari de sticla -->
-        <div class="notif aia-glass n1" aria-hidden="true">
+        <div class="notif aia-glass-lite n1" aria-hidden="true">
           <span class="ico" style="background: linear-gradient(135deg,#ff1f3d,#ff6a7a)"><aia-icon name="heart" [size]="14" /></span>
-          <span><b>maria.p</b> {{ 'media.notifLike' | translate }}<small>acum</small></span>
+          <span><b>maria.p</b> {{ 'media.notifLike' | translate }}<small>{{ 'media.nowAgo' | translate }}</small></span>
         </div>
-        <div class="notif aia-glass n2" aria-hidden="true">
+        <div class="notif aia-glass-lite n2" aria-hidden="true">
           <span class="ico" style="background: linear-gradient(135deg,#ff1f3d,#ff6a7a)"><aia-icon name="medal" [size]="14" /></span>
           <span><b>{{ 'media.notifMedal' | translate }}</b><small>Craiova · 2025</small></span>
         </div>
-        <div class="notif aia-glass n3" aria-hidden="true">
+        <div class="notif aia-glass-lite n3" aria-hidden="true">
           <span class="ico" style="background: linear-gradient(135deg,#7a0010,#ffffff)"><aia-icon name="play" [size]="13" /></span>
-          <span><b>{{ 'media.notifNew' | translate }}</b><small>KickBox Copii</small></span>
+          <span><b>{{ 'media.notifNew' | translate }}</b><small>{{ 'groups.names.kids' | translate }}</small></span>
         </div>
-        <div class="notif aia-glass n4" aria-hidden="true">
+        <div class="notif aia-glass-lite n4" aria-hidden="true">
           <span class="ico" style="background: linear-gradient(135deg,#1a1a1a,#ffffff)"><aia-icon name="users" [size]="14" /></span>
-          <span><b>+48</b> {{ 'media.notifFollow' | translate }}<small>săptămâna asta</small></span>
+          <span><b>+48</b> {{ 'media.notifFollow' | translate }}<small>{{ 'media.thisWeek' | translate }}</small></span>
         </div>
 
         <div #stats class="t-stats absolute inset-x-0 bottom-6 z-20 lg:bottom-10">
           <div class="aia-container flex justify-center">
-            <dl class="aia-glass grid grid-cols-3 gap-2 rounded-[26px] px-4 py-3 sm:gap-8 sm:px-8 sm:py-4">
+            <dl class="aia-glass-lite grid grid-cols-3 gap-2 rounded-[26px] px-4 py-3 sm:gap-8 sm:px-8 sm:py-4">
               @for (s of mediaStats; track s.key) {
                 <div class="text-center">
                   <dd class="font-display text-lg text-[var(--aia-blood-bright)] sm:text-2xl">
@@ -172,12 +171,12 @@ interface MediaItem {
                   [image]="item.image ?? null"
                   [poster]="item.poster ?? ''"
                   [ui]="item.ui"
-                  [caption]="item.caption"
+                  [caption]="item.captionKey | translate"
                   [baseLikes]="item.likes"
                   [comments]="item.comments"
                   [ago]="item.ago"
                 />
-                <button type="button" class="open-btn aia-chip" (click)="open(i)" [attr.aria-label]="('media.open' | translate) + ' ' + item.caption">
+                <button type="button" class="open-btn aia-chip" (click)="open(i)" [attr.aria-label]="('media.open' | translate) + ' ' + (item.captionKey | translate)">
                   <aia-icon name="plus" [size]="12" /> {{ 'media.open' | translate }}
                 </button>
               </div>
@@ -200,7 +199,7 @@ interface MediaItem {
         class="lb fixed inset-0 z-[180] flex items-center justify-center"
         role="dialog"
         aria-modal="true"
-        [attr.aria-label]="current()?.caption"
+        [attr.aria-label]="(current()?.captionKey ?? '') | translate"
         (click)="bgClick()"
         (pointerdown)="lbDown($event)"
         (pointerup)="lbUp($event)"
@@ -230,7 +229,7 @@ interface MediaItem {
               [image]="item.image ?? null"
               [poster]="item.poster ?? ''"
               [ui]="item.ui"
-              [caption]="item.caption"
+              [caption]="item.captionKey | translate"
               [baseLikes]="item.likes"
               [comments]="item.comments"
               [ago]="item.ago"
@@ -241,7 +240,7 @@ interface MediaItem {
 
         <div class="aia-glass absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-full px-5 py-2.5 text-xs">
           <span class="aia-index" [style.color]="'var(--aia-cyan)'">{{ (lightbox() ?? 0) + 1 }} / {{ visible().length }}</span>
-          <span class="max-w-[50vw] truncate" [style.color]="'var(--aia-text-muted)'">{{ current()?.caption }}</span>
+          <span class="max-w-[50vw] truncate" [style.color]="'var(--aia-text-muted)'">{{ (current()?.captionKey ?? '') | translate }}</span>
         </div>
       </div>
     }
@@ -332,9 +331,9 @@ interface MediaItem {
       @media (hover: none) { .open-btn { opacity: 1; transform: translateX(-50%); } }
 
       .lb {
-        -webkit-backdrop-filter: blur(30px) saturate(160%);
-        backdrop-filter: blur(30px) saturate(160%);
-        background: rgba(4, 4, 10, 0.55);
+        /* Fundal opac: un blur pe tot ecranul s-ar recalcula la fiecare cadru
+           al videoclipurilor care ruleaza in spate. */
+        background: rgba(0, 0, 0, 0.9);
         animation: lb-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .lb-phone { animation: lb-phone-in 0.9s cubic-bezier(0.16, 1, 0.3, 1); perspective: 1200px; }
@@ -368,14 +367,14 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
   ];
 
   private readonly items: MediaItem[] = [
-    { id: 1, category: 'training', ui: 'reel', caption: 'Antrenament de seară · combinații la sac', likes: 2310, comments: 142, ago: '1h', video: 'media/karate-video2.mp4', poster: 'media/karate-video2-poster.webp' },
-    { id: 2, category: 'competitions', ui: 'story', caption: 'Ziua competiției · echipa e gata', likes: 1840, comments: 96, ago: '3h', image: ACADEMY.photos.competition },
-    { id: 3, category: 'training', ui: 'reel', caption: 'Tehnică, viteză, control', likes: 980, comments: 41, ago: '5h', image: ACADEMY.photos.training },
-    { id: 4, category: 'performance', ui: 'reel', caption: 'Echipa academiei · mândri de fiecare sportiv', likes: 3120, comments: 210, ago: '1z', image: ACADEMY.photos.team },
-    { id: 5, category: 'training', ui: 'reel', caption: 'Karate · kata înainte de turneu', likes: 1560, comments: 77, ago: '1z', video: 'media/karate-video1.mp4', poster: 'media/karate-video1-poster.webp' },
-    { id: 6, category: 'performance', ui: 'story', caption: 'Grupa de karate · nivel avansat', likes: 1205, comments: 58, ago: '2z', image: ACADEMY.photos.karate },
-    { id: 7, category: 'competitions', ui: 'reel', caption: 'Cei mici, primul lor turneu', likes: 4280, comments: 305, ago: '3z', image: ACADEMY.photos.kids },
-    { id: 8, category: 'training', ui: 'story', caption: 'KickBox adulți · forță și rezistență', likes: 890, comments: 34, ago: '4z', image: ACADEMY.photos.adults }
+    { id: 1, category: 'training', ui: 'reel', captionKey: 'media.items.i1', likes: 2310, comments: 142, ago: '1h', video: 'media/karate-video2.mp4', poster: 'media/karate-video2-poster.webp' },
+    { id: 2, category: 'competitions', ui: 'story', captionKey: 'media.items.i2', likes: 1840, comments: 96, ago: '3h', image: ACADEMY.photos.competition },
+    { id: 3, category: 'training', ui: 'reel', captionKey: 'media.items.i3', likes: 980, comments: 41, ago: '5h', image: ACADEMY.photos.training },
+    { id: 4, category: 'performance', ui: 'reel', captionKey: 'media.items.i4', likes: 3120, comments: 210, ago: '1d', image: ACADEMY.photos.team },
+    { id: 5, category: 'training', ui: 'reel', captionKey: 'media.items.i5', likes: 1560, comments: 77, ago: '1d', video: 'media/karate-video1.mp4', poster: 'media/karate-video1-poster.webp' },
+    { id: 6, category: 'performance', ui: 'story', captionKey: 'media.items.i6', likes: 1205, comments: 58, ago: '2d', image: ACADEMY.photos.karate },
+    { id: 7, category: 'competitions', ui: 'reel', captionKey: 'media.items.i7', likes: 4280, comments: 305, ago: '3d', image: ACADEMY.photos.kids },
+    { id: 8, category: 'training', ui: 'story', captionKey: 'media.items.i8', likes: 890, comments: 34, ago: '4d', image: ACADEMY.photos.adults }
   ];
 
   /** Cele cinci telefoane din scena fixata. */
@@ -398,6 +397,11 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
   private raf?: number;
   private readonly reel = { recenter: true, target: 0, current: 0, max: 0, velocity: 0, dragging: false, startX: 0, startTarget: 0, moved: 0, lastX: 0 };
   private resizeObs?: ResizeObserver;
+  private reelIo?: IntersectionObserver;
+  private reelVisible = false;
+  private lastFrame = 0;
+  private centers: number[] = [];
+  private vpWidth = 0;
   private lbStartX = 0;
   private lbSwiped = false;
 
@@ -405,7 +409,10 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
     // Re-masuram caruselul cand se schimba filtrul (alt numar de telefoane).
     effect(() => {
       this.visible();
-      requestAnimationFrame(() => this.measure());
+      requestAnimationFrame(() => {
+        this.measure();
+        this.kick();
+      });
     });
   }
 
@@ -418,6 +425,7 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
     this.ctx?.revert();
     if (this.raf) cancelAnimationFrame(this.raf);
     this.resizeObs?.disconnect();
+    this.reelIo?.disconnect();
     window.removeEventListener('pointermove', this.onMove);
     window.removeEventListener('pointerup', this.onUp);
     if (this.lightbox() !== null) this.scroller.start();
@@ -500,31 +508,51 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
 
   // ------------------------------------------------------------ caruselul
   private startReel(): void {
-    this.resizeObs = new ResizeObserver(() => this.measure());
+    this.resizeObs = new ResizeObserver(() => {
+      this.measure();
+      this.kick();
+    });
     this.resizeObs.observe(this.viewport().nativeElement);
 
-    const loop = () => {
-      const r = this.reel;
-      if (!r.dragging) {
-        r.target += r.velocity;
-        r.velocity *= 0.92;
-        if (Math.abs(r.velocity) < 0.05) r.velocity = 0;
-      }
-      r.target = Math.max(-80, Math.min(r.max + 80, r.target));
-      // Elastic la capete: se intoarce in interval cand utilizatorul da drumul.
-      if (!r.dragging) {
-        if (r.target < 0) r.target += (0 - r.target) * 0.15;
-        if (r.target > r.max) r.target += (r.max - r.target) * 0.15;
-      }
-      const prev = r.current;
-      r.current += (r.target - r.current) * (this.anim.reducedMotion ? 1 : 0.1);
-      const speed = r.current - prev;
-
-      this.render(speed);
-      this.raf = requestAnimationFrame(loop);
-    };
-    loop();
+    // Caruselul se anima doar cand e pe ecran.
+    this.reelIo = new IntersectionObserver(([entry]) => {
+      this.reelVisible = entry.isIntersecting;
+      if (this.reelVisible) this.kick();
+    });
+    this.reelIo.observe(this.viewport().nativeElement);
   }
+
+  /** Porneste bucla daca nu ruleaza deja; ea se opreste singura cand totul s-a asezat. */
+  private kick(): void {
+    if (this.raf === undefined && this.reelVisible) this.raf = requestAnimationFrame(this.reelLoop);
+  }
+
+  private readonly reelLoop = (now: number) => {
+    const r = this.reel;
+    // Pasul raportat la 60 Hz: inertia si amortizarea arata la fel si pe ecrane de 120 Hz.
+    const dt = this.lastFrame ? Math.min((now - this.lastFrame) / 16.67, 3) : 1;
+    this.lastFrame = now;
+    if (!r.dragging) {
+      r.target += r.velocity * dt;
+      r.velocity *= Math.pow(0.92, dt);
+      if (Math.abs(r.velocity) < 0.05) r.velocity = 0;
+    }
+    r.target = Math.max(-80, Math.min(r.max + 80, r.target));
+    // Elastic la capete: se intoarce in interval cand utilizatorul da drumul.
+    if (!r.dragging) {
+      const k = 1 - Math.pow(0.85, dt);
+      if (r.target < 0) r.target += (0 - r.target) * k;
+      if (r.target > r.max) r.target += (r.max - r.target) * k;
+    }
+    const prev = r.current;
+    r.current += (r.target - r.current) * (this.anim.reducedMotion ? 1 : 1 - Math.pow(0.9, dt));
+    const speed = r.current - prev;
+
+    this.render(speed);
+    const settled = !r.dragging && r.velocity === 0 && Math.abs(r.target - r.current) < 0.1 && Math.abs(speed) < 0.05;
+    this.raf = settled || !this.reelVisible ? undefined : requestAnimationFrame(this.reelLoop);
+    if (this.raf === undefined) this.lastFrame = 0;
+  };
 
   private measure(): void {
     const vp = this.viewport()?.nativeElement;
@@ -538,6 +566,9 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
     track.style.paddingLeft = `${pad}px`;
     track.style.paddingRight = `${pad}px`;
     this.reel.max = Math.max(track.scrollWidth - vp.clientWidth, 0);
+    // Centrele telefoanelor, masurate o data: in bucla nu mai citim layout-ul.
+    this.vpWidth = vp.clientWidth;
+    this.centers = (Array.from(track.children) as HTMLElement[]).map((el) => el.offsetLeft + el.offsetWidth / 2);
     // Pornim cu telefonul din mijloc centrat, ca ambele laturi sa fie pline.
     if (this.reel.recenter) {
       this.reel.recenter = false;
@@ -549,28 +580,31 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
   }
 
   private render(speed: number): void {
-    const vp = this.viewport()?.nativeElement;
     const track = this.track()?.nativeElement;
-    if (!vp || !track) return;
+    if (!track) return;
 
-    track.style.transform = `translate3d(${-this.reel.current}px, 0, 0)`;
-    const center = vp.getBoundingClientRect().left + vp.clientWidth / 2;
-    const half = vp.clientWidth / 2;
+    track.style.transform = `translate3d(${(-this.reel.current).toFixed(2)}px, 0, 0)`;
+    const half = this.vpWidth / 2 || 1;
     const skew = Math.max(-12, Math.min(12, speed * 0.5));
+    const items = track.children as HTMLCollectionOf<HTMLElement>;
 
-    for (const item of Array.from(track.children) as HTMLElement[]) {
-      const rect = item.getBoundingClientRect();
-      const d = Math.max(-1.6, Math.min(1.6, (rect.left + rect.width / 2 - center) / half));
-      const ad = Math.abs(d);
-      if (this.anim.reducedMotion) continue;
-      item.style.transform =
-        `translateZ(${-ad * 140}px) rotateY(${-d * 32}deg) skewX(${-skew}deg) scale(${1 - Math.min(ad, 1) * 0.1})`;
-      item.style.opacity = String(1 - Math.min(ad, 1.4) * 0.4);
-      item.style.zIndex = String(100 - Math.round(ad * 10));
+    if (!this.anim.reducedMotion) {
+      for (let i = 0; i < items.length; i++) {
+        const c = this.centers[i];
+        if (c === undefined) continue;
+        const d = Math.max(-1.6, Math.min(1.6, (c - this.reel.current - half) / half));
+        const ad = Math.abs(d);
+        const item = items[i];
+        item.style.transform =
+          `translateZ(${(-ad * 140).toFixed(1)}px) rotateY(${(-d * 32).toFixed(2)}deg) skewX(${(-skew).toFixed(2)}deg) scale(${(1 - Math.min(ad, 1) * 0.1).toFixed(3)})`;
+        item.style.opacity = (1 - Math.min(ad, 1.4) * 0.4).toFixed(2);
+        const z = String(100 - Math.round(ad * 10));
+        if (item.style.zIndex !== z) item.style.zIndex = z;
+      }
     }
 
     const progress = this.reel.max ? this.reel.current / this.reel.max : 0;
-    this.bar().nativeElement.style.transform = `scaleX(${Math.max(0, Math.min(1, progress))})`;
+    this.bar().nativeElement.style.transform = `scaleX(${Math.max(0, Math.min(1, progress)).toFixed(3)})`;
   }
 
   onDown(e: PointerEvent): void {
@@ -582,6 +616,7 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
     r.startTarget = r.target;
     r.moved = 0;
     r.velocity = 0;
+    this.kick();
     window.addEventListener('pointermove', this.onMove);
     window.addEventListener('pointerup', this.onUp);
   }
@@ -594,11 +629,13 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
     r.target = r.startTarget - dx * 1.2;
     r.velocity = -(e.clientX - r.lastX) * 1.2;
     r.lastX = e.clientX;
+    this.kick();
   };
 
   private readonly onUp = (e: PointerEvent) => {
     const r = this.reel;
     r.dragging = false;
+    this.kick();
     this.viewport().nativeElement.classList.remove('dragging');
     window.removeEventListener('pointermove', this.onMove);
     window.removeEventListener('pointerup', this.onUp);
@@ -616,6 +653,7 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
     if (!dx) return;
     e.preventDefault();
     this.reel.target += dx;
+    this.kick();
   }
 
   nudge(dir: number): void {
@@ -623,6 +661,7 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
     const step = (first?.offsetWidth ?? 220) + 32;
     this.reel.velocity = 0;
     this.reel.target = Math.round((this.reel.target + dir * step) / step) * step;
+    this.kick();
   }
 
   setFilter(f: string): void {

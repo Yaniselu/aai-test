@@ -27,7 +27,10 @@
     "retry": "Reîncearcă",
     "edit": "Editează",
     "optional": "opțional",
-    "required": "obligatoriu"
+    "required": "obligatoriu",
+    "copy": "Copiază",
+    "copied": "Copiat",
+    "skip": "Sari la conținut"
   },
   "hero": {
     "eyebrow": "ARTE MARȚIALE PENTRU COPII ȘI ADULȚI",
@@ -45,7 +48,11 @@
     "badgeMedals": "medalii în 2025",
     "badgeNew": "Clip nou din sală",
     "badgeNewSub": "acum 2 minute",
-    "manifesto": "Nu antrenăm doar corpul. Construim caractere care nu cedează, sportivi care respectă și oameni care câștigă — pe saltea și în viață."
+    "manifesto": "Nu antrenăm doar corpul. Construim caractere care nu cedează, sportivi care respectă și oameni care câștigă — pe saltea și în viață.",
+    "bigword": "LUPTĂ",
+    "phone1": "Ziua competiției",
+    "phone2": "Kata · pregătire pentru turneu",
+    "phone3": "Antrenament de seară · disciplina înainte de toate"
   },
   "about": {
     "eyebrow": "Spiritul academiei",
@@ -65,7 +72,8 @@
       "competitionText": "Pregătire serioasă pentru turnee și testări.",
       "champion": "Campion",
       "championText": "Caracter și performanță la cel mai înalt nivel."
-    }
+    },
+    "journeyTitle": "Drumul spre campion"
   },
   "groups": {
     "eyebrow": "Grupele academiei",
@@ -77,18 +85,70 @@
     "kidsText": "Disciplină, coordonare, respect și încredere într-un mediu motivant.",
     "adultsText": "Tehnică, forță, viteză și mentalitate de luptător, cu evoluție vizibilă.",
     "karateText": "Antrenamente intense pentru sportivii care vor să ridice nivelul la maxim.",
-    "pick": "Alege grupa"
+    "pick": "Alege grupa",
+    "names": {
+      "kids": "KickBox Copii",
+      "adults": "KickBox Adulți",
+      "karate": "Karate"
+    },
+    "tags": {
+      "kids": [
+        "Coordonare",
+        "Respect",
+        "Joc & tehnică"
+      ],
+      "adults": [
+        "Forță",
+        "Cardio",
+        "Sparring"
+      ],
+      "karate": [
+        "Kata",
+        "Kumite",
+        "Competiții"
+      ]
+    }
   },
   "coaches": {
     "eyebrow": "Antrenorii noștri",
     "title": "Experiență. Respect. Leadership.",
-    "hover": "Treci cu mouse-ul peste antrenori"
+    "hover": "Treci cu mouse-ul peste antrenori",
+    "list": {
+      "ion": {
+        "role": "Head Coach · Strategie · Competiții",
+        "focus": "Leadership, tehnică, performanță"
+      },
+      "tech": {
+        "name": "Antrenor Tehnic",
+        "role": "Coordonare · Juniori · Progres",
+        "focus": "Control, viteză, disciplină"
+      },
+      "perf": {
+        "name": "Antrenor Performanță",
+        "role": "Forță · Rezistență · Focus",
+        "focus": "Pregătire pentru nivel avansat"
+      }
+    }
   },
   "reviews": {
     "eyebrow": "Review-uri",
     "title": "Ce spun părinții",
     "previous": "Review anterior",
-    "next": "Review următor"
+    "next": "Review următor",
+    "list": {
+      "r1": {
+        "text": "Cel mai bun loc pentru copii. Se vede disciplina, seriozitatea și grija reală pentru evoluția lor.",
+        "author": "Părinte sportiv"
+      },
+      "r2": {
+        "text": "Antrenamente puternice, atmosferă premium și foarte multă motivație. Copilul meu are altă încredere.",
+        "author": "Familie din academie"
+      },
+      "r3": {
+        "text": "Nu e doar sport. Este formare de caracter. Exact genul de academie de care ai nevoie.",
+        "author": "Părinte competitor"
+      }
+    }
   },
   "gallery": {
     "eyebrow": "Galerie",
@@ -112,6 +172,18 @@
       "friday": "Vineri",
       "saturday": "Sâmbătă",
       "sunday": "Duminică"
+    },
+    "classes": {
+      "aerobic": "Aerobic",
+      "dance": "Dansuri",
+      "karate": "Karate",
+      "karate5": "Karate 5 ani",
+      "karate5plus": "Karate 5 ani+",
+      "kickAdults": "Kick Box Adulți",
+      "kickKids": "Kick Box Copii",
+      "mma": "MMA",
+      "salvy": "Salvy Fight Club",
+      "workshop": "Atelier Creație"
     }
   },
   "contact": {
@@ -136,6 +208,12 @@
       "size": "Maximum 16 sportivi pe grupă",
       "noFee": "Fără taxă de înscriere",
       "platform": "Acces la platformă cu XP și Battle Pass"
+    },
+    "hours": "Luni – Sâmbătă · 16:00 – 21:00",
+    "options": {
+      "kids": "KickBox Copii (5 – 12 ani)",
+      "adults": "KickBox Adulți (12+)",
+      "karate": "Karate (avansat)"
     }
   },
   "auth": {
@@ -366,12 +444,187 @@
     "notifFollow": "urmăritori noi",
     "stat1": "clipuri publicate",
     "stat2": "vizualizări",
-    "stat3": "părinți conectați"
+    "stat3": "părinți conectați",
+    "nowAgo": "acum",
+    "thisWeek": "săptămâna asta",
+    "items": {
+      "i1": "Antrenament de seară · combinații la sac",
+      "i2": "Ziua competiției · echipa e gata",
+      "i3": "Tehnică, viteză, control",
+      "i4": "Echipa academiei · mândri de fiecare sportiv",
+      "i5": "Karate · kata înainte de turneu",
+      "i6": "Grupa de karate · nivel avansat",
+      "i7": "Cei mici, primul lor turneu",
+      "i8": "KickBox adulți · forță și rezistență"
+    }
   },
   "cta": {
     "eyebrow": "Începe azi",
     "title": "Prima ședință e gratis",
     "text": "Vino la o oră de probă. Echipamentul e pe noi, motivația vine de la sine.",
     "button": "Rezervă ședința"
+  },
+  "intro": {
+    "eyebrow": "Craiova · Arte Marțiale",
+    "motto": "Disciplină · Performanță · Mentalitate",
+    "skip": "Sari peste intro",
+    "fight": "LUPTĂ"
+  },
+  "phone": {
+    "follow": "Urmărește",
+    "sound": "sunet original",
+    "live": "LIVE · Sala Craiova",
+    "ago": {
+      "h": "h",
+      "d": "z"
+    }
+  },
+  "marquee": {
+    "a": [
+      "DISCIPLINĂ",
+      "PERFORMANȚĂ",
+      "MENTALITATE",
+      "RESPECT",
+      "FĂRĂ SCUZE"
+    ],
+    "b": [
+      "KICKBOX",
+      "KARATE",
+      "CRAIOVA",
+      "CAMPIONI",
+      "FĂRĂ MILĂ"
+    ]
+  },
+  "kinetic": {
+    "k1a": "FĂRĂ DURERE",
+    "k1b": "FĂRĂ GLORIE",
+    "k2a": "ANTRENEAZĂ-TE DUR",
+    "k2b": "LUPTĂ UȘOR",
+    "k3a": "PE CAMERĂ",
+    "k3b": "ACCES TOTAL",
+    "k4a": "ACADEMIA",
+    "k4b": "ION ANDREI"
+  },
+  "rounds": {
+    "r1": "RUNDA 01 · GRUPE",
+    "r2": "RUNDA 02 · PROGRAM",
+    "r3": "RUNDA 03 · VERDICT",
+    "final": "RUNDA FINALĂ"
+  },
+  "stats": {
+    "title": "Cifrele care contează",
+    "athletes": "sportivi antrenați",
+    "medals": "medalii și podiumuri",
+    "years": "ani de experiență",
+    "clips": "clipuri publicate"
+  },
+  "journey": {
+    "hint": "Derulează · traseul sportivului"
+  },
+  "legal": {
+    "onlyRo": "Acest document este disponibil doar în limba română.",
+    "updated": "Ultima actualizare",
+    "operator": "Operator",
+    "print": "Tipărește documentul"
+  },
+  "search": {
+    "placeholder": "Caută pagini, secțiuni, funcții...",
+    "label": "Căutare în site",
+    "term": "Termen de căutare",
+    "none": "Niciun rezultat pentru",
+    "navigate": "navigare",
+    "open": "deschide",
+    "close": "închide",
+    "items": {
+      "home": {
+        "title": "Acasă",
+        "desc": "Pagina principală a academiei"
+      },
+      "groups": {
+        "title": "Grupe",
+        "desc": "Grupe pentru copii, adulți și karate"
+      },
+      "schedule": {
+        "title": "Program",
+        "desc": "Programul săptămânal al antrenamentelor"
+      },
+      "coaches": {
+        "title": "Antrenori",
+        "desc": "Echipa de antrenori"
+      },
+      "gallery": {
+        "title": "Galerie",
+        "desc": "Fotografii și clipuri din sală și de la competiții"
+      },
+      "location": {
+        "title": "Locație",
+        "desc": "Sala academiei pe hartă"
+      },
+      "register": {
+        "title": "Înscriere",
+        "desc": "Creează un cont nou de sportiv"
+      },
+      "login": {
+        "title": "Autentificare",
+        "desc": "Intră în contul tău"
+      },
+      "profile": {
+        "title": "Profilul meu",
+        "desc": "XP, badge-uri și evoluție"
+      },
+      "battlepass": {
+        "title": "Battle Pass",
+        "desc": "Recompense deblocate prin prezență"
+      },
+      "wheel": {
+        "title": "Învârte-l pe Birtu",
+        "desc": "Roata academiei, o învârtire pe săptămână"
+      },
+      "stories": {
+        "title": "Story-uri",
+        "desc": "Momente din sală, vizibile 24 de ore"
+      },
+      "competitions": {
+        "title": "Calendar competiții",
+        "desc": "Competițiile viitoare ale academiei"
+      },
+      "attendance": {
+        "title": "Prezență",
+        "desc": "Panoul antrenorului pentru marcarea prezenței"
+      },
+      "approvals": {
+        "title": "Aprobare conturi",
+        "desc": "Validarea conturilor noi"
+      },
+      "privacy": {
+        "title": "Politică de confidențialitate",
+        "desc": "Cum prelucrăm datele tale"
+      },
+      "terms": {
+        "title": "Termeni și condiții",
+        "desc": "Regulamentul de utilizare"
+      },
+      "cookies": {
+        "title": "Politica de cookie-uri",
+        "desc": "Ce cookie-uri folosim și de ce"
+      }
+    },
+    "sections": {
+      "nav": "Navigare",
+      "account": "Cont",
+      "athlete": "Sportiv",
+      "coach": "Antrenor",
+      "admin": "Admin",
+      "legal": "Legal"
+    }
+  },
+  "a11y": {
+    "whatsapp": "Scrie-ne pe WhatsApp",
+    "backToTop": "Înapoi sus",
+    "quickLinks": "Legături rapide",
+    "legalLinks": "Informații legale",
+    "notifications": "Notificări",
+    "closeNotification": "Închide notificarea",
+    "sections": "Secțiuni"
   }
 }

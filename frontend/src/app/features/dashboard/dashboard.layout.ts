@@ -24,8 +24,7 @@ import { IconComponent } from '../../shared/icons/icon.component';
             {{ initials() }}
           </div>
           <div>
-            <p class="aia-eyebrow">{{ roleLabel() }}</p>
-            <h1 class="mt-2 font-display text-3xl leading-tight">{{ auth.user()?.name }}</h1>
+            <h1 class="font-display text-3xl leading-tight">{{ auth.user()?.name }}</h1>
             <p class="mt-1.5 text-sm" [style.color]="'var(--aia-text-muted)'">
               {{ auth.user()?.xpPoints ?? 0 }} XP &middot; nivel Battle Pass {{ auth.user()?.currentBattlepassLevel ?? 0 }}
             </p>

@@ -5,6 +5,7 @@ import {
   Directive,
   ElementRef,
   OnDestroy,
+  effect,
   inject,
   input,
   viewChild
@@ -14,40 +15,58 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { AnimationService } from '../../core/services/animation.service';
 
 /**
- * Titlu care "loveste" ecranul: literele cad din fata camerei (mari, blurate,
- * rotite) si se infig una dupa alta; la ultima, sectiunea tremura, un flash
- * rosu porneste din titlu, iar textul ramane cu glitch RGB in rafale.
+ * Titlu care "loveste" ecranul: literele cad din fata camerei (mari, rotite)
+ * si se infig una dupa alta; la ultima, titlul tremura si un flash rosu porneste
+ * din el, iar textul ramane cu glitch RGB in rafale.
  *
- * Inlocuieste SplitTextDirective pe titlurile de sectiune.
+ * Textul vine ca input (`[aiaImpact]="'cheie' | translate"`), nu din continutul
+ * elementului: la schimbarea limbii literele se reconstruiesc cu textul nou.
+ * Animatia ruleaza o singura data; dupa ea, schimbarile de text apar direct.
+ *
+ * Doar transform + opacity pe litere (fara blur si fara will-change permanent),
+ * ca intrarea sa ramana la 60/120 fps si pe telefoane.
  */
 @Directive({
   selector: '[aiaImpact]',
-  standalone: true
+  standalone: true,
+  host: { '[attr.aria-label]': 'text()' }
 })
 export class ImpactDirective implements AfterViewInit, OnDestroy {
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly anim = inject(AnimationService);
 
+  readonly text = input('', { alias: 'aiaImpact' });
   readonly impactDelay = input(0);
   /** Fara flash si cutremur (pentru titluri mici sau foarte dese). */
   readonly impactQuiet = input(false);
 
   private tl?: gsap.core.Timeline;
-  private observer?: MutationObserver;
+  private ready = false;
+  private played = false;
+
+  constructor() {
+    effect(() => {
+      const text = this.text();
+      if (this.ready) this.build(text);
+    });
+  }
 
   ngAfterViewInit(): void {
+    this.ready = true;
+    this.build(this.text());
+  }
+
+  ngOnDestroy(): void {
+    this.tl?.scrollTrigger?.kill();
+    this.tl?.kill();
+  }
+
+  private build(raw: string): void {
     const el = this.host.nativeElement as HTMLElement;
-    const text = (el.textContent ?? '').trim();
+    const text = (raw ?? '').trim();
+    el.textContent = '';
     if (!text) return;
 
-    el.setAttribute('data-text', text);
-    if (this.anim.reducedMotion) {
-      el.classList.add('aia-glitch');
-      return;
-    }
-
-    el.setAttribute('aria-label', text);
-    el.textContent = '';
     const chars: HTMLElement[] = [];
     text.split(/(\s+)/).forEach((part) => {
       if (!part) return;
@@ -56,69 +75,61 @@ export class ImpactDirective implements AfterViewInit, OnDestroy {
         return;
       }
       const word = document.createElement('span');
-      word.style.display = 'inline-block';
-      word.style.whiteSpace = 'nowrap';
+      word.className = 'aia-impact-word';
       word.setAttribute('aria-hidden', 'true');
       for (const ch of Array.from(part)) {
         const c = document.createElement('span');
+        c.className = 'aia-impact-ch';
         c.textContent = ch;
-        c.style.display = 'inline-block';
-        c.style.willChange = 'transform, opacity, filter';
         word.appendChild(c);
         chars.push(c);
       }
       el.appendChild(word);
     });
 
-    const section = el.closest('section') ?? el.parentElement ?? el;
+    // Daca intrarea a rulat deja (sau miscarea e redusa), textul nou apare direct.
+    if (this.played || this.anim.reducedMotion) {
+      el.classList.add('aia-glitch');
+      return;
+    }
+
+    // Textul s-a schimbat inainte ca titlul sa fi intrat in ecran: refacem intrarea.
+    this.tl?.scrollTrigger?.kill();
+    this.tl?.kill();
     this.tl = gsap.timeline({
       delay: this.impactDelay(),
-      scrollTrigger: { trigger: el, start: 'top 82%', once: true }
+      scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+      onComplete: () => gsap.set(chars, { clearProps: 'transform,opacity' })
     });
     this.tl
       .fromTo(
         chars,
         {
           opacity: 0,
-          scale: () => gsap.utils.random(2.6, 4.2),
+          scale: () => gsap.utils.random(2.4, 3.8),
           rotate: () => gsap.utils.random(-28, 28),
-          yPercent: () => gsap.utils.random(-60, 40),
-          filter: 'blur(14px)'
+          yPercent: () => gsap.utils.random(-60, 40)
         },
         {
           opacity: 1,
           scale: 1,
           rotate: 0,
           yPercent: 0,
-          filter: 'blur(0px)',
           duration: 0.42,
           ease: 'power4.in',
-          stagger: { each: 0.028, from: 'random' },
+          stagger: { each: 0.026, from: 'random' },
           immediateRender: true
         }
       )
       .add(() => {
+        this.played = true;
         // Glitch-ul porneste abia dupa impact, ca sa nu arate textul inainte.
         el.classList.add('aia-glitch');
         if (this.impactQuiet()) return;
         const r = el.getBoundingClientRect();
-        this.anim.flash(r.left + r.width / 2, r.top + r.height / 2, 0.45);
-        this.anim.shake(section, 7);
-      })
-      .fromTo(chars, { color: '#ff0019' }, { color: '', duration: 0.5, stagger: 0.01, ease: 'none', clearProps: 'color' }, '<');
-
-    // Daca se schimba limba, Angular rescrie textul: refacem eticheta de glitch.
-    this.observer = new MutationObserver(() => {
-      const t = (el.textContent ?? '').trim();
-      if (t && el.childElementCount === 0) el.setAttribute('data-text', t);
-    });
-    this.observer.observe(el, { childList: true, characterData: true, subtree: true });
-  }
-
-  ngOnDestroy(): void {
-    this.tl?.scrollTrigger?.kill();
-    this.tl?.kill();
-    this.observer?.disconnect();
+        this.anim.flash(r.left + r.width / 2, r.top + r.height / 2, 0.4);
+        this.anim.shake(el, 6);
+      });
   }
 }
 

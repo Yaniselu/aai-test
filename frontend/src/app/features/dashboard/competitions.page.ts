@@ -12,8 +12,7 @@ import { IconComponent } from '../../shared/icons/icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section>
-      <p class="aia-eyebrow">Calendar</p>
-      <h2 class="mt-3 font-display text-4xl leading-none">COMPETITII</h2>
+      <h2 class="font-display text-4xl leading-none">COMPETITII</h2>
       <p class="mt-4 max-w-2xl text-sm leading-relaxed" [style.color]="'var(--aia-text-muted)'">
         Competitiile la care participa colegii tai de academie. Anunta-l pe antrenor daca vrei
         sa fii inscris.
