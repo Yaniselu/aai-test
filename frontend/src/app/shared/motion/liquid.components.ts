@@ -163,6 +163,11 @@ export class AmbientComponent {}
         <span class="label">{{ label() }}</span>
       </div>
       <div #dot class="dot" [class.is-hidden]="hidden()" aria-hidden="true"></div>
+      <div #trail class="trail" [class.is-hidden]="hidden()" aria-hidden="true">
+        @for (t of trailSlots; track t) {
+          <i [style.opacity]="0.75 - t * 0.11"></i>
+        }
+      </div>
       @for (w of waves(); track w.id) {
         <span class="wave" [style.left.px]="w.x" [style.top.px]="w.y" aria-hidden="true"></span>
       }
@@ -224,6 +229,18 @@ export class AmbientComponent {}
         box-shadow: 0 0 14px 2px var(--aia-blood);
         transition: opacity 0.3s;
       }
+      /* Urma: cateva taieturi rosii care urmeaza cursorul, cu intarziere. */
+      .trail { position: fixed; inset: 0; z-index: 398; pointer-events: none; transition: opacity 0.3s; }
+      .trail i {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 14px;
+        height: 3px;
+        margin: -1.5px 0 0 -7px;
+        background: var(--aia-blood);
+        will-change: transform;
+      }
       .wave {
         position: fixed;
         z-index: 399;
@@ -246,6 +263,10 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
   private readonly anim = inject(AnimationService);
   private readonly lens = viewChild<ElementRef<HTMLElement>>('lens');
   private readonly dot = viewChild<ElementRef<HTMLElement>>('dot');
+  private readonly trailEl = viewChild<ElementRef<HTMLElement>>('trail');
+  readonly trailSlots = [0, 1, 2, 3, 4, 5];
+  private readonly trailPts = this.trailSlots.map(() => ({ x: -100, y: -100 }));
+  private lastFrame = 0;
 
   readonly enabled =
     !this.anim.reducedMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -294,8 +315,34 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
         lens.style.transform = `translate3d(${p.lx}px, ${p.ly}px, 0) rotate(${this.hover() || this.label() ? 0 : (stretch - 1) * 90}deg)`;
       }
       if (dot) dot.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
-      // Bucla se opreste singura cand lentila a ajuns pe cursor; reporneste la miscare.
-      const settled = Math.abs(p.x - p.lx) < 0.1 && Math.abs(p.y - p.ly) < 0.1 && speed < 0.05;
+
+      // Fiecare segment al urmei urmareste segmentul din fata lui, orientat pe
+      // directia miscarii. Pasul depinde de timp, nu de cadre: arata la fel la 60 si 120Hz.
+      const now = performance.now();
+      const dt = Math.min((now - (this.lastFrame || now - 16.7)) / 16.7, 3);
+      this.lastFrame = now;
+      const k = 1 - Math.pow(1 - 0.32, dt);
+      let lead = { x: p.x, y: p.y };
+      let trailMoving = false;
+      const parts = this.trailEl()?.nativeElement.children;
+      this.trailPts.forEach((t, i) => {
+        const dx = lead.x - t.x;
+        const dy = lead.y - t.y;
+        t.x += dx * k;
+        t.y += dy * k;
+        if (Math.abs(dx) + Math.abs(dy) > 0.3) trailMoving = true;
+        const el = parts?.[i] as HTMLElement | undefined;
+        if (el) {
+          const ang = Math.atan2(dy, dx);
+          const len = Math.min(1 + Math.hypot(dx, dy) / 10, 4);
+          el.style.transform = `translate3d(${t.x}px, ${t.y}px, 0) rotate(${ang}rad) scale(${len * (1 - i * 0.12)}, 1)`;
+        }
+        lead = t;
+      });
+
+      // Bucla se opreste singura cand lentila si urma au ajuns pe cursor; reporneste la miscare.
+      const settled = !trailMoving && Math.abs(p.x - p.lx) < 0.1 && Math.abs(p.y - p.ly) < 0.1 && speed < 0.05;
+      if (settled) this.lastFrame = 0;
       this.raf = settled ? undefined : requestAnimationFrame(this.loop);
     };
     this.loop();
@@ -320,6 +367,10 @@ export class LiquidCursorComponent implements AfterViewInit, OnDestroy {
     if (this.hidden()) {
       this.pos.lx = e.clientX;
       this.pos.ly = e.clientY;
+      this.trailPts.forEach((t) => {
+        t.x = e.clientX;
+        t.y = e.clientY;
+      });
       this.hidden.set(false);
     }
     if (this.raf === undefined) this.raf = requestAnimationFrame(this.loop);
@@ -571,11 +622,15 @@ export class FxLayerComponent implements AfterViewInit, OnDestroy {
     this.watchNavigation();
     this.lastY = window.scrollY;
     window.addEventListener('scroll', this.onScroll, { passive: true });
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      document.addEventListener('pointerover', this.onHoverText, { passive: true });
+    }
   }
 
   ngOnDestroy(): void {
     if (this.raf) cancelAnimationFrame(this.raf);
     window.removeEventListener('scroll', this.onScroll);
+    document.removeEventListener('pointerover', this.onHoverText);
     this.navSub?.unsubscribe();
   }
 
@@ -594,6 +649,46 @@ export class FxLayerComponent implements AfterViewInit, OnDestroy {
       this.rage().nativeElement.style.opacity = this.heat.toFixed(2);
     }
     this.raf = this.heat < 0.005 && v === 0 ? undefined : requestAnimationFrame(this.tick);
+  };
+
+  private static readonly GLYPHS = '#/\\<>_!*%X';
+  private readonly scrambling = new WeakSet<Element>();
+
+  /**
+   * La hover, textul linkurilor din meniu si al butoanelor se "descifreaza":
+   * literele trec prin simboluri si se fixeaza de la stanga la dreapta.
+   * Scriem direct in nodul de text pe care il tine Angular; daca intre timp
+   * Angular il schimba (ex. comutare RO/EN), ne oprim si nu-l mai atingem.
+   */
+  private readonly onHoverText = (e: PointerEvent) => {
+    const el = (e.target as HTMLElement | null)?.closest('.nav a, .aia-btn > span, [data-scramble]');
+    if (!el || this.scrambling.has(el)) return;
+    const node = Array.from(el.childNodes).find((n) => n.nodeType === Node.TEXT_NODE && n.nodeValue?.trim()) as Text | undefined;
+    if (!node) return;
+    const final = node.nodeValue ?? '';
+    const host = el as HTMLElement;
+    // Latimea ramane fixa cat timp literele se schimba, altfel butonul "tremura".
+    host.style.width = host.getBoundingClientRect().width + 'px';
+    this.scrambling.add(el);
+    const glyphs = FxLayerComponent.GLYPHS;
+    const start = performance.now();
+    const total = Math.min(160 + final.length * 22, 420);
+    let written = final;
+    const step = () => {
+      if (node.nodeValue !== written) return finish(false);
+      const p = Math.min((performance.now() - start) / total, 1);
+      const fixed = Math.floor(p * final.length);
+      written = Array.from(final, (ch, i) => (i < fixed || ch === ' ' ? ch : glyphs[(Math.random() * glyphs.length) | 0])).join('');
+      node.nodeValue = written;
+      if (p < 1) requestAnimationFrame(step);
+      else finish(true);
+    };
+    const finish = (restore: boolean) => {
+      if (restore) node.nodeValue = final;
+      host.style.width = '';
+      this.scrambling.delete(el);
+    };
+    requestAnimationFrame(step);
   };
 
   /**

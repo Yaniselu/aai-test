@@ -87,6 +87,9 @@ interface MediaItem {
           }
         </div>
 
+        <!-- Fascicul de lumina care trece peste scena intre etape -->
+        <div class="sweep" aria-hidden="true"><i></i></div>
+
         <!-- Notificari de sticla -->
         <div class="notif aia-glass-lite n1" aria-hidden="true">
           <span class="ico" style="background: linear-gradient(135deg,#ff1f3d,#ff6a7a)"><aia-icon name="heart" [size]="14" /></span>
@@ -265,6 +268,34 @@ interface MediaItem {
       }
       @media (min-width: 768px) { .t-phone { inset: 12% 0 0 0; } }
 
+      .sweep {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        /* Pornit in afara ecranului din CSS (nu cu transform: GSAP l-ar aduna la xPercent). */
+        left: -45vw;
+        z-index: 15;
+        width: 30vw;
+        pointer-events: none;
+        will-change: transform;
+      }
+      .sweep i {
+        position: absolute;
+        inset: -20% 0;
+        transform: skewX(-20deg);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07) 35%, rgba(255, 0, 25, 0.22) 50%, rgba(255, 255, 255, 0.07) 65%, transparent);
+      }
+      .sweep i::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 2px;
+        background: rgba(255, 60, 80, 0.8);
+        box-shadow: 0 0 24px 4px rgba(255, 0, 25, 0.6);
+      }
+      :host-context(html.light) .sweep i { opacity: 0.6; }
       .notif {
         position: absolute;
         z-index: 15;
@@ -472,6 +503,8 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
       tl.to(phones, { y: 0, rotateX: 0, opacity: 1, stagger: 0.06, duration: 1, ease: 'power3.out' })
         .fromTo('.bigword span', { scale: 1.5, opacity: 0.35 }, { scale: 1, opacity: 1, duration: 1.2 }, 0)
 
+        .fromTo('.sweep', { xPercent: 0 }, { xPercent: 520, duration: 0.9, ease: 'power1.inOut' }, 0.7)
+
         // 2. Evantai
         .to(phones, {
           x: (i) => `${(i - mid) * 9 * fan}vw`,
@@ -492,6 +525,7 @@ export class MediaShowcaseComponent implements AfterViewInit, OnDestroy {
           duration: 1.2
         })
         .to('.bigword span', { scale: 0.85, xPercent: -8, duration: 1.2 }, '<')
+        .fromTo('.sweep', { xPercent: 520 }, { xPercent: 0, duration: 0.9, ease: 'power1.inOut', immediateRender: false }, '<0.15')
         .to('.n3, .n4', { scale: 1, opacity: 1, stagger: 0.15, ease: 'back.out(2)', duration: 0.5 }, '<0.4')
         .to('.t-stats', { y: 0, opacity: 1, duration: 0.6 }, '<0.2')
         .to('.t-intro', { y: -30, opacity: 0.25, duration: 0.8 }, '<')

@@ -334,3 +334,29 @@ export class WipeDirective implements AfterViewInit, OnDestroy {
     this.panel?.remove();
   }
 }
+
+/**
+ * Pune pe pauza animatiile CSS din interiorul elementului cat timp acesta nu e
+ * pe ecran (clasa `is-offscreen`). Compozitorul ar continua altfel sa anime
+ * linii de viteza, unde de soc sau benzi care nu se vad.
+ */
+@Directive({
+  selector: '[aiaPauseOffscreen]',
+  standalone: true
+})
+export class PauseOffscreenDirective implements AfterViewInit, OnDestroy {
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private io?: IntersectionObserver;
+
+  ngAfterViewInit(): void {
+    const el = this.host.nativeElement as HTMLElement;
+    this.io = new IntersectionObserver(([entry]) => el.classList.toggle('is-offscreen', !entry.isIntersecting), {
+      rootMargin: '120px'
+    });
+    this.io.observe(el);
+  }
+
+  ngOnDestroy(): void {
+    this.io?.disconnect();
+  }
+}

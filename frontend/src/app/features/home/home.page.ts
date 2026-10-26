@@ -32,7 +32,13 @@ import {
   RevealDirective,
   TiltDirective
 } from '../../shared/motion/motion.directives';
-import { ImpactDirective, KineticTextComponent, SlashComponent, WipeDirective } from '../../shared/motion/aggressive.motion';
+import {
+  ImpactDirective,
+  KineticTextComponent,
+  PauseOffscreenDirective,
+  SlashComponent,
+  WipeDirective
+} from '../../shared/motion/aggressive.motion';
 import { ContactFormComponent } from './contact-form.component';
 import { LocationsMapComponent } from './locations-map.component';
 import { MediaShowcaseComponent } from './media-showcase.component';
@@ -65,6 +71,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     KineticTextComponent,
     SlashComponent,
     WipeDirective,
+    PauseOffscreenDirective,
     MagnetDirective,
     RevealDirective,
     TiltDirective,
@@ -75,7 +82,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     <aia-section-dots [sections]="dots()" />
 
     <!-- ═══════════════ HERO ═══════════════ -->
-    <section id="acasa" #hero class="hero relative -mt-[92px] overflow-hidden pt-[92px] lg:h-[100svh] lg:min-h-[720px]">
+    <section id="acasa" #hero aiaPauseOffscreen class="hero relative -mt-[92px] overflow-hidden pt-[92px] lg:h-[100svh] lg:min-h-[720px]">
       <div #heroBg class="hero-bg absolute inset-0" aria-hidden="true">
         <img
           [src]="heroBgSrc()"
@@ -97,6 +104,15 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
       <aia-mesh-background class="opacity-50" />
       <div class="hero-spot-wrap" aria-hidden="true"><span #spot class="hero-spot"></span></div>
+
+      <!-- Linii de viteza si unde de soc care pornesc din spatele telefoanelor -->
+      <div class="hero-fx" aria-hidden="true">
+        <span class="shock"></span>
+        <span class="shock s2"></span>
+        @for (l of speedLines; track l.a) {
+          <i class="speed" [style.--a]="l.a + 'deg'" [style.--i]="l.i"></i>
+        }
+      </div>
 
       <!-- Cuvantul urias din spate, contur rosu care palpaie ca un stroboscop -->
       <div class="hero-word font-display aia-text-outline-red" aria-hidden="true">{{ 'hero.bigword' | translate }}</div>
@@ -223,15 +239,15 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
     <!-- ═══════════════ MARQUEE DUBLU ═══════════════ -->
     <div class="relative z-10 -my-4 overflow-hidden py-14">
-      <div class="aia-tape -mx-4 h-3 rotate-[-3deg]"></div>
-      <div class="-mx-4 rotate-[-3deg] bg-[var(--aia-blood)] py-1 text-white">
+      <div class="mq-band aia-tape -mx-4 h-3 rotate-[-3deg]"></div>
+      <div class="mq-band -mx-4 rotate-[-3deg] bg-[var(--aia-blood)] py-1 text-white">
         <aia-velocity-marquee
           [items]="'marquee.a' | translate"
           klass="font-display text-5xl uppercase leading-none sm:text-7xl"
         />
       </div>
-      <div class="aia-tape -mx-4 h-3 rotate-[-3deg]"></div>
-      <div class="-mx-4 mt-6 rotate-[2deg] bg-black py-1">
+      <div class="mq-band aia-tape -mx-4 h-3 rotate-[-3deg]"></div>
+      <div class="mq-band -mx-4 mt-6 rotate-[2deg] bg-black py-1">
         <aia-velocity-marquee
           [reverse]="true"
           [items]="'marquee.b' | translate"
@@ -242,6 +258,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
     <!-- ═══════════════ SPIRIT ═══════════════ -->
     <section id="despre" class="relative scroll-mt-28 overflow-x-clip py-24 lg:py-36">
+      <span class="ghost-num font-display aia-text-outline" aiaParallax [parallaxSpeed]="0.9" aria-hidden="true">01</span>
       <span class="aia-deco-slash left-[-6vw] top-[18%]" aiaParallax [parallaxSpeed]="1.6" aria-hidden="true"></span>
       <span class="aia-deco-slash right-[-8vw] top-[55%] !w-[30vw]" aiaParallax [parallaxSpeed]="-1.2" aria-hidden="true"></span>
       <div class="aia-container">
@@ -272,6 +289,24 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
           }
         </div>
 
+      </div>
+    </section>
+
+    <!-- ═══════════════ CLASH — scena fixata: doua cuvinte se izbesc ═══════════════ -->
+    <section class="clash relative overflow-hidden" [attr.aria-label]="'clash.label' | translate">
+      <div class="clash-stage absolute inset-0">
+        <div class="clash-vs font-display aia-text-outline" aria-hidden="true">{{ 'clash.vs' | translate }}</div>
+        <div class="clash-word clash-left font-display" aria-hidden="true">{{ 'clash.left' | translate }}</div>
+        <div class="clash-word clash-right font-display aia-text-outline-red" aria-hidden="true">{{ 'clash.right' | translate }}</div>
+        <div class="clash-shards" aria-hidden="true">
+          @for (sh of shards; track sh) {
+            <i class="shard" [attr.data-i]="sh"></i>
+          }
+        </div>
+        <div class="clash-result">
+          <p class="clash-res-word font-display">{{ 'clash.result' | translate }}</p>
+          <p class="clash-sub font-heading">{{ 'clash.sub' | translate }}</p>
+        </div>
       </div>
     </section>
 
@@ -310,7 +345,8 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     <aia-slash [label]="'rounds.r1' | translate" />
 
     <!-- ═══════════════ GRUPE — carduri care se stivuiesc ═══════════════ -->
-    <section id="grupe" class="relative scroll-mt-20 py-24 lg:py-32">
+    <section id="grupe" class="relative scroll-mt-20 overflow-x-clip py-24 lg:py-32">
+      <span class="ghost-num font-display aia-text-outline" aiaParallax [parallaxSpeed]="0.9" aria-hidden="true">02</span>
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -338,7 +374,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
                   <span class="aia-chip absolute left-5 top-5 !text-white">{{ group.ageKey | translate }}</span>
                 </div>
 
-                <div class="relative flex flex-col justify-center p-7 pt-24 sm:p-10 sm:pt-28 lg:p-14">
+                <div class="stack-text relative flex flex-col justify-center p-7 pt-24 sm:p-10 sm:pt-28 lg:p-14">
                   <span class="font-display aia-text-outline-red pointer-events-none absolute right-5 top-3 text-[84px] leading-none sm:text-[110px] lg:right-8 lg:top-6 lg:text-[150px]">0{{ i + 1 }}</span>
                   <h3 class="relative font-display text-5xl lg:text-7xl">{{ group.nameKey | translate }}</h3>
                   <p class="relative mt-5 max-w-md text-[15px] leading-relaxed" [style.color]="'var(--aia-text-muted)'">
@@ -365,7 +401,8 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     <aia-slash [label]="'rounds.r2' | translate" />
 
     <!-- ═══════════════ PROGRAM ═══════════════ -->
-    <section id="program" class="relative scroll-mt-28 py-24 lg:py-32">
+    <section id="program" class="relative scroll-mt-28 overflow-x-clip py-24 lg:py-32">
+      <span class="ghost-num font-display aia-text-outline" aiaParallax [parallaxSpeed]="0.9" aria-hidden="true">03</span>
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -388,6 +425,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
     <!-- ═══════════════ ANTRENORI — panouri care se extind ═══════════════ -->
     <section id="antrenori" class="relative scroll-mt-28 overflow-x-clip py-24 lg:py-32">
+      <span class="ghost-num font-display aia-text-outline" aiaParallax [parallaxSpeed]="0.9" aria-hidden="true">04</span>
       <span class="aia-deco-slash right-[-6vw] top-[10%]" aiaParallax [parallaxSpeed]="1.4" aria-hidden="true"></span>
       <div class="aia-container">
         <div class="flex flex-wrap items-end justify-between gap-6">
@@ -412,6 +450,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
               <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(255,0,25,.18), transparent 35%)"></div>
               <div class="absolute inset-0" style="background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,.9))"></div>
 
+              <span class="coach-flash" aria-hidden="true"></span>
               <span class="coach-vert font-display" aria-hidden="true">{{ coach.nameKey ? (coach.nameKey | translate) : coach.name }}</span>
 
               <div class="coach-body absolute inset-x-0 bottom-0 p-6 lg:p-8">
@@ -430,7 +469,8 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
     <aia-slash [label]="'rounds.r3' | translate" />
 
     <!-- ═══════════════ REVIEW-URI — pachet de carti 3D ═══════════════ -->
-    <section class="relative py-24 lg:py-32">
+    <section class="relative overflow-x-clip py-24 lg:py-32">
+      <span class="ghost-num font-display aia-text-outline" aiaParallax [parallaxSpeed]="0.9" aria-hidden="true">05</span>
       <div class="aia-container grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
           <h2 class="aia-section-title" [aiaImpact]="'reviews.title' | translate"></h2>
@@ -468,6 +508,8 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
               </figcaption>
               @if (i === reviewIndex()) {
                 <span class="progress" [class.paused]="reviewPaused()" (animationend)="nextReview()" aria-hidden="true"></span>
+                <!-- Lama care taie cardul la fiecare schimbare (elementul e recreat, deci animatia reporneste) -->
+                <span class="swap-slash" aria-hidden="true"></span>
               }
             </figure>
           }
@@ -482,6 +524,7 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
 
     <!-- ═══════════════ CIFRE — numaratoare legata de scroll ═══════════════ -->
     <section class="stats-band relative overflow-x-clip py-24 lg:py-36">
+      <span class="ghost-num font-display aia-text-outline" aiaParallax [parallaxSpeed]="0.9" aria-hidden="true">06</span>
       <span class="aia-deco-slash left-[-10vw] top-[30%] !w-[50vw]" aiaParallax [parallaxSpeed]="1.4" aria-hidden="true"></span>
       <div class="aia-container">
         <h2 class="aia-section-title max-w-4xl" [aiaImpact]="'stats.title' | translate"></h2>
@@ -507,11 +550,13 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
       <div class="aia-container">
         <div
           #lensEl
+          aiaPauseOffscreen
           class="lens-wrap aia-card relative overflow-hidden px-6 py-20 text-center sm:px-12 lg:py-28"
           (pointermove)="onLens($event)"
           (pointerleave)="lensOn.set(false)"
           (pointerenter)="lensOn.set(true)"
         >
+          <span class="cta-stripes" aria-hidden="true"></span>
           <div class="relative">
             <h2 class="font-display text-[11vw] leading-[0.95] sm:text-[8vw] lg:text-[6.6rem]">{{ 'cta.title' | translate }}</h2>
             <h2
@@ -749,6 +794,141 @@ function toWords(text: string | undefined): { word: string; chars: string[] }[] 
         transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
       .pillar:hover .pillar-ico { transform: rotate(-12deg) scale(1.12); }
+
+      /* ---------- hero: linii de viteza + unde de soc ---------- */
+      .hero-fx {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        overflow: hidden;
+        --cx: 72%;
+        --cy: 50%;
+      }
+      @media (max-width: 1023px) { .hero-fx { --cx: 50%; --cy: 78%; } }
+      .shock {
+        position: absolute;
+        left: var(--cx);
+        top: var(--cy);
+        width: 64vmin;
+        height: 64vmin;
+        margin: -32vmin 0 0 -32vmin;
+        border: 2px solid var(--aia-blood);
+        border-radius: 50%;
+        opacity: 0;
+        animation: shock 3.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+      }
+      .shock.s2 { animation-delay: 1.6s; border-color: rgba(255, 255, 255, 0.5); }
+      @keyframes shock {
+        0% { transform: scale(0.12); opacity: 0.9; }
+        65% { opacity: 0; }
+        100% { transform: scale(2.4); opacity: 0; }
+      }
+      .speed {
+        position: absolute;
+        left: var(--cx);
+        top: var(--cy);
+        width: 55vw;
+        height: 2px;
+        transform-origin: 0 50%;
+        rotate: var(--a);
+        background: linear-gradient(90deg, transparent, rgba(255, 0, 25, 0.85) 55%, transparent);
+        opacity: 0;
+        animation: speed 1.9s cubic-bezier(0.55, 0, 1, 0.45) infinite;
+        animation-delay: calc(var(--i) * -0.16s);
+      }
+      @keyframes speed {
+        0% { transform: translateX(8vw) scaleX(0.1); opacity: 0; }
+        25% { opacity: 1; }
+        100% { transform: translateX(46vw) scaleX(1); opacity: 0; }
+      }
+
+      /* ---------- numere fantoma ---------- */
+      .ghost-num {
+        position: absolute;
+        right: -3vw;
+        top: 4%;
+        z-index: 0;
+        font-size: clamp(160px, 34vw, 460px);
+        line-height: 0.8;
+        opacity: 0.22;
+        pointer-events: none;
+      }
+      /* Sub continutul sectiunii (z-index negativ in contextul lui aia-root). */
+      .ghost-num { z-index: -1; }
+
+      /* ---------- clash ---------- */
+      .clash { height: 100svh; min-height: 560px; }
+      .clash-stage { display: grid; place-items: center; }
+      .clash-stage > * { grid-area: 1 / 1; }
+      .clash-vs { font-size: clamp(200px, 48vw, 760px); line-height: 0.8; opacity: 0.25; }
+      .clash-word {
+        font-size: clamp(64px, 15vw, 250px);
+        line-height: 0.85;
+        white-space: nowrap;
+        will-change: transform;
+      }
+      .clash-left { color: var(--aia-text); }
+      .clash-shards { position: relative; width: 0; height: 0; }
+      .shard {
+        position: absolute;
+        left: -14px;
+        top: -24px;
+        width: 28px;
+        height: 48px;
+        background: var(--aia-blood);
+        clip-path: polygon(50% 0, 100% 100%, 0 70%);
+        opacity: 0;
+      }
+      .shard:nth-child(even) { background: var(--aia-text); width: 18px; height: 30px; }
+      .clash-result { text-align: center; }
+      .clash-res-word {
+        font-size: clamp(72px, 17vw, 280px);
+        line-height: 0.85;
+        color: var(--aia-blood);
+        text-shadow: 0 0 80px rgba(255, 0, 25, 0.55);
+      }
+      @media (max-width: 767px) {
+        .clash-word { font-size: 22vw; }
+        .clash-res-word { font-size: 22vw; }
+      }
+      .clash-sub { margin-top: 18px; font-size: 13px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--aia-text-muted); }
+
+      /* ---------- antrenori: flash la hover ---------- */
+      .coach-flash { position: absolute; inset: 0; z-index: 3; background: var(--aia-blood); opacity: 0; pointer-events: none; }
+      @media (hover: hover) {
+        .coach:hover .coach-flash { animation: coach-flash 0.5s steps(1) 1; }
+      }
+      @keyframes coach-flash {
+        0% { opacity: 0.55; }
+        20% { opacity: 0; }
+        40% { opacity: 0.3; }
+        60%, 100% { opacity: 0; }
+      }
+
+      /* ---------- review: lama la schimbare ---------- */
+      .swap-slash {
+        position: absolute;
+        inset: -10% -40%;
+        z-index: 5;
+        pointer-events: none;
+        background: linear-gradient(100deg, transparent 42%, var(--aia-blood) 46%, var(--aia-blood) 54%, transparent 58%);
+        transform: translateX(-100%);
+        animation: swap-slash 0.6s cubic-bezier(0.85, 0, 0.15, 1) forwards;
+      }
+      @keyframes swap-slash { to { transform: translateX(100%); } }
+
+      /* ---------- CTA: benzi de avertizare care curg ---------- */
+      .cta-stripes {
+        position: absolute;
+        inset: -50% -10%;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.12;
+        background: repeating-linear-gradient(-45deg, var(--aia-blood) 0 22px, transparent 22px 44px);
+        animation: cta-stripes 1.4s linear infinite;
+      }
+      @keyframes cta-stripes { to { transform: translate3d(62.2px, 0, 0); } }
 
       /* ---------- cifre ---------- */
       .stat-num {
@@ -1017,6 +1197,10 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
   readonly journey = ['beginner', 'evolution', 'competition', 'champion'];
 
+  /** 12 linii de viteza, la unghiuri diferite. */
+  readonly speedLines = Array.from({ length: 12 }, (_, i) => ({ a: -170 + i * 28 + (i % 2 ? 9 : -6), i }));
+  readonly shards = Array.from({ length: 12 }, (_, i) => i);
+
   readonly bigStats = [
     { value: 293, key: 'stats.athletes' },
     { value: 17, key: 'stats.medals' },
@@ -1034,6 +1218,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
   private heroIo?: IntersectionObserver;
   private heroVisible = true;
   private tiltLast = 0;
+  private readonly cleanups: (() => void)[] = [];
 
   ngAfterViewInit(): void {
     this.clockTimer = setInterval(() => this.clock.set(this.now()), 1000) as unknown as number;
@@ -1056,11 +1241,21 @@ export class HomePage implements AfterViewInit, OnDestroy {
       this.buildStack();
       this.buildBatches();
       this.buildStats();
+      this.buildClash();
+      this.buildVelocitySkew();
+      this.buildExtras();
     }, this.host.nativeElement);
 
     this.startStageTilt();
+    // Sectiunile fixate (pin) se calculeaza in ordinea de pe pagina, nu in cea in
+    // care au fost create; altfel una de mai jos porneste prea devreme si se
+    // suprapune peste cea de deasupra.
+    ScrollTrigger.sort();
     // Fonturile si imaginile schimba inaltimile dupa primul layout.
-    setTimeout(() => ScrollTrigger.refresh(), 600);
+    setTimeout(() => {
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    }, 600);
   }
 
   ngOnDestroy(): void {
@@ -1071,6 +1266,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
     clearInterval(this.tcTimer);
     window.removeEventListener('pointermove', this.onPointer);
     this.heroIo?.disconnect();
+    this.cleanups.forEach((fn) => fn());
     this.anim.killAll();
   }
 
@@ -1141,6 +1337,17 @@ export class HomePage implements AfterViewInit, OnDestroy {
     gsap.to('.hp-right', { x: 220, y: -160, rotate: 16, ease: 'none', scrollTrigger: st });
     gsap.to('.hp-center', { y: -120, scale: 1.08, ease: 'none', scrollTrigger: st });
     gsap.to('.badges', { y: -160, opacity: 0, ease: 'none', scrollTrigger: st });
+    // Cuvintele titlului explodeaza in afara cadrului cand iesi din hero.
+    // Pe cuvinte (nu pe litere): literele au deja propriul tween de intrare.
+    gsap.to('.hero-title .word', {
+      x: (i) => (i % 2 ? 1 : -1) * (140 + i * 60),
+      y: (i) => -(90 + ((i * 53) % 180)),
+      rotate: (i) => (i % 2 ? 1 : -1) * (12 + i * 7),
+      scale: 1.35,
+      opacity: 0,
+      ease: 'none',
+      scrollTrigger: { trigger: hero, start: 'top top', end: '65% top', scrub: 0.5 }
+    });
   }
 
   /** Scena se inclina dupa cursor, iar sferele se misca pe adancimi diferite. */
@@ -1293,6 +1500,131 @@ export class HomePage implements AfterViewInit, OnDestroy {
           gsap.to(batch, { opacity: 1, y: 0, skewY: 0, duration: 0.7, ease: 'expo.out', stagger: 0.045, overwrite: true, clearProps: 'transform' })
       });
     }
+  }
+
+  /**
+   * Scena "clash": cele doua cuvinte vin din margini si se izbesc in centru.
+   * La impact: flash, cutremur, cioburi care zboara si cuvantul castigator.
+   * Totul e legat de scroll (scrub), deci merge si inainte, si inapoi.
+   */
+  private buildClash(): void {
+    const stage = this.host.nativeElement.querySelector('.clash-stage') as HTMLElement | null;
+    if (!stage) return;
+    const mobile = window.innerWidth < 768;
+    const IMPACT = 1.05;
+    let prev = 0;
+    // Pozitia de start: cuvantul sta la marginea ecranului, cu o bucata vizibila,
+    // indiferent cat e de lung (RO si EN au lungimi diferite).
+    const offscreen = (sel: string) => innerWidth / 2 + ((stage.querySelector(sel) as HTMLElement).offsetWidth / 2) * 0.55;
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      // Impactul (flash + cutremur) se declanseaza cand animatia insasi trece
+      // de momentul ciocnirii, doar la derulare in jos.
+      onUpdate: () => {
+        const t = tl.time();
+        if (prev < IMPACT && t >= IMPACT) {
+          const r = stage.getBoundingClientRect();
+          this.anim.flash(r.left + r.width / 2, r.top + r.height / 2, 0.85);
+          this.anim.shake(stage, 18);
+        }
+        prev = t;
+      },
+      scrollTrigger: {
+        trigger: '.clash',
+        start: 'top top',
+        end: mobile ? '+=130%' : '+=170%',
+        pin: true,
+        scrub: 0.5,
+        anticipatePin: 1,
+        invalidateOnRefresh: true
+      }
+    });
+    tl.fromTo('.clash-vs', { scale: 2.6, opacity: 0.12, rotate: -12 }, { scale: 1, opacity: 0.25, rotate: 0, duration: 1 }, 0)
+      // Cuvintele vin pe doua randuri decalate si se intalnesc in centru.
+      .fromTo('.clash-left', { x: () => -offscreen('.clash-left'), yPercent: -58, skewX: 18 }, { x: () => -innerWidth * 0.04, yPercent: -58, skewX: 0, duration: 1, ease: 'power3.in' }, 0)
+      .fromTo('.clash-right', { x: () => offscreen('.clash-right'), yPercent: 58, skewX: -18 }, { x: () => innerWidth * 0.04, yPercent: 58, skewX: 0, duration: 1, ease: 'power3.in' }, 0)
+      .fromTo('.clash-result', { scale: 0.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(2.4)' }, IMPACT + 0.1)
+      .to('.clash-left', { xPercent: -130, yPercent: -150, rotate: -16, opacity: 0, duration: 1, ease: 'power2.out' }, IMPACT)
+      .to('.clash-right', { xPercent: 130, yPercent: 150, rotate: 16, opacity: 0, duration: 1, ease: 'power2.out' }, IMPACT)
+      .to('.clash-vs', { scale: 1.6, opacity: 0.08, duration: 1 }, IMPACT)
+      // Cioburile: pozitia intr-un tween, opacitatea in altele doua, ca la derularea
+      // inapoi sa redevina invizibile (nu sa ramana in centru).
+      .fromTo(
+        '.shard',
+        { x: 0, y: 0, rotate: 0, scale: 0.4 },
+        {
+          x: (i) => Math.cos((i / 12) * Math.PI * 2) * (mobile ? 46 : 38) + 'vw',
+          y: (i) => Math.sin((i / 12) * Math.PI * 2) * (mobile ? 40 : 34) + 'vh',
+          rotate: (i) => (i % 2 ? 1 : -1) * (180 + i * 40),
+          scale: (i) => 1 + (i % 3) * 0.6,
+          duration: 1.1,
+          ease: 'power2.out'
+        },
+        IMPACT
+      )
+      .fromTo('.shard', { opacity: 0 }, { opacity: 1, duration: 0.04 }, IMPACT)
+      .to('.shard', { opacity: 0, duration: 0.5 }, IMPACT + 0.6)
+      .to({}, { duration: 0.4 });
+  }
+
+  /**
+   * Titlurile, benzile de text si marquee-urile se inclina dupa viteza scroll-ului
+   * si revin cand scroll-ul se opreste. Un singur ScrollTrigger + quickTo pe fiecare
+   * element: GSAP scrie direct transform-ul, fara variabile CSS globale.
+   */
+  private buildVelocitySkew(): void {
+    const targets = gsap.utils.toArray<HTMLElement>('.aia-section-title, aia-kinetic .row, .mq-band, .clash-vs');
+    const setters = new Map(targets.map((t) => [t, gsap.quickTo(t, 'skewY', { duration: 0.45, ease: 'power3.out' })]));
+    // Doar elementele de pe ecran primesc inclinarea: restul nu costa nimic.
+    const visible = new Set<HTMLElement>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const el = e.target as HTMLElement;
+          if (e.isIntersecting) visible.add(el);
+          else if (visible.delete(el)) gsap.set(el, { skewY: 0 });
+        }
+      },
+      { rootMargin: '10% 0px' }
+    );
+    targets.forEach((t) => io.observe(t));
+    let reset: number | undefined;
+    const apply = (v: number) => visible.forEach((el) => setters.get(el)?.(v));
+    ScrollTrigger.create({
+      start: 0,
+      end: 'max',
+      onUpdate: (self) => {
+        apply(gsap.utils.clamp(-8, 8, self.getVelocity() / -280));
+        clearTimeout(reset);
+        reset = setTimeout(() => apply(0), 140) as unknown as number;
+      }
+    });
+    this.cleanups.push(() => {
+      io.disconnect();
+      clearTimeout(reset);
+    });
+  }
+
+  /** Intrari mai violente pentru antrenori si textele din stiva de grupe. */
+  private buildExtras(): void {
+    gsap.from('.coach', {
+      yPercent: -40,
+      rotate: (i) => (i - 1) * 7,
+      opacity: 0,
+      duration: 1.1,
+      ease: 'expo.out',
+      stagger: 0.12,
+      scrollTrigger: { trigger: '.coaches', start: 'top 85%', once: true }
+    });
+    gsap.utils.toArray<HTMLElement>('.stack-inner').forEach((card) => {
+      const text = card.querySelector('.stack-text');
+      if (!text) return;
+      gsap.fromTo(
+        text.children,
+        { x: 90, opacity: 0 },
+        { x: 0, opacity: 1, stagger: 0.06, ease: 'power3.out', scrollTrigger: { trigger: card, start: 'top 85%', end: 'top 35%', scrub: 0.6 } }
+      );
+    });
   }
 
   /** Cifrele cresc odata cu scroll-ul (scrub), iar barele de sub ele se umplu. */

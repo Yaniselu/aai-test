@@ -430,17 +430,25 @@ h1, h2, h3, .font-display {
    scurte. Se aplica pe elementul insusi (text-shadow), deci nu depinde de cum
    se rupe textul pe randuri si ramane perfect aliniat pe orice ecran. */
 .aia-glitch {
-  animation: aia-glitch 4.2s steps(1) infinite;
+  animation: aia-glitch 3.1s steps(1) infinite;
 }
 .aia-glitch:hover { animation-duration: 0.7s; }
 @keyframes aia-glitch {
-  0%, 88%, 100% { text-shadow: none; translate: none; }
-  89% { text-shadow: -4px 0 rgba(255, 0, 25, 0.9), 4px 0 rgba(255, 255, 255, 0.55); translate: 3px 0; }
-  90.5% { text-shadow: 5px 0 rgba(255, 0, 25, 0.9), -3px 0 rgba(255, 255, 255, 0.5); translate: -4px 0; }
-  92% { text-shadow: -2px 0 rgba(255, 0, 25, 0.8); translate: 2px 0; }
-  93.5% { text-shadow: none; translate: none; }
-  96% { text-shadow: 3px 0 rgba(255, 0, 25, 0.8), -3px 0 rgba(255, 255, 255, 0.4); translate: -2px 0; }
-  97% { text-shadow: none; translate: none; }
+  0%, 84%, 100% { text-shadow: none; translate: none; }
+  85% { text-shadow: -7px 0 rgba(255, 0, 25, 0.95), 6px 0 rgba(255, 255, 255, 0.6); translate: 5px 0; }
+  86.5% { text-shadow: 8px 0 rgba(255, 0, 25, 0.95), -5px 0 rgba(255, 255, 255, 0.55); translate: -6px 0; }
+  88% { text-shadow: -3px 0 rgba(255, 0, 25, 0.85); translate: 3px 0; }
+  89.5% { text-shadow: none; translate: none; }
+  93% { text-shadow: 5px 0 rgba(255, 0, 25, 0.9), -5px 0 rgba(255, 255, 255, 0.5); translate: -3px 0; }
+  94% { text-shadow: -9px 0 rgba(255, 0, 25, 0.9); translate: 7px 0; }
+  95% { text-shadow: none; translate: none; }
+}
+
+/* PauseOffscreenDirective: nimic nu se anima in afara ecranului. */
+.is-offscreen *,
+.is-offscreen *::before,
+.is-offscreen *::after {
+  animation-play-state: paused !important;
 }
 
 /* Literele titlurilor cu impact (ImpactDirective). */

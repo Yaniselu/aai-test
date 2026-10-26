@@ -626,5 +626,13 @@
     "notifications": "Notifications",
     "closeNotification": "Close notification",
     "sections": "Sections"
+  },
+  "clash": {
+    "left": "DISCIPLINE",
+    "right": "FEAR",
+    "vs": "VS",
+    "result": "VICTORY",
+    "sub": "Only one stays standing.",
+    "label": "Discipline beats fear"
   }
 }

@@ -626,5 +626,13 @@
     "notifications": "Notificări",
     "closeNotification": "Închide notificarea",
     "sections": "Secțiuni"
+  },
+  "clash": {
+    "left": "DISCIPLINĂ",
+    "right": "FRICĂ",
+    "vs": "VS",
+    "result": "VICTORIE",
+    "sub": "Doar unul rămâne în picioare.",
+    "label": "Disciplina învinge frica"
   }
 }
